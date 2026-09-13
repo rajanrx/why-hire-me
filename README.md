@@ -19,6 +19,7 @@ pnpm install
 pnpm run check
 pnpm run spec:validate
 pnpm run cli profile create --name "Your Name"
+pnpm run cli source ingest --profile "<profile-id>" --file "<resume-or-work-file>"
 ```
 
 The CLI stores local data under `~/.why-hire-me` by default. Set `WHY_HIRE_ME_HOME` or pass
