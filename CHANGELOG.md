@@ -1,5 +1,12 @@
 # why-hire-me
 
+## 0.3.1
+
+### Patch Changes
+
+- f85e414: Refocus the README on a concise three-step AI journey, move the development CLI into its own guide,
+  and document the planned offline career portfolio and optional platform-independent hosting output.
+
 ## 0.3.0
 
 ### Minor Changes
