@@ -14,6 +14,7 @@ use.
 | `why-hire-me:input-work-evidence-explorer` | [Explore a bounded body of work](examples/input-work-evidence-explorer.md) |
 | `why-hire-me:input-career-reference-explorer` | [Explore a portfolio, publication, or credential link](examples/input-career-reference-explorer.md) |
 | `why-hire-me:knowledge-curator` | [Review and organise knowledge proposals](examples/knowledge-curator.md) |
+| `why-hire-me:output-career-knowledge-guide` | [Answer from an authorised career view](examples/output-career-knowledge-guide.md) |
 
 ## Planned workflow preview
 

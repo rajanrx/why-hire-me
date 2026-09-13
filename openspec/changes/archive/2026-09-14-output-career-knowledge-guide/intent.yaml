@@ -1,0 +1,39 @@
+schema: why-hire-me-intent/v1
+change: output-career-knowledge-guide
+references:
+  - type: goal
+    id: G-3
+    path: intent/specs/prd.md
+    reason: Authorised visitors can explore a deliberately bounded career view.
+  - type: goal
+    id: G-4
+    path: intent/specs/prd.md
+    reason: Versioned portable knowledge can be consumed without the original application.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: The person controls the view and disclosure boundary.
+  - type: goal
+    id: G-7
+    path: intent/specs/prd.md
+    reason: Missing or withheld information is not converted into a hiring judgement.
+  - type: domain
+    id: dom-person-knowledge
+    path: intent/specs/domains/dom-person-knowledge/domain.md
+    reason: Person Knowledge owns canonical knowledge from which authorised views originate.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Publication owns versioned views, releases, and audience delivery boundaries.
+  - type: adr
+    id: adr-0002
+    path: intent/specs/adr/0002-separate-canonical-knowledge-from-projections.md
+    reason: The guide reads a projection and cannot reach back into canonical or source stores.
+  - type: adr
+    id: adr-0006
+    path: intent/specs/adr/0006-publish-versioned-portable-knowledge-releases.md
+    reason: Supplied releases remain versioned and independently inspectable.
+  - type: adr
+    id: adr-0018
+    path: intent/specs/adr/0018-mark-directional-skills-as-input-or-output.md
+    reason: The output prefix identifies authorised knowledge leaving the core for an audience.
