@@ -39,6 +39,7 @@ test("release bundle contains end-user files and excludes development material",
     `${root}/skills/output-career-knowledge-guide/SKILL.md`,
     `${root}/skills/async-interview/SKILL.md`,
     `${root}/skills/job-application-tailor/SKILL.md`,
+    `${root}/skills/output-career-portfolio/SKILL.md`,
   ]) {
     assert.ok(entries.includes(required), `missing distributable entry: ${required}`);
   }
@@ -75,6 +76,7 @@ test("plugin namespace qualifies portable skill names", async () => {
     "job-application-tailor",
     "knowledge-curator",
     "output-career-knowledge-guide",
+    "output-career-portfolio",
   ]) {
     const skill = await readFile(`skills/${skillName}/SKILL.md`, "utf8");
     assert.match(skill, new RegExp(`^---\\nname: ${skillName}\\n`));

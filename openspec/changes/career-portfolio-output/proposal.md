@@ -9,7 +9,7 @@ give a cloud destination access to private canonical knowledge.
 - Build an offline static HTML portfolio from one authorised, versioned release.
 - Present a career overview, explorable graph, evidence-backed résumé, sources, limitations, and
   freshness.
-- Add `output-career-portfolio` as the planned AI skill coordinating preview and generation.
+- Add `output-career-portfolio` as the available AI skill coordinating validation, preview, and local generation.
 - Support optional hosted-platform adapters for the same static projection, with Firebase Hosting
   as one possible reference implementation.
 - Keep credentials, plan limits, delivery state, and public visibility outside release content.
@@ -30,6 +30,7 @@ types.
 
 ## Impact
 
-Defines the next Publication output contract and its trust, accessibility, portability, and
-destination boundaries without selecting a permanent hosting vendor. Runtime implementation begins
+Defines the Publication output contract and its trust, accessibility, portability, and destination
+boundaries without selecting a permanent hosting vendor. The installable skill fails closed or creates
+a labelled local prototype when production ports are unavailable; runtime implementation still begins
 only after authorised views and local release validation exist.

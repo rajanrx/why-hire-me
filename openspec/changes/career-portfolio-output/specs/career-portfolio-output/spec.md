@@ -55,7 +55,7 @@ record upload and observed public state separately.
 
 ### Requirement: AI coordination cannot grant publication authority
 
-The planned `output-career-portfolio` skill SHALL help select, explain, preview, and generate a
+The `output-career-portfolio` skill SHALL help select, explain, preview, and generate a
 portfolio but MUST NOT approve a view, infer consent, or make an output public on the person's
 behalf.
 

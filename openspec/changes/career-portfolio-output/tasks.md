@@ -13,7 +13,7 @@
 
 - [ ] 2.1 Create visual, accessibility, print, content-security, and evidence-navigation fixtures.
 - [ ] 2.2 Implement `CareerPortfolioProjectionBuilder` behind the Publication port.
-- [ ] 2.3 Create and validate the `output-career-portfolio` AI skill against the preview and consent workflow.
+- [x] 2.3 Create and validate the `output-career-portfolio` AI skill against the preview and consent workflow.
 
 ## 3. Optional hosted delivery
 
