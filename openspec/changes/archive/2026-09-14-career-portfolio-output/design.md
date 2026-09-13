@@ -1,7 +1,9 @@
 ## Context
 
-Person Knowledge can now admit entities, but authorised views and vendor-neutral releases are not
-implemented. The portfolio therefore needs a contract now without pretending its runtime exists.
+Person Knowledge can admit entities. Authorised views and vendor-neutral releases were originally
+prerequisites; they now ship through the separately reviewed `stable-local-publication-runtime`
+change, so this change can implement the projection and reference delivery adapter without crossing
+the canonical boundary.
 
 ## Goals / Non-Goals
 
@@ -61,6 +63,6 @@ may be a reference implementation, but its concepts do not enter the core contra
 
 ## Migration Plan
 
-No data migration occurs during planning. Implement authorised views and local releases first, then
-add the renderer, the `output-career-portfolio` skill, and finally one reference hosting adapter in
-separate reviewed changes.
+Existing databases add disclosure-view tables on first use. Authorised views and local releases land
+through their own reviewed change; this change then adds the renderer, skill, and reference Firebase
+Hosting adapter behind Publication ports.

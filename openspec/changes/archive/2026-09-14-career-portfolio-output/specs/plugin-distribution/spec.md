@@ -8,12 +8,12 @@ and offers installation into compatible agent hosts.
 #### Scenario: A person installs the skills
 
 - **WHEN** the person runs the documented global installation command
-- **THEN** the installer discovers the ten current skills and prompts for a compatible agent host
+- **THEN** the installer discovers the fourteen current skills and prompts for a compatible agent host
 
 ### Requirement: Release bundle boundary
 
 The release archive SHALL contain only documented end-user files and SHALL exclude local user data,
-dependencies, source-control state, developer guides, development intent and specifications, source
+dependencies, source-control state, the repository-only development CLI guide, development intent and specifications, source
 files, tests, CI configuration, changesets, and development caches.
 
 #### Scenario: A release archive is built

@@ -26,6 +26,27 @@ import type {
   AdmissionDisposition,
   ReviewerAuthority,
 } from "../../domains/person-knowledge/domain/entity-admission.js";
+import { createHash } from "node:crypto";
+import { SqliteAuthorisedViewRepository } from "../../adapters/persistence/sqlite/sqlite-authorised-view-repository.js";
+import { CreateAuthorisedView } from "../../domains/person-knowledge/application/create-authorised-view.js";
+import type { DisclosureAudience } from "../../domains/person-knowledge/domain/authorised-view.js";
+import { NodeReleaseDigester } from "../../adapters/publication/node-release-digester.js";
+import { LocalReleaseRepository, validateLocalRelease } from "../../adapters/publication/local-release-repository.js";
+import { CreateLocalKnowledgeRelease } from "../../domains/publication/application/create-local-knowledge-release.js";
+import type { ReleaseInputRecord } from "../../domains/publication/domain/knowledge-release.js";
+import { LocalKnowledgeReleaseReader } from "../../adapters/publication/local-knowledge-release-reader.js";
+import { StaticHtmlCareerPortfolioRenderer } from "../../adapters/publication/static-html-career-portfolio-renderer.js";
+import { LocalCareerPortfolioRepository } from "../../adapters/publication/local-career-portfolio-repository.js";
+import { BuildCareerPortfolio } from "../../domains/publication/application/build-career-portfolio.js";
+import { readFile } from "node:fs/promises";
+import { EnvironmentCredentialProvider } from "../../adapters/publication/environment-credential-provider.js";
+import { LocalStaticPortfolioReader } from "../../adapters/publication/local-static-portfolio-reader.js";
+import { FirebaseHostingPublisher } from "../../adapters/publication/firebase-hosting-publisher.js";
+import { NodeCommandRunner } from "../../adapters/publication/node-command-runner.js";
+import { FetchPublicUrlObserver } from "../../adapters/publication/fetch-public-url-observer.js";
+import { PublishCareerPortfolio } from "../../domains/publication/application/publish-career-portfolio.js";
+import type { CareerPortfolioManifest } from "../../domains/publication/domain/career-portfolio.js";
+import { LocalPublicationLedger } from "../../adapters/publication/local-publication-ledger.js";
 
 export type CliResult =
   | {
@@ -56,6 +77,34 @@ export type CliResult =
       readonly kind: "entity-candidate-reviewed";
       readonly admission: AdmissionResult;
       readonly databasePath: string;
+    }
+  | {
+      readonly kind: "authorised-view-created";
+      readonly view: import("../../domains/person-knowledge/domain/authorised-view.js").AuthorisedKnowledgeView;
+      readonly reused: boolean;
+      readonly databasePath: string;
+    }
+  | {
+      readonly kind: "knowledge-release-created";
+      readonly directory: string;
+      readonly manifest: import("../../domains/publication/domain/knowledge-release.js").KnowledgeReleaseManifest;
+      readonly reused: boolean;
+    }
+  | {
+      readonly kind: "knowledge-release-validated";
+      readonly directory: string;
+      readonly validation: import("../../domains/publication/domain/knowledge-release.js").ReleaseValidationResult;
+    }
+  | {
+      readonly kind: "career-portfolio-created";
+      readonly directory: string;
+      readonly manifest: import("../../domains/publication/domain/career-portfolio.js").CareerPortfolioManifest;
+      readonly reused: boolean;
+    }
+  | {
+      readonly kind: "career-portfolio-published";
+      readonly publication: import("../../domains/publication/domain/destination-publication.js").StaticPortfolioPublicationResult;
+      readonly reused: boolean;
     };
 
 function option(args: readonly string[], name: string): string | undefined {
@@ -81,7 +130,10 @@ function localPaths(args: readonly string[], environment: NodeJS.ProcessEnv) {
   const databasePath = resolve(option(args, "--database") ?? join(home, "knowledge.db"));
   const snapshotRoot = resolve(option(args, "--snapshots") ?? join(dirname(databasePath), "snapshots"));
   const derivedRoot = resolve(option(args, "--derived") ?? join(dirname(databasePath), "derived"));
-  return { databasePath, snapshotRoot, derivedRoot };
+  const releaseRoot = resolve(option(args, "--releases") ?? join(dirname(databasePath), "releases"));
+  const portfolioRoot = resolve(option(args, "--portfolios") ?? join(dirname(databasePath), "portfolios"));
+  const publicationRoot = resolve(option(args, "--publication-ledger") ?? join(dirname(databasePath), "publication-ledger"));
+  return { databasePath, snapshotRoot, derivedRoot, releaseRoot, portfolioRoot, publicationRoot };
 }
 
 export function usage(): string {
@@ -92,6 +144,11 @@ export function usage(): string {
     "  why-hire-me evidence extract-text --profile <profile-id> --capture <capture-id> [options]",
     "  why-hire-me knowledge stage-entity --profile <id> --type <type> --name <name> --artifact <id> --lines <start:end> [options]",
     "  why-hire-me knowledge review-entity --profile <id> --candidate <id> --decision <accepted|rejected|deferred> [options]",
+    "  why-hire-me knowledge create-view --profile <id> --purpose <text> --audience <private|restricted|public> --expires-at <RFC3339> --confirm [options]",
+    "  why-hire-me release create --profile <id> --view <id> [--releases <path>]",
+    "  why-hire-me release validate --path <release-directory>",
+    "  why-hire-me portfolio build --release <release-directory> [--portfolios <path>]",
+    "  why-hire-me portfolio publish-firebase --portfolio <directory> --project <id> --target <name> --mode <preview-channel|live> --confirm-public [options]",
     "",
     "Environment:",
     "  WHY_HIRE_ME_HOME  Local data directory (default: ~/.why-hire-me)",
@@ -106,7 +163,7 @@ export async function runCli(
   args: readonly string[],
   environment: NodeJS.ProcessEnv = process.env,
 ): Promise<CliResult> {
-  const { databasePath, snapshotRoot, derivedRoot } = localPaths(args, environment);
+  const { databasePath, snapshotRoot, derivedRoot, releaseRoot, portfolioRoot, publicationRoot } = localPaths(args, environment);
 
   if (args[0] === "profile" && args[1] === "create") {
     mkdirSync(dirname(databasePath), { recursive: true, mode: 0o700 });
@@ -234,6 +291,79 @@ export async function runCli(
     } finally {
       repository.close();
     }
+  }
+
+  if (args[0] === "knowledge" && args[1] === "create-view") {
+    const repository = new SqliteAuthorisedViewRepository(databasePath);
+    try {
+      const result = await new CreateAuthorisedView(repository, repository, { generate: randomUUID },
+        { now: () => new Date() }, { sha256: (content) => createHash("sha256").update(content).digest("hex") }).execute({
+          profileId: requiredOption(args, "--profile"), purpose: requiredOption(args, "--purpose"),
+          audience: requiredOption(args, "--audience") as DisclosureAudience,
+          audienceDescription: option(args, "--audience-description") ?? requiredOption(args, "--audience"),
+          allowedPolicyLabels: (option(args, "--allow-policy") ?? "").split(",").map((value) => value.trim()).filter(Boolean),
+          expiresAt: requiredOption(args, "--expires-at"), reviewerId: requiredOption(args, "--reviewer"),
+          reviewerAuthority: "person", confirmed: args.includes("--confirm"),
+          idempotencyKey: requiredOption(args, "--idempotency-key"),
+        });
+      return Object.freeze({ kind: "authorised-view-created", ...result, databasePath });
+    } finally { repository.close(); }
+  }
+
+  if (args[0] === "release" && args[1] === "create") {
+    const profileId = requiredOption(args, "--profile");
+    const viewId = requiredOption(args, "--view");
+    const views = new SqliteAuthorisedViewRepository(databasePath);
+    try {
+      const view = await views.findById(viewId, profileId);
+      if (view === undefined) throw new Error("Authorised view is unavailable.");
+      const digester = new NodeReleaseDigester();
+      const result = await new CreateLocalKnowledgeRelease(new LocalReleaseRepository(releaseRoot, digester), digester,
+        { now: () => new Date() }).execute({ id: view.id, version: view.version,
+          knowledgeSpaceId: view.knowledgeSpaceId, subjectDisplayName: view.subject.displayName,
+          purpose: view.grant.purpose, audience: view.grant.audience, grantId: view.grant.id,
+          createdAt: view.createdAt, expiresAt: view.expiresAt,
+          records: view.records as readonly ReleaseInputRecord[], limitations: view.limitations });
+      return Object.freeze({ kind: "knowledge-release-created", ...result });
+    } finally { views.close(); }
+  }
+
+  if (args[0] === "release" && args[1] === "validate") {
+    const directory = resolve(requiredOption(args, "--path"));
+    const validation = await validateLocalRelease(directory, new NodeReleaseDigester());
+    return Object.freeze({ kind: "knowledge-release-validated", directory, validation });
+  }
+
+  if (args[0] === "portfolio" && args[1] === "build") {
+    const releaseDirectory = resolve(requiredOption(args, "--release"));
+    const digester = new NodeReleaseDigester();
+    const result = await new BuildCareerPortfolio(new LocalKnowledgeReleaseReader(digester),
+      new StaticHtmlCareerPortfolioRenderer(digester), new LocalCareerPortfolioRepository(portfolioRoot, digester),
+      { now: () => new Date() })
+      .execute({ releaseDirectory });
+    return Object.freeze({ kind: "career-portfolio-created", directory: result.directory,
+      manifest: result.projection.manifest, reused: result.reused });
+  }
+
+  if (args[0] === "portfolio" && args[1] === "publish-firebase") {
+    const portfolioDirectory = resolve(requiredOption(args, "--portfolio"));
+    const manifest = JSON.parse(await readFile(join(portfolioDirectory, "portfolio-manifest.json"), "utf8")) as CareerPortfolioManifest;
+    const mode = requiredOption(args, "--mode") as "preview-channel" | "live";
+    const channel = option(args, "--channel");
+    const expires = option(args, "--expires");
+    const digester = new NodeReleaseDigester();
+    const publication = await new PublishCareerPortfolio(new LocalStaticPortfolioReader(digester, { now: () => new Date() }),
+      new EnvironmentCredentialProvider(environment),
+      new FirebaseHostingPublisher(new NodeCommandRunner(), new FetchPublicUrlObserver(), digester),
+      new LocalPublicationLedger(publicationRoot, digester), digester).execute({
+        portfolioDirectory, manifest,
+        destination: { provider: "firebase-hosting", projectId: requiredOption(args, "--project"),
+          target: requiredOption(args, "--target"), mode, ...(channel ? { channel } : {}),
+          ...(expires ? { expires } : {}), requestedVisibility: "public" },
+        credentialSource: "GOOGLE_APPLICATION_CREDENTIALS", confirmed: args.includes("--confirm-public"),
+        idempotencyKey: requiredOption(args, "--idempotency-key"),
+      });
+    return Object.freeze({ kind: "career-portfolio-published", ...publication });
   }
 
   throw new Error(usage());

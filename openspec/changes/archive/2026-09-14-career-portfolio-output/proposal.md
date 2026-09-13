@@ -30,7 +30,6 @@ types.
 
 ## Impact
 
-Defines the Publication output contract and its trust, accessibility, portability, and destination
-boundaries without selecting a permanent hosting vendor. The installable skill fails closed or creates
-a labelled local prototype when production ports are unavailable; runtime implementation still begins
-only after authorised views and local release validation exist.
+Defines and implements the Publication output contract, deterministic offline renderer, and one
+replaceable Firebase Hosting reference adapter without making that destination part of the core. The
+installable skill still fails closed when the required runtime or authority is unavailable.

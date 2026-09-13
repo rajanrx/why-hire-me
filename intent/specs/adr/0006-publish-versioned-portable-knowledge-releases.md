@@ -1,6 +1,6 @@
 ---
 id: adr-0006
-status: proposed
+status: accepted
 date: 2026-09-13
 owner: architecture
 ---

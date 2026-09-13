@@ -1,0 +1,19 @@
+schema: why-hire-me-intent/v1
+change: enforce-publication-authorisation-expiry
+references:
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: The person's disclosure authority must remain active when an output is generated or shared.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Publication owns projection and delivery policy checks.
+  - type: adr
+    id: adr-0006
+    path: intent/specs/adr/0006-publish-versioned-portable-knowledge-releases.md
+    reason: Outputs consume bounded releases without turning integrity into perpetual authority.
+  - type: adr
+    id: adr-0017
+    path: intent/specs/adr/0017-render-an-offline-portfolio-before-hosted-delivery.md
+    reason: The portfolio remains the reviewed boundary before destination delivery.

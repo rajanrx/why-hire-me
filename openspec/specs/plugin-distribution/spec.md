@@ -43,8 +43,8 @@ create a GitHub release after the generated version pull request is merged.
 ### Requirement: Release bundle boundary
 
 The release archive SHALL contain only documented end-user files and SHALL exclude local user data,
-dependencies, source-control state, development intent and specifications, source files, tests, CI
-configuration, changesets, and development caches.
+dependencies, source-control state, the repository-only development CLI guide, development intent and specifications, source
+files, tests, CI configuration, changesets, and development caches.
 
 #### Scenario: A release archive is built
 

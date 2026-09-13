@@ -1,0 +1,31 @@
+schema: why-hire-me-intent/v1
+change: stable-local-publication-runtime
+references:
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Released knowledge must preserve review provenance and visible limitations.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: Purpose, audience, expiry, labels, preview, and confirmation remain person-controlled.
+  - type: domain
+    id: dom-person-knowledge
+    path: intent/specs/domains/dom-person-knowledge/domain.md
+    reason: Person Knowledge owns grants and authorised versioned views.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Publication owns immutable releases and validation.
+  - type: port
+    id: ports-publication
+    path: intent/specs/domains/dom-publication/ports.md
+    reason: Filesystem output remains an adapter behind release and projection ports.
+  - type: adr
+    id: adr-0006
+    path: intent/specs/adr/0006-publish-versioned-portable-knowledge-releases.md
+    reason: A vendor-neutral immutable release precedes every destination.
+  - type: rfc
+    id: RFC-001
+    path: intent/specs/rfc/RFC-001-first-knowledge-release.md
+    reason: The first slice requires authorised view, local release, and independent validation.

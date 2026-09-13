@@ -74,3 +74,39 @@ reject, or defer it; only an accepted review can create a canonical entity.
 
 See the [development CLI reference](../development-cli.md) for the complete commands and required
 governance options.
+
+## 5. Freeze an authorised view
+
+```sh
+pnpm run cli knowledge create-view \
+  --profile "generated-profile-id" \
+  --purpose "offline career portfolio" \
+  --audience private \
+  --audience-description "local review" \
+  --allow-policy shareable \
+  --expires-at "2027-01-01T00:00:00Z" \
+  --reviewer local-user \
+  --idempotency-key "portfolio-view-v1" \
+  --confirm
+```
+
+## 6. Create and validate the release
+
+```sh
+pnpm run cli release create \
+  --profile "generated-profile-id" \
+  --view "generated-view-id"
+
+pnpm run cli release validate \
+  --path "/home/ada/.why-hire-me/releases/generated-release-id"
+```
+
+## 7. Build the offline portfolio
+
+```sh
+pnpm run cli portfolio build \
+  --release "/home/ada/.why-hire-me/releases/generated-release-id"
+```
+
+The result contains a deterministic portfolio ID, projection digest, manifest, and local directory.
+Opening `index.html` needs no account or network connection.

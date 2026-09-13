@@ -1,10 +1,14 @@
 ---
 id: std-knowledge-admission
-status: proposed
+status: accepted
 version: 0.1.0
 date: 2026-09-13
 owner: knowledge-governance
-enforced_by: TBD
+enforced_by:
+  - src/domains/knowledge-enrichment/application/stage-entity-candidate.test.ts
+  - src/domains/person-knowledge/application/review-entity-candidate.test.ts
+  - src/domains/person-knowledge/application/create-authorised-view.test.ts
+  - src/domains/publication/application/create-local-knowledge-release.test.ts
 ---
 
 # Standard: Knowledge admission
@@ -37,5 +41,6 @@ permits a safe representation.
 
 ## Enforcement
 
-Proposed until schema validation and a test proving that every canonical write passes through the
-admission application port run as blocking checks.
+Blocking tests require evidence before staging, prevent direct or unauthorised admission, reject
+secret-labelled acceptance, filter authorised views, and fail release validation on foreign, secret,
+or tampered records. The architecture check prevents domain code from bypassing owned ports.

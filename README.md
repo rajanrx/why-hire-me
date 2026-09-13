@@ -74,9 +74,11 @@ The design works across professions. A résumé, portfolio, document, credential
 or selected source-code folder can be an input. Source-code inspection is one adapter, not an
 assumption about the person or their role.
 
-The local runtime can already capture a selected text file, preserve an immutable snapshot, create
-precise citations, stage typed entities, and record an accept, reject, or defer decision. Only
-accepted proposals become canonical knowledge.
+The local reference runtime can capture a selected text file, preserve an immutable snapshot, create
+precise citations, stage and review typed entities, freeze an expiring authorised view, validate a
+portable release, and render it as offline HTML. Only accepted proposals enter a view. The current
+runtime releases entities and admission activities; claim, evidence, and alias admission remains an
+explicit limitation rather than inferred content.
 
 ## 🌐 Your career portfolio, local first
 
@@ -88,7 +90,8 @@ into a polished static HTML portfolio containing:
 - an evidence-backed résumé that is easy to read and print; and
 - visible sources, limitations, release version, and freshness information.
 
-The report will work locally without an account, analytics, remote fonts, or a network connection.
+The bundled reference renderer produces a report that works locally without an account, analytics,
+remote fonts, or a network connection.
 It will remain an output projection—not a second source of truth—and will never add unreviewed
 claims.
 
@@ -117,7 +120,10 @@ SQLite, AI providers, interfaces, and publication destinations plug in as replac
 TypeScript is the primary runtime. Go is reserved for a measured performance bottleneck behind a
 versioned port.
 
-Developers can follow the complete [local CLI guide](https://github.com/rajanrx/why-hire-me/blob/main/docs/development-cli.md).
+Developers can follow the complete
+[local CLI guide](https://github.com/rajanrx/why-hire-me/blob/main/docs/development-cli.md).
+The [stability boundary](https://github.com/rajanrx/why-hire-me/blob/main/docs/stability.md) states
+exactly what the current runtime supports and what remains intentionally unsupported.
 The durable design lives in the [product requirements](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/prd.md),
 [architecture](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/architecture.md),
 [ontology](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/_ontology.md), and
