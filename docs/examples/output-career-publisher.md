@@ -7,7 +7,7 @@ It creates the plan and delegates each action to a destination child.
 
 ```text
 Use why-hire-me:output-career-publisher with portfolio manifest ./career-portfolio/manifest.json.
-Plan a restricted Firebase site and a versioned GitHub release. Dry-run only: show exact files,
+Plan a public Firebase Hosting site and a versioned GitHub release. Dry-run only: show exact files,
 digests, destination identifiers, visibility, credential-source names, and retraction limits. Ask for
 separate confirmation immediately before each destination action.
 ```
@@ -21,7 +21,7 @@ input:
   validation: validated
 destinations:
   - childSkill: output-firebase-publisher
-    requestedVisibility: restricted
+    requestedVisibility: public
     confirmation: not-requested
     state: planned
   - childSkill: output-github-release

@@ -1,0 +1,22 @@
+# Firebase Hosting platform constraints
+
+Validate these constraints with the connector and current official documentation before every deploy:
+
+- Firebase Hosting deploys files from a configured public root to public `web.app` and
+  `firebaseapp.com` subdomains or a configured custom domain.
+- Hosting preview channels provide temporary, shareable URLs. Those URLs are public even when they are
+  difficult to guess and even when the channel expires automatically.
+- A live deploy and a preview-channel deploy are separate operations. Restrict connector scope to the
+  intended Hosting site or target.
+- Local emulation is the only non-public preview supported by this leaf.
+- Firebase Hosting rollback and release management cannot recall copies already downloaded or cached.
+
+Primary references:
+
+- [Get started with Firebase Hosting](https://firebase.google.com/docs/hosting/quickstart)
+- [Test locally, use preview channels, and deploy live](https://firebase.google.com/docs/hosting/test-preview-deploy)
+- [Manage Hosting resources and releases](https://firebase.google.com/docs/hosting/manage-hosting-resources)
+- [Configure Hosting behaviour](https://firebase.google.com/docs/hosting/full-config)
+
+Do not freeze quotas, expiry maxima, CLI flags, or authentication mechanisms into the skill. The
+connector declares supported capabilities and verifies current limits during preflight.
