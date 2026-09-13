@@ -11,6 +11,7 @@ use.
 | `why-hire-me:evidence-led-interviewer` | [Explore a project or career episode](examples/evidence-led-interviewer.md) |
 | `why-hire-me:daily-work-diary` | [Reconstruct and review a workday](examples/daily-work-diary.md) |
 | `why-hire-me:input-resume-explorer` | [Turn a résumé into evidence-linked proposals](examples/input-resume-explorer.md) |
+| `why-hire-me:input-work-evidence-explorer` | [Explore a bounded body of work](examples/input-work-evidence-explorer.md) |
 
 ## Planned workflow preview
 
