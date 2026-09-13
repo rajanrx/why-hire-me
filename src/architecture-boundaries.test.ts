@@ -24,6 +24,7 @@ test("domain modules do not depend on adapters or apps", async () => {
     files.some((file) => file.includes("evidence-acquisition")),
     "Evidence Acquisition must be included in the boundary scan",
   );
+  assert.ok(files.some((file) => file.includes("knowledge-enrichment")), "Knowledge Enrichment must be included in the boundary scan");
 
   for (const file of files) {
     const source = await readFile(file, "utf8");
