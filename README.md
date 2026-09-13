@@ -21,6 +21,7 @@ pnpm run spec:validate
 pnpm run cli profile create --name "Your Name"
 pnpm run cli source ingest --profile "<profile-id>" --file "<resume-or-work-file>"
 pnpm run cli evidence extract-text --profile "<profile-id>" --capture "<capture-id>"
+pnpm run cli knowledge stage-entity --profile "<profile-id>" --type Organisation --name "Example" --artifact "<text-artifact-id>" --lines 1:2 --generator-type human --generator local-user --generator-version 1 --uncertainty low --uncertainty-rationale "Explicit evidence" --review person-required --policy private --actor local-user --correlation-id "<id>"
 ```
 
 The CLI stores local data under `~/.why-hire-me` by default. Set `WHY_HIRE_ME_HOME` or pass

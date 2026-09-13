@@ -1,0 +1,39 @@
+schema: why-hire-me-intent/v1
+change: entity-candidate-staging
+references:
+  - type: goal
+    id: G-1
+    path: intent/specs/prd.md
+    reason: Typed entity proposals are the first semantic building blocks of connected knowledge.
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Each proposal must retain precise evidence and derivation provenance.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: Candidate staging must remain within the person's knowledge-space boundary.
+  - type: domain
+    id: dom-knowledge-enrichment
+    path: intent/specs/domains/dom-knowledge-enrichment/domain.md
+    reason: Knowledge Enrichment owns typed candidates and their handoff to admission.
+  - type: port
+    id: ports-knowledge-enrichment
+    path: intent/specs/domains/dom-knowledge-enrichment/ports.md
+    reason: Candidate submission and evidence reading require core-owned ports.
+  - type: domain
+    id: dm-person-knowledge
+    path: intent/specs/domains/dom-person-knowledge/datamodel.md
+    reason: The conceptual model defines the recognised entity families and identity rules.
+  - type: adr
+    id: adr-0005
+    path: intent/specs/adr/0005-admit-knowledge-through-a-governed-staging-boundary.md
+    reason: Proposals must remain non-canonical until an explicit admission decision.
+  - type: adr
+    id: adr-0008
+    path: intent/specs/adr/0008-represent-knowledge-as-entities-and-first-class-claims.md
+    reason: Entity identity must remain separate from later attributable relationship claims.
+  - type: standard
+    id: std-knowledge-admission
+    path: intent/specs/standards/knowledge/std-knowledge-admission.md
+    reason: Staged candidates must carry the metadata required for later admission checks.

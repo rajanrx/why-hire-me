@@ -16,6 +16,9 @@ import { CreatePersonProfile } from "../../domains/person-knowledge/application/
 import type { PersonProfile } from "../../domains/person-knowledge/domain/person-profile.js";
 import { ExtractEvidenceText } from "../../domains/knowledge-enrichment/application/extract-evidence-text.js";
 import type { ExtractionAttempt } from "../../domains/knowledge-enrichment/domain/text-extraction.js";
+import { SqliteCandidateStagingRepository } from "../../adapters/persistence/sqlite/sqlite-candidate-staging-repository.js";
+import { StageEntityCandidate } from "../../domains/knowledge-enrichment/application/stage-entity-candidate.js";
+import type { EntityCandidate, CandidateSubmission, GeneratorType, UncertaintyLevel } from "../../domains/knowledge-enrichment/domain/entity-candidate.js";
 
 export type CliResult =
   | {
@@ -34,6 +37,13 @@ export type CliResult =
       readonly extraction: ExtractionAttempt;
       readonly databasePath: string;
       readonly derivedRoot: string;
+    }
+  | {
+      readonly kind: "entity-candidate-staged";
+      readonly candidate: EntityCandidate;
+      readonly submission: CandidateSubmission;
+      readonly reused: boolean;
+      readonly databasePath: string;
     };
 
 function option(args: readonly string[], name: string): string | undefined {
@@ -68,6 +78,7 @@ export function usage(): string {
     "  why-hire-me profile create --name <display-name> [--database <path>]",
     "  why-hire-me source ingest --profile <profile-id> --file <path> [options]",
     "  why-hire-me evidence extract-text --profile <profile-id> --capture <capture-id> [options]",
+    "  why-hire-me knowledge stage-entity --profile <id> --type <type> --name <name> --artifact <id> --lines <start:end> [options]",
     "",
     "Environment:",
     "  WHY_HIRE_ME_HOME  Local data directory (default: ~/.why-hire-me)",
@@ -157,6 +168,24 @@ export async function runCli(
       ).execute({ profileId, captureId });
       return Object.freeze({ kind: "text-extracted", extraction, databasePath, derivedRoot });
     } finally { artifacts.close(); captures.close(); }
+  }
+
+  if (args[0] === "knowledge" && args[1] === "stage-entity") {
+    const lineMatch=/^(\d+):(\d+)$/.exec(requiredOption(args,"--lines"));
+    if(!lineMatch) throw new Error("--lines must use <start:end>.");
+    const repository=new SqliteCandidateStagingRepository(databasePath,derivedRoot);
+    try {
+      const result=await new StageEntityCandidate(repository,repository,{generate:randomUUID},{now:()=>new Date()}).execute({
+        profileId:requiredOption(args,"--profile"),entityType:requiredOption(args,"--type"),proposedName:requiredOption(args,"--name"),
+        evidence:[{artifactId:requiredOption(args,"--artifact"),lineStart:Number(lineMatch[1]),lineEnd:Number(lineMatch[2]),relation:"supports"}],
+        generator:{type:requiredOption(args,"--generator-type") as GeneratorType,id:requiredOption(args,"--generator"),version:requiredOption(args,"--generator-version"),
+          ...(option(args,"--model") ? {modelIdentifier:option(args,"--model")!} : {})},
+        uncertainty:{level:requiredOption(args,"--uncertainty") as UncertaintyLevel,rationale:requiredOption(args,"--uncertainty-rationale")},
+        reviewRequirement:requiredOption(args,"--review") as "person-required"|"policy-required",
+        policyLabels:requiredOption(args,"--policy").split(","),actorId:requiredOption(args,"--actor"),
+        correlationId:requiredOption(args,"--correlation-id")});
+      return Object.freeze({kind:"entity-candidate-staged",...result,databasePath});
+    } finally { repository.close(); }
   }
 
   throw new Error(usage());
