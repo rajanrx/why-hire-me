@@ -1,0 +1,47 @@
+schema: why-hire-me-intent/v1
+change: input-career-reference-explorer
+references:
+  - type: goal
+    id: G-1
+    path: intent/specs/prd.md
+    reason: External references become connected proposals rather than isolated bookmarks.
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Requested and canonical locators, retrieval time, and verification state preserve provenance.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: The person controls each source and reviews every proposed meaning.
+  - type: goal
+    id: G-6
+    path: intent/specs/prd.md
+    reason: Web, identifier, issuer, and future readers remain replaceable adapters.
+  - type: goal
+    id: G-8
+    path: intent/specs/prd.md
+    reason: Link exploration is independently installable and incrementally gains governed tools.
+  - type: domain
+    id: dom-evidence-acquisition
+    path: intent/specs/domains/dom-evidence-acquisition/domain.md
+    reason: Evidence Acquisition owns source authority, retrieval, capture, and provenance.
+  - type: domain
+    id: dom-knowledge-enrichment
+    path: intent/specs/domains/dom-knowledge-enrichment/domain.md
+    reason: Knowledge Enrichment owns interpretation, discovery questions, and candidate proposals.
+  - type: adr
+    id: adr-0004
+    path: intent/specs/adr/0004-distinguish-domains-skills-tools-and-connectors.md
+    reason: The skill coordinates readers and domain ports without becoming either one.
+  - type: adr
+    id: adr-0005
+    path: intent/specs/adr/0005-admit-knowledge-through-a-governed-staging-boundary.md
+    reason: Reference-derived proposals cannot grant themselves canonical authority.
+  - type: adr
+    id: adr-0018
+    path: intent/specs/adr/0018-mark-directional-skills-as-input-or-output.md
+    reason: The name marks external reference evidence flowing toward the core.
+  - type: standard
+    id: std-knowledge-admission
+    path: intent/specs/standards/knowledge/std-knowledge-admission.md
+    reason: All proposed entities and claims remain subject to governed admission.

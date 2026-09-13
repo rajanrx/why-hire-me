@@ -12,6 +12,7 @@ use.
 | `why-hire-me:daily-work-diary` | [Reconstruct and review a workday](examples/daily-work-diary.md) |
 | `why-hire-me:input-resume-explorer` | [Turn a résumé into evidence-linked proposals](examples/input-resume-explorer.md) |
 | `why-hire-me:input-work-evidence-explorer` | [Explore a bounded body of work](examples/input-work-evidence-explorer.md) |
+| `why-hire-me:input-career-reference-explorer` | [Explore a portfolio, publication, or credential link](examples/input-career-reference-explorer.md) |
 
 ## Planned workflow preview
 
