@@ -7,7 +7,9 @@ Validate these constraints with the connector and current official documentation
 - Hosting preview channels provide temporary, shareable URLs. Those URLs are public even when they are
   difficult to guess and even when the channel expires automatically.
 - A live deploy and a preview-channel deploy are separate operations. Restrict connector scope to the
-  intended Hosting site or target.
+  intended Hosting site.
+- Deploy targets require local `.firebaserc` mappings. A connector running in an isolated directory
+  must instead receive an explicit site ID or construct and validate the required mapping.
 - Local emulation is the only non-public preview supported by this leaf.
 - Firebase Hosting rollback and release management cannot recall copies already downloaded or cached.
 

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -52,8 +52,13 @@ test("publishes exact staged files without putting credentials in command argume
       assert.equal(command, "firebase");
       assert.ok(args.includes("hosting:channel:deploy"));
       assert.ok(args.includes("career-v1"));
+      assert.equal(args.includes("--only"), false);
       assert.equal(args.some((arg) => arg.includes(secret)), false);
       assert.equal(options.environment.GOOGLE_APPLICATION_CREDENTIALS, secret);
+      const firebaseConfig = JSON.parse(await readFile(join(options.cwd, "firebase.json"), "utf8")) as {
+        hosting: { site: string };
+      };
+      assert.equal(firebaseConfig.hosting.site, "career-portfolio");
       return { exitCode: 0, stdout: JSON.stringify({ result: { url: "https://career-v1--portfolio.web.app" } }), stderr: "" };
     } };
     const useCase = new PublishCareerPortfolio(new LocalStaticPortfolioReader(digester, clock),
@@ -61,12 +66,13 @@ test("publishes exact staged files without putting credentials in command argume
       new FirebaseHostingPublisher(commands, { observe: async () => true }, digester), new MemoryLedger(), digester);
     const request: StaticPortfolioPublicationRequest = { portfolioDirectory: directory,
       manifest: projection.manifest, destination: { provider: "firebase-hosting", projectId: "career-project",
-        target: "portfolio", mode: "preview-channel", channel: "career-v1", expires: "7d",
+        siteId: "career-portfolio", mode: "preview-channel", channel: "career-v1", expires: "7d",
         requestedVisibility: "public" }, credentialSource: "GOOGLE_APPLICATION_CREDENTIALS",
       idempotencyKey: "firebase-career-v1", confirmed: true };
     const result = await useCase.execute(request);
     assert.equal(invocations, 1);
     assert.equal(result.publication.state, "observed-public");
+    assert.equal(result.publication.siteId, "career-portfolio");
     assert.equal(result.publication.safeUrl, "https://career-v1--portfolio.web.app");
     const retry = await useCase.execute(request);
     assert.equal(retry.reused, true);
@@ -83,7 +89,7 @@ test("fails before connector invocation without confirmation or credentials", as
     const publisher = new FirebaseHostingPublisher({ run: async () => { throw new Error("must not run"); } },
       { observe: async () => false }, digester);
     const base: StaticPortfolioPublicationRequest = { portfolioDirectory: directory, manifest: projection.manifest,
-      destination: { provider: "firebase-hosting", projectId: "project", target: "portfolio", mode: "live",
+      destination: { provider: "firebase-hosting", projectId: "career-project", siteId: "career-portfolio", mode: "live",
         requestedVisibility: "public" }, credentialSource: "GOOGLE_APPLICATION_CREDENTIALS",
       idempotencyKey: "publish-1", confirmed: false };
     await assert.rejects(() => new PublishCareerPortfolio(new LocalStaticPortfolioReader(digester, clock),
@@ -92,6 +98,10 @@ test("fails before connector invocation without confirmation or credentials", as
     await assert.rejects(() => new PublishCareerPortfolio(new LocalStaticPortfolioReader(digester, clock),
       new EnvironmentCredentialProvider({}), publisher, new MemoryLedger(), digester)
       .execute({ ...base, idempotencyKey: "publish-1", confirmed: true }), /unavailable/);
+    await assert.rejects(() => new PublishCareerPortfolio(new LocalStaticPortfolioReader(digester, clock),
+      new EnvironmentCredentialProvider({ GOOGLE_APPLICATION_CREDENTIALS: "/secret" }), publisher,
+      new MemoryLedger(), digester).execute({ ...base, confirmed: true,
+        destination: { ...base.destination, siteId: "not.a.site" } }), /site ID/);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
 
@@ -101,10 +111,14 @@ test("reports connector refusal without changing the local portfolio", async () 
     const { digester, projection, directory } = await fixture(root);
     const useCase = new PublishCareerPortfolio(new LocalStaticPortfolioReader(digester, clock),
       new EnvironmentCredentialProvider({ GOOGLE_APPLICATION_CREDENTIALS: "/secret" }),
-      new FirebaseHostingPublisher({ run: async () => ({ exitCode: 1, stdout: "", stderr: "quota exceeded" }) },
+      new FirebaseHostingPublisher({ run: async (_command, args) => {
+        assert.ok(args.includes("--only"));
+        assert.ok(args.includes("hosting"));
+        return { exitCode: 1, stdout: "", stderr: "quota exceeded" };
+      } },
         { observe: async () => false }, digester), new MemoryLedger(), digester);
     await assert.rejects(() => useCase.execute({ portfolioDirectory: directory, manifest: projection.manifest,
-      destination: { provider: "firebase-hosting", projectId: "project", target: "portfolio", mode: "live",
+      destination: { provider: "firebase-hosting", projectId: "career-project", siteId: "career-portfolio", mode: "live",
         requestedVisibility: "public" }, credentialSource: "GOOGLE_APPLICATION_CREDENTIALS",
       idempotencyKey: "publish-failure", confirmed: true }), /failed/);
     assert.equal((await new LocalStaticPortfolioReader(digester, clock).validate(directory, projection.manifest)).valid, true);

@@ -13,7 +13,7 @@ test("persists a successful publication result under a non-path idempotency iden
   try {
     const ledger = new LocalPublicationLedger(root, new NodeReleaseDigester());
     const result: StaticPortfolioPublicationResult = { provider: "firebase-hosting", projectId: "project",
-      target: "portfolio", mode: "live", state: "observed-public", safeUrl: "https://project.web.app",
+      siteId: "career-portfolio", mode: "live", state: "observed-public", safeUrl: "https://project.web.app",
       observedVisibility: "public", portfolioDigest: "abc", warnings: [] };
     await ledger.save("../../unsafe/key", "fingerprint", result);
     const stored = await ledger.find("../../unsafe/key");

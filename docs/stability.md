@@ -15,7 +15,7 @@ The TypeScript CLI on Node.js 22 can:
 5. freeze accepted entities and their admission activities into an expiring, policy-filtered view;
 6. create and independently validate an immutable NDJSON knowledge release;
 7. render that release into deterministic, accessible offline HTML; and
-8. publish the exact portfolio through an existing Firebase Hosting target after explicit public
+8. publish the exact portfolio through an existing Firebase Hosting site after explicit public
    confirmation, when the Firebase CLI and service-account credentials are supplied.
 
 The AI plugin contains fourteen installable conversational skills. GitHub and NotebookLM destination

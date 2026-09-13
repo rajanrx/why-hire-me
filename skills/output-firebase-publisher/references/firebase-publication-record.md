@@ -18,7 +18,7 @@ input:
       sha256: string
 destination:
   projectId: string
-  siteOrTarget: string
+  siteId: string
   mode: preview-channel | live
   channel: string | null
   expiresAt: string | null

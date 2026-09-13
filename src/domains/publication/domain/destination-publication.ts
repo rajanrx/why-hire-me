@@ -6,7 +6,7 @@ export interface StaticPortfolioPublicationRequest {
   readonly destination: {
     readonly provider: "firebase-hosting";
     readonly projectId: string;
-    readonly target: string;
+    readonly siteId: string;
     readonly mode: "preview-channel" | "live";
     readonly channel?: string;
     readonly expires?: string;
@@ -20,7 +20,7 @@ export interface StaticPortfolioPublicationRequest {
 export interface StaticPortfolioPublicationResult {
   readonly provider: "firebase-hosting";
   readonly projectId: string;
-  readonly target: string;
+  readonly siteId: string;
   readonly mode: "preview-channel" | "live";
   readonly state: "accepted" | "deployed" | "observed-public" | "visibility-unknown" | "failed";
   readonly safeUrl: string | null;

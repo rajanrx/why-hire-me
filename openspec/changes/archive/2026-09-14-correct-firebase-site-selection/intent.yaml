@@ -1,0 +1,19 @@
+schema: why-hire-me-intent/v1
+change: correct-firebase-site-selection
+references:
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: The public destination must be exact and visible before confirmation.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Publication owns destination selection and delivery state.
+  - type: port
+    id: ports-publication
+    path: intent/specs/domains/dom-publication/ports.md
+    reason: Firebase CLI configuration remains inside the destination adapter.
+  - type: adr
+    id: adr-0017
+    path: intent/specs/adr/0017-render-an-offline-portfolio-before-hosted-delivery.md
+    reason: The exact offline projection is delivered only to the selected site.
