@@ -1,5 +1,17 @@
 # why-hire-me
 
+## 0.5.0
+
+### Minor Changes
+
+- e15a3e2: Add `why-hire-me:input-work-evidence-explorer` for safe, bounded, profession-neutral exploration of
+  work samples with explicit attribution and evidence-linked proposals.
+
+### Patch Changes
+
+- 1d4a6ec: Add scalable, skill-specific examples for conversational prompts, expected outputs, the planned job
+  application workflow, and the governed development CLI.
+
 ## 0.4.0
 
 ### Minor Changes
