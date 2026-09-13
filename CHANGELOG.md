@@ -1,5 +1,12 @@
 # why-hire-me
 
+## 0.7.1
+
+### Patch Changes
+
+- 8a6a2f6: Fix isolated Firebase Hosting publication by selecting an explicit existing site ID instead of a
+  deploy target whose mapping is unavailable without the user's local Firebase project file.
+
 ## 0.7.0
 
 ### Minor Changes
