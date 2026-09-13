@@ -1,5 +1,3 @@
-import type { PersonProfileId } from "../../person-knowledge/domain/person-profile.js";
-
 export type CaptureId = string & { readonly captureId: unique symbol };
 export type SourceId = string & { readonly sourceId: unique symbol };
 export type SnapshotId = string & { readonly snapshotId: unique symbol };
@@ -20,7 +18,7 @@ export interface SnapshotDescriptor {
 
 interface CaptureProvenance {
   readonly id: CaptureId;
-  readonly profileId: PersonProfileId;
+  readonly profileId: string;
   readonly knowledgeSpaceId: string;
   readonly actorId: string;
   readonly purpose: string;
@@ -132,7 +130,7 @@ export function createCompletedCapture(input: CompletedCaptureInput): CompletedC
 
   return Object.freeze({
     id: required(input.id, "Capture ID") as CaptureId,
-    profileId: required(input.profileId, "Profile ID") as PersonProfileId,
+    profileId: required(input.profileId, "Profile ID"),
     knowledgeSpaceId: required(input.knowledgeSpaceId, "Knowledge space ID"),
     actorId: required(input.actorId, "Actor ID"),
     purpose: required(input.purpose, "Purpose"),
@@ -152,7 +150,7 @@ export function createCompletedCapture(input: CompletedCaptureInput): CompletedC
 export function createFailedCapture(input: FailedCaptureInput): FailedCapture {
   const base = {
     id: required(input.id, "Capture ID") as CaptureId,
-    profileId: required(input.profileId, "Profile ID") as PersonProfileId,
+    profileId: required(input.profileId, "Profile ID"),
     knowledgeSpaceId: required(input.knowledgeSpaceId, "Knowledge space ID"),
     actorId: required(input.actorId, "Actor ID"),
     purpose: required(input.purpose, "Purpose"),

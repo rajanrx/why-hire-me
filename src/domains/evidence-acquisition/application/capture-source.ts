@@ -7,8 +7,7 @@ import {
 import type { CaptureRepository } from "../ports/capture-repository.js";
 import type { SnapshotRepository } from "../ports/snapshot-repository.js";
 import { SourceReadError, type SourceReader } from "../ports/source-reader.js";
-import type { PersonProfileId } from "../../person-knowledge/domain/person-profile.js";
-import type { PersonProfileRepository } from "../../person-knowledge/ports/person-profile-repository.js";
+import type { KnowledgeSpaceResolver } from "../ports/knowledge-space-resolver.js";
 
 export interface Clock {
   now(): Date;
@@ -37,7 +36,7 @@ export class UnknownPersonProfileError extends Error {
 
 export class CaptureSource {
   public constructor(
-    private readonly profiles: PersonProfileRepository,
+    private readonly profiles: KnowledgeSpaceResolver,
     private readonly reader: SourceReader,
     private readonly snapshots: SnapshotRepository,
     private readonly captures: CaptureRepository,
@@ -46,10 +45,9 @@ export class CaptureSource {
   ) {}
 
   public async execute(request: CaptureSourceRequest): Promise<CaptureRecord> {
-    const profileId = request.profileId.trim() as PersonProfileId;
+    const profileId = request.profileId.trim();
     const requestedLocator = request.requestedLocator.trim();
-    const profile = await this.profiles.findById(profileId);
-    if (profile === undefined) {
+    if (!(await this.profiles.exists(profileId))) {
       throw new UnknownPersonProfileError(profileId);
     }
 
@@ -104,7 +102,7 @@ export class CaptureSource {
 
   private async recordFailure(
     id: string,
-    profileId: PersonProfileId,
+    profileId: string,
     request: CaptureSourceRequest,
     capturedAt: Date,
     error: unknown,

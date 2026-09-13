@@ -15,16 +15,15 @@ import type {
   SourceIdentityInput,
 } from "../ports/capture-repository.js";
 import { SourceReadError, type SourceReader } from "../ports/source-reader.js";
-import type { PersonProfile, PersonProfileId } from "../../person-knowledge/domain/person-profile.js";
+import type { PersonProfile } from "../../person-knowledge/domain/person-profile.js";
 import { createPersonProfile } from "../../person-knowledge/domain/person-profile.js";
-import type { PersonProfileRepository } from "../../person-knowledge/ports/person-profile-repository.js";
+import type { KnowledgeSpaceResolver } from "../ports/knowledge-space-resolver.js";
 import { CaptureSource, UnknownPersonProfileError } from "./capture-source.js";
 
-class MemoryProfiles implements PersonProfileRepository {
+class MemoryProfiles implements KnowledgeSpaceResolver {
   public constructor(private readonly profile: PersonProfile) {}
-  public async save(): Promise<void> {}
-  public async findById(id: PersonProfileId): Promise<PersonProfile | undefined> {
-    return id === this.profile.id ? this.profile : undefined;
+  public async exists(id: string): Promise<boolean> {
+    return id === this.profile.id;
   }
 }
 
