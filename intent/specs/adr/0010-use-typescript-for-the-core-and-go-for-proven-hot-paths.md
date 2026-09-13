@@ -39,4 +39,3 @@ implementation is required before a Go implementation becomes the default.
 - Some performance-sensitive work may initially remain in TypeScript until profiling justifies the
   extra component.
 - Packaging must account for platform-specific Go binaries when the first accelerator is added.
-
