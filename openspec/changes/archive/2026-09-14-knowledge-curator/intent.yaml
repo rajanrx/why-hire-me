@@ -1,0 +1,47 @@
+schema: why-hire-me-intent/v1
+change: knowledge-curator
+references:
+  - type: goal
+    id: G-1
+    path: intent/specs/prd.md
+    reason: Curation connects evidence-backed proposals into coherent person knowledge.
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Every recommendation and disposition remains attributable to evidence and rules.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: The person or authorised reviewer retains admission authority.
+  - type: goal
+    id: G-8
+    path: intent/specs/prd.md
+    reason: The review workflow is independently usable and incrementally gains domain tools.
+  - type: domain
+    id: dom-knowledge-enrichment
+    path: intent/specs/domains/dom-knowledge-enrichment/domain.md
+    reason: Knowledge Enrichment owns candidate proposals and their derivation.
+  - type: domain
+    id: dom-person-knowledge
+    path: intent/specs/domains/dom-person-knowledge/domain.md
+    reason: Person Knowledge owns canonical state and admission decisions.
+  - type: adr
+    id: adr-0005
+    path: intent/specs/adr/0005-admit-knowledge-through-a-governed-staging-boundary.md
+    reason: AI output stays in staging until explicit governed admission.
+  - type: adr
+    id: adr-0013
+    path: intent/specs/adr/0013-use-a-versioned-controlled-predicate-registry.md
+    reason: Claims use governed predicate direction and type constraints.
+  - type: adr
+    id: adr-0016
+    path: intent/specs/adr/0016-own-admission-in-person-knowledge.md
+    reason: The skill coordinates but cannot move canonical authority out of Person Knowledge.
+  - type: standard
+    id: std-knowledge-admission
+    path: intent/specs/standards/knowledge/std-knowledge-admission.md
+    reason: Review decisions and failure behaviour follow the admission standard.
+  - type: standard
+    id: std-predicate-registry
+    path: intent/specs/standards/knowledge/std-predicate-registry.md
+    reason: Semantic relationship review uses controlled predicates.
