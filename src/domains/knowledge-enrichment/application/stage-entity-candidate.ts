@@ -27,9 +27,9 @@ export class StageEntityCandidate {
     if(generator.type==="model"&&!generator.modelIdentifier) throw new CandidateValidationError("Model identifier is required for model-generated candidates.");
     const resolved=[];
     for(const citation of request.evidence){ validateLineRange(citation.lineStart,citation.lineEnd); resolved.push(await this.evidence.resolve({...citation,profileId})); }
-    resolved.sort((a,b)=>`${a.artifactId}:${a.lineStart}:${a.lineEnd}:${a.relation}`.localeCompare(`${b.artifactId}:${b.lineStart}:${b.lineEnd}:${b.relation}`));
+    resolved.sort((a,b)=>{ const left=`${a.artifactId}:${a.lineStart}:${a.lineEnd}:${a.relation}`; const right=`${b.artifactId}:${b.lineStart}:${b.lineEnd}:${b.relation}`; return left<right?-1:left>right?1:0; });
     const identityHints=(request.identityHints??[]).map(h=>Object.freeze({namespace:required(h.namespace,"Identity namespace"),value:required(h.value,"Identity value")}));
-    identityHints.sort((a,b)=>`${a.namespace}:${a.value}`.localeCompare(`${b.namespace}:${b.value}`));
+    identityHints.sort((a,b)=>{ const left=`${a.namespace}:${a.value}`; const right=`${b.namespace}:${b.value}`; return left<right?-1:left>right?1:0; });
     const candidate:Omit<EntityCandidate,"id">={schemaVersion:"0.1",recordType:"EntityCandidate",knowledgeSpaceId:profileId,status:"proposed",
       entityType:request.entityType as EntityType,proposedName,evidence:Object.freeze(resolved),generator:Object.freeze(generator),
       uncertainty:Object.freeze({level:request.uncertainty.level,rationale:required(request.uncertainty.rationale,"Uncertainty rationale")}),

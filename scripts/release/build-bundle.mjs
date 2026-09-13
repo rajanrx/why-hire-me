@@ -15,6 +15,7 @@ const distributableFiles = [
   "CHANGELOG.md",
   "docs/examples.md",
   "docs/examples",
+  "docs/stability.md",
   "LICENSE",
   "NOTICE",
   "README.md",

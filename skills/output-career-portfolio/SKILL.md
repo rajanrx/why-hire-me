@@ -31,6 +31,11 @@ Use one mode:
   local static files, but the production builder is unavailable; or
 - `blocked`: release authority, validation, readable content, or safe local output is missing.
 
+When the bundled reference CLI is available, `portfolio build --release <release-directory>` is the
+`governed-render` implementation. It validates the release again, writes a content-addressed portfolio
+directory, and returns its manifest and projection digest. Its availability does not bypass the exact
+preview and local-generation approval required below.
+
 A local prototype must be labelled `prototype`, record generator and limitations, and never claim
 byte determinism, production validation, or Publication-port persistence. Do not use an unvalidated
 release for factual output without the person's explicit review of the extracted content.

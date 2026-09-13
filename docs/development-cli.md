@@ -1,7 +1,8 @@
 # Development CLI
 
-The local knowledge runtime is a developer preview. It demonstrates the governed path from a
-selected source to reviewed canonical knowledge. It is not yet the end-user installer.
+The local reference runtime demonstrates the governed path from a selected source to reviewed
+canonical knowledge, an authorised release, and an offline portfolio. It remains a developer CLI,
+not the one-command AI-skill installer.
 
 ## Set up the repository
 
@@ -98,6 +99,79 @@ pnpm run cli knowledge review-entity \
 If the candidate reports possible duplicates or conflicts, acceptance also requires
 `--duplicates distinct` or `--conflicts resolved`, plus `--resolution-reason`. Deferring preserves
 the review trail and allows a later decision. Acceptance and rejection are terminal.
+
+## Create an authorised view
+
+Choose the exact purpose, audience, policy labels, and expiry. `--confirm` records the person's
+approval of that disclosure boundary. The returned JSON contains `view.id` and excluded-record counts.
+
+```sh
+pnpm run cli knowledge create-view \
+  --profile "<profile-id>" \
+  --purpose "offline career portfolio" \
+  --audience private \
+  --audience-description "local review by me" \
+  --allow-policy shareable \
+  --expires-at "2027-01-01T00:00:00Z" \
+  --reviewer local-user \
+  --idempotency-key "<stable-view-key>" \
+  --confirm
+```
+
+The current reference runtime includes accepted entities and their admission activities. Claim,
+evidence, and alias admission is not implemented yet, so every view and release states that limitation.
+
+## Create and validate a portable release
+
+Publication reads the immutable view rather than canonical storage. It writes a content-addressed
+directory under `~/.why-hire-me/releases` and returns its path.
+
+```sh
+pnpm run cli release create \
+  --profile "<profile-id>" \
+  --view "<view-id>"
+
+pnpm run cli release validate \
+  --path "<release-directory>"
+```
+
+Validation uses only the release directory. It checks the schema, safe paths, digests, byte sizes,
+record counts, NDJSON families, knowledge-space identity, and admission-activity references.
+
+## Build the offline portfolio
+
+```sh
+pnpm run cli portfolio build \
+  --release "<release-directory>"
+```
+
+Open the returned `index.html`. The renderer escapes career content and includes local styling, a
+Content Security Policy, keyboard navigation, an equivalent list for its graph, responsive layout,
+and print CSS. Rebuilding the same release with the same renderer reuses the same projection. New
+generation stops after the authorised view expires; an already generated local file is not deleted.
+
+## Optional Firebase Hosting reference adapter
+
+This action is public. Install and authenticate the Firebase CLI separately, set
+`GOOGLE_APPLICATION_CREDENTIALS` to an authorised service-account file, and use an existing project
+and Hosting target. The command stages only the validated portfolio files.
+
+```sh
+pnpm run cli portfolio publish-firebase \
+  --portfolio "<portfolio-directory>" \
+  --project "<firebase-project-id>" \
+  --target portfolio \
+  --mode preview-channel \
+  --channel career-v1 \
+  --expires 7d \
+  --idempotency-key "firebase-career-v1" \
+  --confirm-public
+```
+
+Preview-channel and live Hosting URLs are both public. Live deployment uses `--mode live` and requires
+a new `--confirm-public`. Missing credentials, invalid portfolio bytes, ambiguous targets, and CLI
+failure stop without changing the local release or portfolio. Publication also stops when the
+portfolio's disclosure authorisation has expired.
 
 ## Validate a change
 
