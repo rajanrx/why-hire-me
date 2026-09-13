@@ -13,7 +13,7 @@ thoughtful, asynchronous career conversations.
 |---|---|---|
 | 1 · Install | Run `npx skills add rajanrx/why-hire-me --skill '*' -g`, choose your AI app, then restart it | ✅ Available |
 | 2 · Explore | Ask: “Use `why-hire-me:evidence-led-interviewer` to explore this project and understand my contribution.” | ✅ Available |
-| 3 · Share | Review your knowledge, generate an offline career portfolio, then optionally publish it through the platform of your choice | 🧭 Upcoming |
+| 3 · Share | Review your knowledge, generate an offline career portfolio, then optionally publish it through the platform of your choice | ✅ Workflow available |
 
 You stay in control throughout. AI may explore and propose; you decide what becomes trusted
 knowledge and what can leave your computer.
@@ -35,7 +35,7 @@ knowledge and what can leave your computer.
 | `why-hire-me:output-career-publisher` | 📤 Output | Preview a portable release and route it to one or more destination-specific publishing skills | ✅ Available |
 | `↳ why-hire-me:output-github-release` | 📤 Output | Publish an authorised, versioned knowledge release and assets through GitHub | ✅ Available |
 | `↳ why-hire-me:output-notebooklm-sync` | 📤 Output | Synchronise an authorised knowledge projection to a supported NotebookLM destination without changing sharing | ✅ Available |
-| `↳ why-hire-me:output-firebase-publisher` | 📤 Output | Publish an authorised static career portfolio through Firebase and return its address | 🧭 Upcoming |
+| `↳ why-hire-me:output-firebase-publisher` | 📤 Output | Publish an authorised static career portfolio through Firebase Hosting with truthful public visibility | ✅ Available |
 
 Plugin-aware hosts use the `why-hire-me:<skill>` namespace. Skill-only hosts may show the same
 capabilities without the prefix because individual skill names stay portable. The installer
@@ -80,7 +80,7 @@ accepted proposals become canonical knowledge.
 
 ## 🌐 Your career portfolio, local first
 
-The upcoming `output-career-portfolio` skill will turn one authorised, versioned knowledge release
+The `output-career-portfolio` skill guides an installed renderer to turn one authorised, versioned knowledge release
 into a polished static HTML portfolio containing:
 
 - a clear career overview;
@@ -92,9 +92,9 @@ The report will work locally without an account, analytics, remote fonts, or a n
 It will remain an output projection—not a second source of truth—and will never add unreviewed
 claims.
 
-Hosted sharing will use replaceable destination adapters, so people can choose the platform that
+Hosted sharing uses replaceable destination adapters, so people can choose the platform that
 suits them. Firebase Hosting is one possible adapter, not an architectural dependency. After
-explicit sign-in and a final preview, a connector can publish the same static portfolio and return
+explicit sign-in and a final preview, a compatible connector can publish the same static portfolio and return
 its shareable address. Credentials stay outside the release, and “uploaded” remains distinct from
 “public”. The offline report keeps working without any hosted platform. Pricing and quotas belong
 to the selected destination rather than the core product.
@@ -138,4 +138,4 @@ official approval.
 > [!important] Your next steps
 > - [ ] Install the available AI skills.
 > - [ ] Start one evidence-led career conversation.
-> - [ ] Follow the project to help shape the offline portfolio and optional hosted sharing.
+> - [ ] Generate a reviewed portfolio, then choose whether and where to share it.

@@ -1,0 +1,27 @@
+schema: why-hire-me-intent/v1
+change: output-firebase-publisher
+references:
+  - type: goal
+    id: G-4
+    path: intent/specs/prd.md
+    reason: A portable portfolio can be delivered through a replaceable hosting destination.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: Public visibility, exact bytes, and irreversible disclosure require explicit control.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Publication owns portfolio delivery and observed public state.
+  - type: port
+    id: ports-publication
+    path: intent/specs/domains/dom-publication/ports.md
+    reason: Firebase remains an adapter behind destination and credential ports.
+  - type: adr
+    id: adr-0017
+    path: intent/specs/adr/0017-render-an-offline-portfolio-before-hosted-delivery.md
+    reason: The completed local portfolio exists before optional public hosting.
+  - type: adr
+    id: adr-0019
+    path: intent/specs/adr/0019-compose-publication-as-parent-and-destination-skills.md
+    reason: Firebase-specific visibility and deployment belong in a leaf and connector.

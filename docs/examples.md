@@ -21,8 +21,9 @@ use.
 | `why-hire-me:output-career-publisher` | [Route an authorised release to chosen destinations](examples/output-career-publisher.md) |
 | `↳ why-hire-me:output-github-release` | [Publish a versioned release through GitHub](examples/output-github-release.md) |
 | `↳ why-hire-me:output-notebooklm-sync` | [Synchronise an approved projection to NotebookLM](examples/output-notebooklm-sync.md) |
+| `↳ why-hire-me:output-firebase-publisher` | [Publish a static portfolio through Firebase Hosting](examples/output-firebase-publisher.md) |
 
-As each upcoming skill ships, it receives a separate example page and moves into this table.
+Each skill has a focused example so new destinations can be added without expanding one giant guide.
 
 ## Developer runtime
 
