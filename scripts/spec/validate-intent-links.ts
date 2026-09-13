@@ -7,7 +7,7 @@ import { parse } from "yaml";
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const intentRoot = join(repositoryRoot, "intent", "specs");
 const changesRoot = join(repositoryRoot, "openspec", "changes");
-const allowedTypes = new Set(["goal", "domain", "adr", "rfc", "standard"]);
+const allowedTypes = new Set(["goal", "domain", "port", "adr", "rfc", "standard"]);
 
 interface IntentReference {
   readonly type?: unknown;
@@ -22,16 +22,35 @@ interface IntentLinkFile {
   readonly references?: unknown;
 }
 
-async function existingChangeDirectories(): Promise<string[]> {
+interface ChangeLocation {
+  readonly label: string;
+  readonly path: string;
+  readonly archived: boolean;
+}
+
+async function directoriesBelow(root: string): Promise<string[]> {
   try {
-    const entries = await readdir(changesRoot, { withFileTypes: true });
-    return entries.filter((entry) => entry.isDirectory() && entry.name !== "archive").map((entry) => entry.name);
+    const entries = await readdir(root, { withFileTypes: true });
+    return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
   } catch (error: unknown) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {
       return [];
     }
     throw error;
   }
+}
+
+async function existingChanges(): Promise<ChangeLocation[]> {
+  const active = (await directoriesBelow(changesRoot))
+    .filter((name) => name !== "archive")
+    .map((name) => ({ label: name, path: join(changesRoot, name), archived: false }));
+  const archiveRoot = join(changesRoot, "archive");
+  const archived = (await directoriesBelow(archiveRoot)).map((name) => ({
+    label: `archive/${name}`,
+    path: join(archiveRoot, name),
+    archived: true,
+  }));
+  return [...active, ...archived];
 }
 
 function requireString(value: unknown, label: string, errors: string[]): value is string {
@@ -42,34 +61,39 @@ function requireString(value: unknown, label: string, errors: string[]): value i
   return true;
 }
 
-async function validateChange(change: string): Promise<string[]> {
+async function validateChange(change: ChangeLocation): Promise<string[]> {
   const errors: string[] = [];
-  const linkPath = join(changesRoot, change, "intent.yaml");
+  const linkPath = join(change.path, "intent.yaml");
   let document: IntentLinkFile;
 
   try {
     document = parse(await readFile(linkPath, "utf8")) as IntentLinkFile;
   } catch (error: unknown) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-      return [`${change}: missing intent.yaml`];
+      return [`${change.label}: missing intent.yaml`];
     }
-    return [`${change}: cannot parse intent.yaml: ${String(error)}`];
+    return [`${change.label}: cannot parse intent.yaml: ${String(error)}`];
   }
 
   if (document.schema !== "why-hire-me-intent/v1") {
-    errors.push(`${change}: schema must be why-hire-me-intent/v1`);
+    errors.push(`${change.label}: schema must be why-hire-me-intent/v1`);
   }
-  if (document.change !== change) {
-    errors.push(`${change}: change must match the directory name`);
+  const nameMatches =
+    typeof document.change === "string" &&
+    (change.archived
+      ? change.label.endsWith(`-${document.change}`)
+      : change.label === document.change);
+  if (!nameMatches) {
+    errors.push(`${change.label}: change must match its active or date-prefixed archive directory`);
   }
   if (!Array.isArray(document.references) || document.references.length === 0) {
-    errors.push(`${change}: references must contain at least one intent link`);
+    errors.push(`${change.label}: references must contain at least one intent link`);
     return errors;
   }
 
   for (const [index, rawReference] of document.references.entries()) {
     const reference = rawReference as IntentReference;
-    const prefix = `${change}: references[${index}]`;
+    const prefix = `${change.label}: references[${index}]`;
     const typeValid = requireString(reference.type, `${prefix}.type`, errors);
     const idValid = requireString(reference.id, `${prefix}.id`, errors);
     const pathValid = requireString(reference.path, `${prefix}.path`, errors);
@@ -110,12 +134,12 @@ async function validateChange(change: string): Promise<string[]> {
   return errors;
 }
 
-const changes = await existingChangeDirectories();
+const changes = await existingChanges();
 const errors = (await Promise.all(changes.map(validateChange))).flat();
 
 if (errors.length > 0) {
   process.stderr.write(`${errors.map((error) => `- ${error}`).join("\n")}\n`);
   process.exitCode = 1;
 } else {
-  process.stdout.write(`Intent links valid for ${changes.length} active change(s).\n`);
+  process.stdout.write(`Intent links valid for ${changes.length} active or archived change(s).\n`);
 }

@@ -37,13 +37,15 @@ mutate a stored snapshot.
 
 ### Requirement: Capture provenance
 
-The system SHALL record the profile, requested locator, resolved locator, connector identity and
+The system SHALL record the profile or knowledge-space root, actor, purpose, permission scope,
+idempotency key, correlation ID, requested locator, resolved locator, connector identity and
 version, capture time, byte length, digest, and explicit outcome for each capture attempt.
 
 #### Scenario: Completed capture is inspected
 
 - **WHEN** a completed capture is retrieved
-- **THEN** its provenance identifies who authorised what source, through which connector, and when
+- **THEN** its provenance identifies who authorised what source, for what purpose and scope,
+  through which connector, and when
 
 #### Scenario: Capture fails
 

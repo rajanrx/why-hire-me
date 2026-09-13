@@ -25,6 +25,10 @@ references:
     id: dom-evidence-acquisition
     path: intent/specs/domains/dom-evidence-acquisition/domain.md
     reason: This domain owns source scope, capture runs, provenance, and immutable snapshots.
+  - type: port
+    id: ports-evidence-acquisition
+    path: intent/specs/domains/dom-evidence-acquisition/ports.md
+    reason: Capture commands and connector results must preserve the complete application contract.
   - type: adr
     id: adr-0001
     path: intent/specs/adr/0001-own-ports-in-a-hexagonal-core.md

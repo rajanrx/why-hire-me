@@ -15,7 +15,7 @@
     "build": "tsc -p tsconfig.json",
     "check": "pnpm run build && pnpm run test && pnpm run spec:validate",
     "cli": "tsx src/apps/cli/main.ts",
-    "spec:validate": "openspec validate --all --strict --no-interactive && tsx scripts/spec/validate-intent-links.ts",
+    "spec:validate": "openspec validate --all --strict --no-interactive && openspec validate --archived --strict --no-interactive && tsx scripts/spec/validate-intent-links.ts",
     "test": "tsx --test src/**/*.test.ts"
   },
   "dependencies": {

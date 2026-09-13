@@ -6,8 +6,10 @@
 
 ## Findings
 
-No blocking findings. Scope is limited to opaque single-file capture; parsing, enrichment,
-publication, recursive inspection, and premature Go optimisation remain explicit non-goals.
+No blocking findings after correction. Scope is limited to opaque single-file capture; parsing,
+enrichment, publication, recursive inspection, and premature Go optimisation remain explicit
+non-goals. The initial review missed the durable acquisition-port metadata contract; the corrected
+package now selects that port explicitly and carries its provenance fields through the design.
 
 ## Traceability Check
 

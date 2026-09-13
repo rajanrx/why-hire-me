@@ -44,10 +44,10 @@ artifacts:
 
       Use schema `why-hire-me-intent/v1` and set `change` to the exact change
       directory name. Add one reference for every goal, domain, ADR, RFC, or
-      standard that materially motivates or constrains the change.
+      port, standard, or other typed artifact that materially motivates or constrains the change.
 
       Every reference contains:
-      - `type`: one of goal, domain, adr, rfc, or standard
+      - `type`: one of goal, domain, port, adr, rfc, or standard
       - `id`: the exact typed ID as written in the durable intent document
       - `path`: an exact repository-relative path below intent/specs
       - `reason`: one concise explanation of why the reference applies

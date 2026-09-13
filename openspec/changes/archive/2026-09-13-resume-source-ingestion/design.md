@@ -30,12 +30,17 @@ those ports outside the domain.
 Alternative: let the CLI write files and database rows directly. Rejected because it would make
 capture policy and idempotency adapter-specific.
 
+For the first local slice, the person profile ID is also the root knowledge-space ID. The driving
+adapter supplies actor, purpose, explicit file scope, idempotency key, and correlation ID to the
+application command. Separating a multi-person knowledge space is a later domain change, not a
+nullable field invented here.
+
 ### Stream once into content-addressed storage
 
 The local reader resolves the explicitly supplied path, verifies it is a regular file, and exposes
 its bytes. The snapshot adapter streams those bytes into a private temporary file while calculating
-SHA-256 and byte length, then atomically renames it to a digest-derived path. Existing digest paths
-are reused.
+SHA-256 and byte length, then atomically publishes it at a digest-derived path. Existing digest
+paths are reused.
 
 Alternative: load the whole file into memory. Rejected because file size should not determine core
 memory consumption.
