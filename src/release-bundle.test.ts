@@ -30,6 +30,7 @@ test("release bundle contains end-user files and excludes development material",
     `${root}/dist/apps/cli/main.js`,
     `${root}/skills/daily-work-diary/SKILL.md`,
     `${root}/skills/evidence-led-interviewer/SKILL.md`,
+    `${root}/skills/input-resume-explorer/SKILL.md`,
   ]) {
     assert.ok(entries.includes(required), `missing distributable entry: ${required}`);
   }
@@ -54,7 +55,7 @@ test("plugin namespace qualifies portable skill names", async () => {
   assert.equal(plugin.name, "why-hire-me");
   assert.equal(plugin.skills, "./skills/");
 
-  for (const skillName of ["daily-work-diary", "evidence-led-interviewer"]) {
+  for (const skillName of ["daily-work-diary", "evidence-led-interviewer", "input-resume-explorer"]) {
     const skill = await readFile(`skills/${skillName}/SKILL.md`, "utf8");
     assert.match(skill, new RegExp(`^---\\nname: ${skillName}\\n`));
     assert.equal(`${plugin.name}:${skillName}`, `why-hire-me:${skillName}`);
