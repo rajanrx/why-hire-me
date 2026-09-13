@@ -34,7 +34,7 @@ knowledge and what can leave your computer.
 | `why-hire-me:output-career-portfolio` | 📤 Output | Generate an appealing offline HTML portfolio with an overview, evidence graph, and résumé | ✅ Available |
 | `why-hire-me:output-career-publisher` | 📤 Output | Preview a portable release and route it to one or more destination-specific publishing skills | ✅ Available |
 | `↳ why-hire-me:output-github-release` | 📤 Output | Publish an authorised, versioned knowledge release and assets through GitHub | ✅ Available |
-| `↳ why-hire-me:output-notebooklm-sync` | 📤 Output | Synchronise an authorised knowledge projection to NotebookLM without making it public automatically | 🧭 Upcoming |
+| `↳ why-hire-me:output-notebooklm-sync` | 📤 Output | Synchronise an authorised knowledge projection to a supported NotebookLM destination without changing sharing | ✅ Available |
 | `↳ why-hire-me:output-firebase-publisher` | 📤 Output | Publish an authorised static career portfolio through Firebase and return its address | 🧭 Upcoming |
 
 Plugin-aware hosts use the `why-hire-me:<skill>` namespace. Skill-only hosts may show the same
