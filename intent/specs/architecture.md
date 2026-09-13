@@ -1,7 +1,7 @@
 ---
 id: architecture
 status: proposed
-version: 0.2.0
+version: 0.3.0
 date: 2026-09-13
 owner: architecture
 relied_on_adrs: [adr-0001, adr-0002, adr-0003, adr-0004, adr-0005, adr-0006, adr-0007, adr-0008, adr-0009]
@@ -12,27 +12,26 @@ relied_on_adrs: [adr-0001, adr-0002, adr-0003, adr-0004, adr-0005, adr-0006, adr
 This is the current target shape. It records system boundaries and flows without choosing a
 language, framework, database, model provider, or deployment topology prematurely.
 
+## Diagram convention
+
+Architecture diagrams use Mermaid in Markdown by default so their source is reviewable, diffable,
+and rendered by GitHub. Use draw.io when Mermaid cannot express the required layout; commit the
+editable `.drawio` source alongside any exported image.
+
 ## System context
 
-```text
-person / evaluator / agent
-          │
-          ▼
-   driving interfaces
- CLI · web · API · MCP · scheduled jobs
-          │
-          ▼
-┌─────────────────────────────────────────────────────────┐
-│               application and domain core               │
-│                                                         │
-│ Acquisition → Enrichment → Person Knowledge → Publication│
-│                                  │                      │
-│                                  └──────→ Evaluation    │
-└─────────────────────────────────────────────────────────┘
-          │ core-owned driven ports
-          ▼
-sources · snapshots · AI · policy · persistence · search
-secrets · audit · release storage · output destinations
+```mermaid
+flowchart TB
+    actors["Person, evaluator, or agent"]
+    interfaces["Driving interfaces: CLI, web, API, MCP, scheduled jobs"]
+    core["Application and domain core"]
+    ports["Core-owned driven ports"]
+    adapters["Sources, snapshots, AI, policy, persistence, search, secrets, audit, releases, destinations"]
+
+    actors --> interfaces
+    interfaces --> core
+    core --> ports
+    ports --> adapters
 ```
 
 NotebookLM, GPT, Gemini, GitHub, local files, model providers, databases, and protocols are edge
@@ -44,14 +43,18 @@ The repository is packaged as an installable AI plugin. The plugin composes skil
 implemented, local tools and MCP servers. It is a delivery boundary around the application, not a
 sixth domain and not the canonical owner of knowledge.
 
-```text
-installable plugin
-  ├── skills: evidence-led interviewer, daily diary, future workflows
-  ├── driving adapters: agent tools, CLI, future UI
-  └── driven adapters: local sources, stores, AI providers, destinations
-                         │
-                         ▼
-              stable application ports + domain core
+```mermaid
+flowchart LR
+    subgraph plugin["Installable plugin"]
+        skills["Skills: interviewer, daily diary, future workflows"]
+        driving["Driving adapters: agent tools, CLI, future UI"]
+        driven["Driven adapters: sources, stores, AI providers, destinations"]
+    end
+    core["Stable application ports and domain core"]
+
+    skills --> driving
+    driving --> core
+    core --> driven
 ```
 
 Installation grants no implicit authority. Each connector is optional, declares its required
@@ -73,28 +76,28 @@ domain's storage.
 
 ## Primary flow: build knowledge
 
-```text
-CaptureSource
-  → SourceReader adapter
-  → immutable Snapshot
-  → ExploreEvidence
-  → agent follows authorised references and asks questions
-  → KnowledgeCandidate
-  → AdmitKnowledge
-  → canonical Entity + Claim + Evidence records
+```mermaid
+flowchart LR
+    capture[CaptureSource] --> reader[SourceReader adapter]
+    reader --> snapshot[Immutable Snapshot]
+    snapshot --> explore[ExploreEvidence]
+    explore --> investigate["Follow authorised references and ask questions"]
+    investigate --> candidate[KnowledgeCandidate]
+    candidate --> admit[AdmitKnowledge]
+    admit --> records["Canonical Entity, Claim, and Evidence records"]
 ```
 
 Raw sources, transcripts, and AI output do not bypass admission.
 
 ## Primary flow: publish knowledge
 
-```text
-Grant + canonical version
-  → authorised View
-  → vendor-neutral Release
-  → Projection
-  → DestinationPublisher adapter
-  → Delivery status and public locator
+```mermaid
+flowchart LR
+    grant["Grant and canonical version"] --> view[Authorised View]
+    view --> release[Vendor-neutral Release]
+    release --> projection[Projection]
+    projection --> publisher[DestinationPublisher adapter]
+    publisher --> delivery["Delivery status and public locator"]
 ```
 
 A GitHub release asset and a NotebookLM notebook are deliveries of the same logical release, not
@@ -102,14 +105,14 @@ independent sources of truth.
 
 ## Primary flow: evaluate a person
 
-```text
-Opportunity + job analysis
-  → criteria + interview plan
-  → frozen authorised evidence View
-  → structured core questions + bounded follow-ups
-  → observations + evidence + uncertainty
-  → contextual findings
-  → accountable human outcome
+```mermaid
+flowchart LR
+    opportunity["Opportunity and job analysis"] --> plan["Criteria and interview plan"]
+    plan --> view["Frozen authorised evidence View"]
+    view --> questions["Structured core questions and bounded follow-ups"]
+    questions --> observations["Observations, evidence, and uncertainty"]
+    observations --> findings[Contextual findings]
+    findings --> outcome[Accountable human outcome]
 ```
 
 Evaluation findings never become canonical person knowledge automatically.
