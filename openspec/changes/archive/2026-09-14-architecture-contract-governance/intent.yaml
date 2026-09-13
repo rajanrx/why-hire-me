@@ -1,0 +1,39 @@
+schema: why-hire-me-intent/v1
+change: architecture-contract-governance
+references:
+  - type: goal
+    id: G-6
+    path: intent/specs/prd.md
+    reason: Replaceable adapters require stable and enforceable core boundaries.
+  - type: goal
+    id: G-7
+    path: intent/specs/prd.md
+    reason: Vendor-neutral meaning requires governed relationship identifiers.
+  - type: domain
+    id: dom-person-knowledge
+    path: intent/specs/domains/dom-person-knowledge/domain.md
+    reason: Person Knowledge owns claims, relationships, and their meaning.
+  - type: adr
+    id: adr-0001
+    path: intent/specs/adr/0001-own-ports-in-a-hexagonal-core.md
+    reason: Domain and application cores own every external capability contract.
+  - type: adr
+    id: adr-0008
+    path: intent/specs/adr/0008-represent-knowledge-as-entities-and-first-class-claims.md
+    reason: First-class claims require controlled rather than free-form predicates.
+  - type: adr
+    id: adr-0012
+    path: intent/specs/adr/0012-govern-bounded-context-dependencies.md
+    reason: Production domain imports must remain inside their owning bounded context.
+  - type: adr
+    id: adr-0013
+    path: intent/specs/adr/0013-use-a-versioned-controlled-predicate-registry.md
+    reason: Predicate meaning and compatible entity types require one versioned owner.
+  - type: standard
+    id: std-domain-dependencies
+    path: intent/specs/standards/engineering/std-domain-dependencies.md
+    reason: The conformance test must implement the exact allowed dependency rule.
+  - type: standard
+    id: std-predicate-registry
+    path: intent/specs/standards/knowledge/std-predicate-registry.md
+    reason: Runtime registry entries and change rules must match the governed catalogue.

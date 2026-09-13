@@ -125,8 +125,12 @@ export async function runCli(
     const snapshots = new ContentAddressedSnapshotRepository(snapshotRoot);
     const captures = new SqliteCaptureRepository(databasePath, snapshots);
     try {
+      const knowledgeSpaces = {
+        exists: async (profileId: string) =>
+          (await profiles.findById(profileId as PersonProfile["id"])) !== undefined,
+      };
       const useCase = new CaptureSource(
-        profiles,
+        knowledgeSpaces,
         new LocalFileSourceReader(),
         snapshots,
         captures,

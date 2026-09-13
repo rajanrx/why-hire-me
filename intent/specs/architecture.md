@@ -1,10 +1,10 @@
 ---
 id: architecture
 status: proposed
-version: 0.4.0
-date: 2026-09-13
+version: 0.5.0
+date: 2026-09-14
 owner: architecture
-relied_on_adrs: [adr-0001, adr-0002, adr-0003, adr-0004, adr-0005, adr-0006, adr-0007, adr-0008, adr-0009, adr-0010]
+relied_on_adrs: [adr-0001, adr-0002, adr-0003, adr-0004, adr-0005, adr-0006, adr-0007, adr-0008, adr-0009, adr-0010, adr-0011, adr-0012, adr-0013]
 ---
 
 # Architecture
@@ -73,6 +73,10 @@ and release contracts remain portable.
 
 Communication crosses domain-owned application ports. A domain never reaches into another
 domain's storage.
+
+Production domain modules also never import another bounded context directly. App composition and
+adapters translate between domain-owned contracts. Person Knowledge owns the controlled predicate
+registry used to validate claim meaning and entity-type pairs.
 
 ## Primary flow: build knowledge
 
