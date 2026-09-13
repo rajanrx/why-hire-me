@@ -1,6 +1,6 @@
 ---
 name: output-firebase-publisher
-description: Publish one authorised, self-contained static career portfolio through an existing Firebase Hosting site, with local-first preview, explicit public-visibility warnings, target isolation, exact-file verification, and separate confirmation for preview-channel or live delivery. Use directly or as a child of output-career-publisher when Firebase Hosting is the chosen destination. Do not use for private or restricted sharing, project or site creation, application backends, databases, analytics, domains, billing, or silent live deployment.
+description: Publish one authorised, self-contained static career portfolio through an existing Firebase Hosting site, with local-first preview, explicit public-visibility warnings, site isolation, exact-file verification, and separate confirmation for preview-channel or live delivery. Use directly or as a child of output-career-publisher when Firebase Hosting is the chosen destination. Do not use for private or restricted sharing, project or site creation, application backends, databases, analytics, domains, billing, or silent live deployment.
 ---
 
 # Output Firebase publisher
@@ -30,15 +30,15 @@ connector capability, not a flag on this static publisher.
 Warn that public files can be downloaded, cached, indexed, archived, or redistributed and may survive
 rollback or deletion elsewhere.
 
-## Preflight an existing Hosting target
+## Preflight an existing Hosting site
 
-Require an explicit Firebase project ID, existing Hosting site or configured target, channel mode,
+Require an explicit Firebase project ID, existing Hosting site ID, channel mode,
 credential-source name, and connector capability version. Verify project access, selected site,
 current live or channel release, quotas, configuration, and exact public root. Resolve credentials
 through the connector only at action time; never display or persist values.
 
 Do not create projects or sites, enable products, change billing, configure custom domains, deploy
-Functions, modify databases or security rules, add analytics, or alter unrelated Hosting targets.
+Functions, modify databases or security rules, add analytics, or alter unrelated Hosting sites.
 
 ## Preview in two safe stages
 
@@ -58,7 +58,7 @@ separately planned.
 
 Require action-time confirmation for the exact public destination. Approval for a temporary preview
 channel does not approve a live deploy; live always requires a new preview and confirmation. Pass only
-the confirmed manifest and static root to a connector restricted to that Hosting target.
+the confirmed manifest and static root to a connector restricted to that Hosting site.
 
 ## Observe the deployed result
 
@@ -74,6 +74,6 @@ cached copies.
 ## Stop conditions
 
 Stop on invalid authority or manifest, unsafe files, unsupported visibility, ambiguous or missing
-target, insufficient permission, missing connector or credential, unconfirmed public action, remote
+site, insufficient permission, missing connector or credential, unconfirmed public action, remote
 conflict, quota or rate limit, partial deployment, or failed observation. Never fall back to another
 site or broaden the operation.

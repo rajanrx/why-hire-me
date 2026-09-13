@@ -7,7 +7,7 @@ Use this leaf for an already generated, authorised static portfolio and an exist
 ```text
 Use why-hire-me:output-firebase-publisher with ./career-portfolio/manifest.json. Validate the exact
 static directory, then show a local preview. Plan a seven-day Firebase Hosting preview channel named
-career-v3 in project alex-career, target portfolio. Make the public visibility and retraction limits
+career-v3 in project alex-career, site alex-career-portfolio. Make the public visibility and retraction limits
 prominent. Do not deploy until I confirm that exact public URL operation.
 ```
 
@@ -17,7 +17,7 @@ prominent. Do not deploy until I confirm that exact public URL operation.
 status: planned
 destination:
   projectId: alex-career
-  siteOrTarget: portfolio
+  siteId: alex-career-portfolio
   mode: preview-channel
   channel: career-v3
   requestedVisibility: public

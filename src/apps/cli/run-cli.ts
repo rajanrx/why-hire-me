@@ -148,7 +148,7 @@ export function usage(): string {
     "  why-hire-me release create --profile <id> --view <id> [--releases <path>]",
     "  why-hire-me release validate --path <release-directory>",
     "  why-hire-me portfolio build --release <release-directory> [--portfolios <path>]",
-    "  why-hire-me portfolio publish-firebase --portfolio <directory> --project <id> --target <name> --mode <preview-channel|live> --confirm-public [options]",
+    "  why-hire-me portfolio publish-firebase --portfolio <directory> --project <id> --site <id> --mode <preview-channel|live> --confirm-public [options]",
     "",
     "Environment:",
     "  WHY_HIRE_ME_HOME  Local data directory (default: ~/.why-hire-me)",
@@ -358,7 +358,7 @@ export async function runCli(
       new LocalPublicationLedger(publicationRoot, digester), digester).execute({
         portfolioDirectory, manifest,
         destination: { provider: "firebase-hosting", projectId: requiredOption(args, "--project"),
-          target: requiredOption(args, "--target"), mode, ...(channel ? { channel } : {}),
+          siteId: requiredOption(args, "--site"), mode, ...(channel ? { channel } : {}),
           ...(expires ? { expires } : {}), requestedVisibility: "public" },
         credentialSource: "GOOGLE_APPLICATION_CREDENTIALS", confirmed: args.includes("--confirm-public"),
         idempotencyKey: requiredOption(args, "--idempotency-key"),

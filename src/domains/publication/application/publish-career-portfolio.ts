@@ -19,11 +19,11 @@ export class PublishCareerPortfolio {
     if (!["preview-channel", "live"].includes(request.destination.mode)) {
       throw new DestinationPublicationValidationError("Unknown Firebase Hosting publication mode.");
     }
-    for (const [label, value] of [["Project ID", request.destination.projectId], ["Hosting target", request.destination.target]] as const) {
-      if (value.trim().length === 0) throw new DestinationPublicationValidationError(`${label} must not be empty.`);
-      if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(value)) {
-        throw new DestinationPublicationValidationError(`${label} contains unsupported characters.`);
-      }
+    if (!/^[a-z][a-z0-9-]{4,28}[a-z0-9]$/.test(request.destination.projectId)) {
+      throw new DestinationPublicationValidationError("Project ID must be a valid Firebase project ID.");
+    }
+    if (!/^[a-z0-9](?:[a-z0-9-]{0,28}[a-z0-9])?$/.test(request.destination.siteId)) {
+      throw new DestinationPublicationValidationError("Hosting site ID must be a valid hostname label of at most 30 characters.");
     }
     if (request.destination.mode === "preview-channel" && !request.destination.channel?.trim()) {
       throw new DestinationPublicationValidationError("A preview channel name is required.");

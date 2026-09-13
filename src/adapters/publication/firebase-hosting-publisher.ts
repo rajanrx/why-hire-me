@@ -36,15 +36,15 @@ export class FirebaseHostingPublisher implements DestinationPublisher {
       }
       await writeFile(join(publicRoot, "portfolio-manifest.json"), `${JSON.stringify(request.manifest, null, 2)}\n`,
         { mode: 0o600, flag: "wx" });
-      const config = { hosting: { target: request.destination.target, public: "public", cleanUrls: true,
+      const config = { hosting: { site: request.destination.siteId, public: "public", cleanUrls: true,
         trailingSlash: false, headers: [{ source: "**", headers: [{ key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "no-referrer" }, { key: "X-Frame-Options", value: "DENY" }] }] } };
       await writeFile(join(staging, "firebase.json"), `${JSON.stringify(config, null, 2)}\n`, { mode: 0o600 });
-      const common = ["--project", request.destination.projectId, "--only", `hosting:${request.destination.target}`,
+      const common = ["--project", request.destination.projectId,
         "--config", join(staging, "firebase.json"), "--json", "--non-interactive"];
       const args = request.destination.mode === "preview-channel"
         ? ["hosting:channel:deploy", request.destination.channel!, ...(request.destination.expires ? ["--expires", request.destination.expires] : []), ...common]
-        : ["deploy", ...common];
+        : ["deploy", "--only", "hosting", ...common];
       const environment: Record<string, string> = { GOOGLE_APPLICATION_CREDENTIALS: credential.secret,
         HOME: staging, TMPDIR: staging };
       if (process.env.PATH) environment.PATH = process.env.PATH;
@@ -54,7 +54,7 @@ export class FirebaseHostingPublisher implements DestinationPublisher {
       const safeUrl = findHostingUrl(parsed);
       const observed = safeUrl === null ? false : await this.observer.observe(safeUrl);
       return Object.freeze({ provider: "firebase-hosting", projectId: request.destination.projectId,
-        target: request.destination.target, mode: request.destination.mode,
+        siteId: request.destination.siteId, mode: request.destination.mode,
         state: observed ? "observed-public" : safeUrl ? "deployed" : "visibility-unknown",
         safeUrl, observedVisibility: observed ? "public" : "unknown",
         portfolioDigest: request.manifest.projectionDigest,

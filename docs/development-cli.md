@@ -154,13 +154,14 @@ generation stops after the authorised view expires; an already generated local f
 
 This action is public. Install and authenticate the Firebase CLI separately, set
 `GOOGLE_APPLICATION_CREDENTIALS` to an authorised service-account file, and use an existing project
-and Hosting target. The command stages only the validated portfolio files.
+and Hosting site ID. The command stages only the validated portfolio files and writes an isolated
+single-site Firebase configuration; it does not depend on or copy a local `.firebaserc`.
 
 ```sh
 pnpm run cli portfolio publish-firebase \
   --portfolio "<portfolio-directory>" \
   --project "<firebase-project-id>" \
-  --target portfolio \
+  --site "<firebase-hosting-site-id>" \
   --mode preview-channel \
   --channel career-v1 \
   --expires 7d \
