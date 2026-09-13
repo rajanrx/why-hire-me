@@ -1,5 +1,12 @@
 # why-hire-me
 
+## 0.7.0
+
+### Minor Changes
+
+- 324449e: Add the stable local path from an expiring authorised view through a validated portable release to a
+  deterministic offline portfolio, plus an idempotent Firebase Hosting reference adapter.
+
 ## 0.6.0
 
 ### Minor Changes
