@@ -1,0 +1,43 @@
+schema: why-hire-me-intent/v1
+change: evidence-text-extraction
+references:
+  - type: goal
+    id: G-1
+    path: intent/specs/prd.md
+    reason: Searchable knowledge begins with inspectable representations of authorised evidence.
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Derived text must remain traceable to immutable source evidence.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: Interpretation must remain within the evidence scope controlled by the person.
+  - type: domain
+    id: dom-knowledge-enrichment
+    path: intent/specs/domains/dom-knowledge-enrichment/domain.md
+    reason: Knowledge Enrichment owns inspection and extraction candidates without canonical authority.
+  - type: port
+    id: ports-knowledge-enrichment
+    path: intent/specs/domains/dom-knowledge-enrichment/ports.md
+    reason: Evidence reading and bounded extraction must use domain-owned contracts.
+  - type: adr
+    id: adr-0001
+    path: intent/specs/adr/0001-own-ports-in-a-hexagonal-core.md
+    reason: Extractors and persistence remain replaceable adapters behind inward-owned ports.
+  - type: adr
+    id: adr-0005
+    path: intent/specs/adr/0005-admit-knowledge-through-a-governed-staging-boundary.md
+    reason: Extracted content must not bypass candidate staging or admission.
+  - type: adr
+    id: adr-0010
+    path: intent/specs/adr/0010-use-typescript-for-the-core-and-go-for-proven-hot-paths.md
+    reason: The unprofiled extraction path remains in TypeScript behind a versioned port.
+  - type: rfc
+    id: RFC-001
+    path: intent/specs/rfc/RFC-001-first-knowledge-release.md
+    reason: The first release workflow requires traceable enrichment of captured snapshots.
+  - type: standard
+    id: std-knowledge-admission
+    path: intent/specs/standards/knowledge/std-knowledge-admission.md
+    reason: Derived text remains evidence and cannot write canonical knowledge.

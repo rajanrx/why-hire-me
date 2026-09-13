@@ -5,12 +5,17 @@ import { dirname, join, resolve } from "node:path";
 
 import { SqliteCaptureRepository } from "../../adapters/persistence/sqlite/sqlite-capture-repository.js";
 import { SqlitePersonProfileRepository } from "../../adapters/persistence/sqlite/sqlite-person-profile-repository.js";
+import { LocalTextArtifactRepository } from "../../adapters/persistence/sqlite/local-text-artifact-repository.js";
 import { ContentAddressedSnapshotRepository } from "../../adapters/snapshots/content-addressed-snapshot-repository.js";
 import { LocalFileSourceReader } from "../../adapters/sources/local-file-source-reader.js";
+import { LocalCapturedEvidenceReader } from "../../adapters/evidence/local-captured-evidence-reader.js";
+import { Utf8TextExtractor } from "../../adapters/extractors/utf8-text-extractor.js";
 import { CaptureSource } from "../../domains/evidence-acquisition/application/capture-source.js";
 import type { CaptureRecord } from "../../domains/evidence-acquisition/domain/capture-record.js";
 import { CreatePersonProfile } from "../../domains/person-knowledge/application/create-person-profile.js";
 import type { PersonProfile } from "../../domains/person-knowledge/domain/person-profile.js";
+import { ExtractEvidenceText } from "../../domains/knowledge-enrichment/application/extract-evidence-text.js";
+import type { ExtractionAttempt } from "../../domains/knowledge-enrichment/domain/text-extraction.js";
 
 export type CliResult =
   | {
@@ -23,6 +28,12 @@ export type CliResult =
       readonly capture: CaptureRecord;
       readonly databasePath: string;
       readonly snapshotRoot: string;
+    }
+  | {
+      readonly kind: "text-extracted";
+      readonly extraction: ExtractionAttempt;
+      readonly databasePath: string;
+      readonly derivedRoot: string;
     };
 
 function option(args: readonly string[], name: string): string | undefined {
@@ -47,7 +58,8 @@ function localPaths(args: readonly string[], environment: NodeJS.ProcessEnv) {
   const home = environment.WHY_HIRE_ME_HOME ?? join(homedir(), ".why-hire-me");
   const databasePath = resolve(option(args, "--database") ?? join(home, "knowledge.db"));
   const snapshotRoot = resolve(option(args, "--snapshots") ?? join(dirname(databasePath), "snapshots"));
-  return { databasePath, snapshotRoot };
+  const derivedRoot = resolve(option(args, "--derived") ?? join(dirname(databasePath), "derived"));
+  return { databasePath, snapshotRoot, derivedRoot };
 }
 
 export function usage(): string {
@@ -55,6 +67,7 @@ export function usage(): string {
     "Usage:",
     "  why-hire-me profile create --name <display-name> [--database <path>]",
     "  why-hire-me source ingest --profile <profile-id> --file <path> [options]",
+    "  why-hire-me evidence extract-text --profile <profile-id> --capture <capture-id> [options]",
     "",
     "Environment:",
     "  WHY_HIRE_ME_HOME  Local data directory (default: ~/.why-hire-me)",
@@ -69,7 +82,7 @@ export async function runCli(
   args: readonly string[],
   environment: NodeJS.ProcessEnv = process.env,
 ): Promise<CliResult> {
-  const { databasePath, snapshotRoot } = localPaths(args, environment);
+  const { databasePath, snapshotRoot, derivedRoot } = localPaths(args, environment);
 
   if (args[0] === "profile" && args[1] === "create") {
     mkdirSync(dirname(databasePath), { recursive: true, mode: 0o700 });
@@ -128,6 +141,22 @@ export async function runCli(
       captures.close();
       profiles.close();
     }
+  }
+
+  if (args[0] === "evidence" && args[1] === "extract-text") {
+    const profileId = requiredOption(args, "--profile");
+    const captureId = requiredOption(args, "--capture");
+    mkdirSync(derivedRoot, { recursive: true, mode: 0o700 });
+    const snapshots = new ContentAddressedSnapshotRepository(snapshotRoot);
+    const captures = new SqliteCaptureRepository(databasePath, snapshots);
+    const artifacts = new LocalTextArtifactRepository(databasePath, derivedRoot);
+    try {
+      const extraction = await new ExtractEvidenceText(
+        new LocalCapturedEvidenceReader(captures, snapshotRoot), [new Utf8TextExtractor()], artifacts,
+        { generate: randomUUID }, { now: () => new Date() },
+      ).execute({ profileId, captureId });
+      return Object.freeze({ kind: "text-extracted", extraction, databasePath, derivedRoot });
+    } finally { artifacts.close(); captures.close(); }
   }
 
   throw new Error(usage());
