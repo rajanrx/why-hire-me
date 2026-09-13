@@ -17,8 +17,15 @@ Requirements: Node.js 22 or newer and pnpm 10.
 ```sh
 pnpm install
 pnpm run check
+pnpm run spec:validate
 pnpm run cli profile create --name "Your Name"
 ```
 
 The CLI stores local data under `~/.why-hire-me` by default. Set `WHY_HIRE_ME_HOME` or pass
 `--database <path>` to use another location.
+
+## Change workflow
+
+OpenSpec changes live under `openspec/changes`. The project schema requires a typed `intent.yaml`
+linking every change to durable product intent, followed by one quick review before implementation.
+It deliberately does not require a review council.
