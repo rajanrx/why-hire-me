@@ -1,0 +1,39 @@
+schema: why-hire-me-intent/v1
+change: output-career-publisher
+references:
+  - type: goal
+    id: G-4
+    path: intent/specs/prd.md
+    reason: Portable releases can reach multiple replaceable AI and hosting destinations.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: The person approves exact bytes, destination, audience, and visibility independently.
+  - type: goal
+    id: G-7
+    path: intent/specs/prd.md
+    reason: Vendor integrations remain replaceable rather than becoming core dependencies.
+  - type: goal
+    id: G-8
+    path: intent/specs/prd.md
+    reason: Parent and leaf skills can ship and evolve independently.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Publication owns release, projection, delivery, and observed destination state.
+  - type: port
+    id: ports-publication
+    path: intent/specs/domains/dom-publication/ports.md
+    reason: Child connectors implement destination ports rather than changing the parent or domain.
+  - type: adr
+    id: adr-0006
+    path: intent/specs/adr/0006-publish-versioned-portable-knowledge-releases.md
+    reason: Every child consumes the same authorised portable release or completed projection.
+  - type: adr
+    id: adr-0018
+    path: intent/specs/adr/0018-mark-directional-skills-as-input-or-output.md
+    reason: The parent and leaves use output names to make egress explicit.
+  - type: adr
+    id: adr-0019
+    path: intent/specs/adr/0019-compose-publication-as-parent-and-destination-skills.md
+    reason: The accepted tree separates destination-neutral coordination, vendor workflow, and connector code.

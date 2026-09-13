@@ -32,7 +32,7 @@ knowledge and what can leave your computer.
 | `why-hire-me:async-interview` | ⚖️ Evaluation | Prepare and run structured, role-relevant asynchronous interviews without replacing accountable human decisions | ✅ Available |
 | `why-hire-me:job-application-tailor` | 🧭 Workflow | Match an authorised job description to career evidence, evaluate gaps, and draft a truthful résumé and cover letter | ✅ Available |
 | `why-hire-me:output-career-portfolio` | 📤 Output | Generate an appealing offline HTML portfolio with an overview, evidence graph, and résumé | ✅ Available |
-| `why-hire-me:output-career-publisher` | 📤 Output | Preview a portable release and route it to one or more destination-specific publishing skills | 🧭 Upcoming |
+| `why-hire-me:output-career-publisher` | 📤 Output | Preview a portable release and route it to one or more destination-specific publishing skills | ✅ Available |
 | `↳ why-hire-me:output-github-release` | 📤 Output | Publish an authorised, versioned knowledge release and assets through GitHub | 🧭 Upcoming |
 | `↳ why-hire-me:output-notebooklm-sync` | 📤 Output | Synchronise an authorised knowledge projection to NotebookLM without making it public automatically | 🧭 Upcoming |
 | `↳ why-hire-me:output-firebase-publisher` | 📤 Output | Publish an authorised static career portfolio through Firebase and return its address | 🧭 Upcoming |

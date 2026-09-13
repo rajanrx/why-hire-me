@@ -149,6 +149,29 @@ Evaluation findings never become canonical person knowledge automatically.
   named for their business purpose.
 - Contract tests prove adapter substitutability.
 
+## Output publication skill tree
+
+Publication workflows form a tree so destination concerns cannot accumulate in one parent skill.
+
+```mermaid
+flowchart LR
+    Release[Authorised release or completed projection] --> Parent[output-career-publisher]
+    Parent --> GitHubSkill[output-github-release]
+    Parent --> NotebookSkill[output-notebooklm-sync]
+    Parent --> FirebaseSkill[output-firebase-publisher]
+    GitHubSkill --> GitHubConnector[GitHub connector]
+    NotebookSkill --> NotebookConnector[NotebookLM connector]
+    FirebaseSkill --> FirebaseConnector[Firebase connector]
+    GitHubConnector --> GitHub[GitHub]
+    NotebookConnector --> NotebookLM[NotebookLM]
+    FirebaseConnector --> Firebase[Firebase]
+```
+
+The parent owns destination selection, the exact-byte publication plan, and per-destination results.
+Each leaf skill owns one destination's preview and safety semantics. Connector adapters alone translate
+credentials, vendor APIs, quotas, retries, identifiers, and observed visibility. Adding a destination
+adds a leaf and connector without modifying Publication domain policy.
+
 ## Knowledge state
 
 Three state classes remain separate:

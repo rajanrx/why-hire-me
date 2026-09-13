@@ -36,6 +36,7 @@ The prefix describes direction relative to the hexagonal core. It does not grant
 
 - People can recognise acquisition and publication skills before invoking them.
 - Names reinforce the same boundary used by ports and adapters.
-- Vendor names stay out of skill identities.
+- Vendor names stay out of domain and parent workflow identities; a destination-specific leaf skill
+  may name its vendor when that makes routing and consent unambiguous.
 - Renaming a released skill requires a compatibility plan; this convention applies before each
   directional skill is first published.
