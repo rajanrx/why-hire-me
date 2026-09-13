@@ -1,0 +1,27 @@
+schema: why-hire-me-intent/v1
+change: output-notebooklm-sync
+references:
+  - type: goal
+    id: G-4
+    path: intent/specs/prd.md
+    reason: Authorised career knowledge can be explored through a replaceable AI destination.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: Source selection, external copying, and sharing must stay under human control.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Publication owns synchronisation attempts and observed destination state.
+  - type: port
+    id: ports-publication
+    path: intent/specs/domains/dom-publication/ports.md
+    reason: NotebookLM capability remains behind replaceable destination and credential ports.
+  - type: adr
+    id: adr-0006
+    path: intent/specs/adr/0006-publish-versioned-portable-knowledge-releases.md
+    reason: Synchronisation consumes a bounded release projection rather than canonical storage.
+  - type: adr
+    id: adr-0019
+    path: intent/specs/adr/0019-compose-publication-as-parent-and-destination-skills.md
+    reason: NotebookLM-specific semantics belong in a destination leaf and connector.
