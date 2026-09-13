@@ -1,5 +1,12 @@
 # why-hire-me
 
+## 0.3.3
+
+### Patch Changes
+
+- 0c86002: Mark upcoming directional skills with `input-` and `output-` prefixes while keeping cross-cutting
+  workflow, governance, and evaluation skills named for their business purpose.
+
 ## 0.3.2
 
 ### Patch Changes
