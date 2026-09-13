@@ -9,3 +9,16 @@ sources and destinations are replaceable adapters around governed semantic knowl
 
 Start with [`intent/specs/prd.md`](intent/specs/prd.md) and
 [`intent/specs/architecture.md`](intent/specs/architecture.md).
+
+## Development
+
+Requirements: Node.js 22 or newer and pnpm 10.
+
+```sh
+pnpm install
+pnpm run check
+pnpm run cli profile create --name "Your Name"
+```
+
+The CLI stores local data under `~/.why-hire-me` by default. Set `WHY_HIRE_ME_HOME` or pass
+`--database <path>` to use another location.

@@ -1,10 +1,10 @@
 ---
 id: architecture
 status: proposed
-version: 0.3.0
+version: 0.4.0
 date: 2026-09-13
 owner: architecture
-relied_on_adrs: [adr-0001, adr-0002, adr-0003, adr-0004, adr-0005, adr-0006, adr-0007, adr-0008, adr-0009]
+relied_on_adrs: [adr-0001, adr-0002, adr-0003, adr-0004, adr-0005, adr-0006, adr-0007, adr-0008, adr-0009, adr-0010]
 ---
 
 # Architecture
@@ -142,6 +142,10 @@ storage remains behind repository ports.
 Start as a modular application with in-process domain boundaries. Distribution is earned by
 measured load, isolation, or operational needs.
 
+TypeScript is the primary product runtime. Go may implement a measured hot path as an
+out-of-process adapter or worker behind a versioned port; it never owns domain policy or reaches
+across a domain's persistence boundary.
+
 - Capture, enrichment, projection, and delivery are idempotent jobs.
 - Long-running and retryable work can move to workers without moving domain rules.
 - Canonical writes remain strongly governed; read projections may be eventually consistent.
@@ -166,7 +170,7 @@ The first vertical slice may use:
 - an installable AI plugin and a CLI as driving adapters;
 - résumé-file and explicitly scoped local-workspace input adapters;
 - the `evidence-led-interviewer` and `daily-work-diary` enrichment skills;
-- a file-backed semantic repository with content-addressed snapshots;
+- a SQLite semantic repository with content-addressed snapshot files;
 - a local directory/ archive as the first release adapter.
 
 These are reference adapters, not architecture commitments. GitHub and NotebookLM follow only

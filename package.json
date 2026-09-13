@@ -1,0 +1,35 @@
+{
+  "name": "why-hire-me",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-first, evidence-backed knowledge for asynchronous hiring.",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "why-hire-me": "./dist/apps/cli/main.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "pnpm run build && pnpm run test",
+    "cli": "tsx src/apps/cli/main.ts",
+    "test": "tsx --test src/**/*.test.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "12.11.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^26.5.1",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "esbuild"
+    ]
+  }
+}
