@@ -37,6 +37,7 @@ test("release bundle contains end-user files and excludes development material",
     `${root}/skills/input-career-reference-explorer/SKILL.md`,
     `${root}/skills/knowledge-curator/SKILL.md`,
     `${root}/skills/output-career-knowledge-guide/SKILL.md`,
+    `${root}/skills/async-interview/SKILL.md`,
   ]) {
     assert.ok(entries.includes(required), `missing distributable entry: ${required}`);
   }
@@ -64,6 +65,7 @@ test("plugin namespace qualifies portable skill names", async () => {
   assert.equal(plugin.skills, "./skills/");
 
   for (const skillName of [
+    "async-interview",
     "daily-work-diary",
     "evidence-led-interviewer",
     "input-career-reference-explorer",

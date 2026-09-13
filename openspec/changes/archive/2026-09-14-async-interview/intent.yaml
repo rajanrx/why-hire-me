@@ -1,0 +1,31 @@
+schema: why-hire-me-intent/v1
+change: async-interview
+references:
+  - type: goal
+    id: G-7
+    path: intent/specs/prd.md
+    reason: Evaluation stays contextual, structured, evidence-led, and accountable.
+  - type: goal
+    id: G-8
+    path: intent/specs/prd.md
+    reason: The interview workflow is independently installable and can gain tools incrementally.
+  - type: domain
+    id: dom-evaluation
+    path: intent/specs/domains/dom-evaluation/domain.md
+    reason: Evaluation owns opportunities, plans, criteria, findings, ratings, and outcomes.
+  - type: domain
+    id: dom-knowledge-enrichment
+    path: intent/specs/domains/dom-knowledge-enrichment/domain.md
+    reason: Question generation and model assistance remain provenance-rich orchestration.
+  - type: adr
+    id: adr-0003
+    path: intent/specs/adr/0003-separate-person-knowledge-from-evaluation.md
+    reason: Findings and ratings remain opportunity-specific and never become person attributes.
+  - type: adr
+    id: adr-0007
+    path: intent/specs/adr/0007-separate-knowledge-discovery-from-formal-evaluation.md
+    reason: The workflow declares formal-evaluation mode and cannot switch silently.
+  - type: standard
+    id: std-evidence-led-interview
+    path: intent/specs/standards/evaluation/std-evidence-led-interview.md
+    reason: Job analysis, structured questions, anchors, fairness, AI trace, and human accountability follow the evaluation standard.
