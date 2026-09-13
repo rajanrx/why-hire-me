@@ -16,23 +16,25 @@ The current command-line workflow can:
 1. create a local person profile;
 2. capture one explicitly selected file as an immutable SHA-256 snapshot;
 3. extract deterministic text from UTF-8 `.txt`, `.md`, and `.markdown` files;
-4. cite the extracted text by one-based line range; and
-5. stage typed entity proposals for human review.
+4. cite the extracted text by one-based line range;
+5. stage typed entity proposals for human review; and
+6. accept, reject, or defer a proposal with an auditable reason.
 
 Supported entity types are `Person`, `Organisation`, `Engagement`, `Role`, `Work`, `Contribution`,
 `Artefact`, `Technology`, `TechnologyUse`, and `Credential`.
 
-Staged proposals are not canonical knowledge. They cannot merge identities, run instructions,
-influence an evaluation, or publish themselves. PDF, DOCX, OCR, automatic AI extraction,
-admission, querying, releases, GitHub delivery, and NotebookLM delivery are not implemented yet.
+Only an accepted proposal becomes a canonical entity. Staged, rejected, and deferred proposals
+cannot merge identities, run instructions, influence an evaluation, or publish themselves. PDF,
+DOCX, OCR, automatic AI extraction, claims, querying, knowledge releases, GitHub delivery, and
+NotebookLM delivery are not implemented yet.
 
 ```mermaid
 flowchart LR
     Source[Selected source] --> Snapshot[Immutable snapshot]
     Snapshot --> Text[Citable text artefact]
     Text --> Candidate[Typed candidate]
-    Candidate --> Review[Future admission review]
-    Review --> Knowledge[Future canonical knowledge]
+    Candidate --> Review[Accept, reject, or defer]
+    Review -->|accepted only| Knowledge[Canonical entity]
     Knowledge --> View[Future authorised view]
     View --> Destination[Future AI or hiring destination]
 ```
@@ -45,10 +47,16 @@ You do not need to clone this repository. With Node.js 22.20 or newer installed,
 npx skills add rajanrx/why-hire-me --skill '*' -g
 ```
 
-Choose your AI application when asked, then restart it. The installer adds both current skills:
+Choose your AI application when asked, then restart it. Native plugin hosts expose the skills under
+the plugin namespace:
 
-- `evidence-led-interviewer` explores career evidence and asks useful follow-up questions;
-- `daily-work-diary` helps you privately reflect on what you achieved and learnt today.
+- `why-hire-me:daily-work-diary` helps you privately reflect on what you achieved and learnt today;
+- `why-hire-me:evidence-led-interviewer` explores career evidence and asks useful follow-up
+  questions.
+
+Portable skill-only hosts may show the same capabilities without the `why-hire-me:` prefix. The
+prefix is supplied by the plugin host; it is deliberately not embedded in each portable skill's
+name.
 
 The open Skills installer supports Codex, Claude Code, Gemini CLI, Qwen Code, and many other agent
 applications. It installs from this public repository and lets you choose the compatible host on
@@ -132,6 +140,25 @@ The CLI stores private data in `~/.why-hire-me` by default. Set `WHY_HIRE_ME_HOM
 `--database <path>`, to use another location. Commands return structured JSON so scripts and future
 AI tools can use the same application boundary.
 
+Review the proposal. Acceptance creates the first canonical entity; rejection and deferral leave
+canonical knowledge unchanged. Copy the candidate ID returned by the staging command.
+
+```sh
+pnpm run cli knowledge review-entity \
+  --profile "<profile-id>" \
+  --candidate "<candidate-id>" \
+  --decision accepted \
+  --reason "I confirmed this from my selected evidence" \
+  --reviewer local-user \
+  --reviewer-authority person \
+  --correlation-id "<your-trace-id>" \
+  --idempotency-key "<stable-retry-key>"
+```
+
+If the candidate reports possible duplicates or conflicts, acceptance also requires
+`--duplicates distinct` or `--conflicts resolved`, plus `--resolution-reason`. Deferring preserves
+the review trail and allows a later decision. Acceptance and rejection are terminal.
+
 ## Architecture
 
 The core uses hexagonal architecture. Domain and application code own the ports. Filesystems,
@@ -143,9 +170,12 @@ versioned port. SQLite stores local metadata; source snapshots and derived text 
 content-addressed files. The semantic model is a logical graph of entities and first-class claims,
 not a commitment to a graph database.
 
-Read the [product requirements](intent/specs/prd.md), [architecture](intent/specs/architecture.md),
-[ontology](intent/specs/_ontology.md), and
-[first-release RFC](intent/specs/rfc/RFC-001-first-knowledge-release.md) for the durable design.
+Read the [product requirements](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/prd.md),
+[architecture](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/architecture.md),
+[ontology](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/_ontology.md), and
+[first-release RFC](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/rfc/RFC-001-first-knowledge-release.md)
+for the durable design. These development documents remain in the repository rather than the
+end-user release archive.
 
 ## AI plugin
 
@@ -156,7 +186,9 @@ own or bypass domain data.
 
 Changesets prepares versions and release notes. GitHub Actions validates every change and creates a
 tagged GitHub release with a plugin bundle and SHA-256 checksum after the version pull request is
-merged. A graphical end-user installer and hosted destination connectors are future work.
+merged. The bundle contains the runnable plugin, skills, compiled runtime, and user documentation.
+Development material such as `intent`, `openspec`, source files, and tests stays in the repository.
+A graphical end-user installer and hosted destination connectors are future work.
 
 ## Licence and project name
 

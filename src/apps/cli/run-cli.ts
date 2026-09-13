@@ -19,6 +19,13 @@ import type { ExtractionAttempt } from "../../domains/knowledge-enrichment/domai
 import { SqliteCandidateStagingRepository } from "../../adapters/persistence/sqlite/sqlite-candidate-staging-repository.js";
 import { StageEntityCandidate } from "../../domains/knowledge-enrichment/application/stage-entity-candidate.js";
 import type { EntityCandidate, CandidateSubmission, GeneratorType, UncertaintyLevel } from "../../domains/knowledge-enrichment/domain/entity-candidate.js";
+import { SqliteEntityAdmissionRepository } from "../../adapters/persistence/sqlite/sqlite-entity-admission-repository.js";
+import { ReviewEntityCandidate } from "../../domains/person-knowledge/application/review-entity-candidate.js";
+import type {
+  AdmissionResult,
+  AdmissionDisposition,
+  ReviewerAuthority,
+} from "../../domains/person-knowledge/domain/entity-admission.js";
 
 export type CliResult =
   | {
@@ -43,6 +50,11 @@ export type CliResult =
       readonly candidate: EntityCandidate;
       readonly submission: CandidateSubmission;
       readonly reused: boolean;
+      readonly databasePath: string;
+    }
+  | {
+      readonly kind: "entity-candidate-reviewed";
+      readonly admission: AdmissionResult;
       readonly databasePath: string;
     };
 
@@ -79,6 +91,7 @@ export function usage(): string {
     "  why-hire-me source ingest --profile <profile-id> --file <path> [options]",
     "  why-hire-me evidence extract-text --profile <profile-id> --capture <capture-id> [options]",
     "  why-hire-me knowledge stage-entity --profile <id> --type <type> --name <name> --artifact <id> --lines <start:end> [options]",
+    "  why-hire-me knowledge review-entity --profile <id> --candidate <id> --decision <accepted|rejected|deferred> [options]",
     "",
     "Environment:",
     "  WHY_HIRE_ME_HOME  Local data directory (default: ~/.why-hire-me)",
@@ -190,6 +203,37 @@ export async function runCli(
         correlationId:requiredOption(args,"--correlation-id")});
       return Object.freeze({kind:"entity-candidate-staged",...result,databasePath});
     } finally { repository.close(); }
+  }
+
+  if (args[0] === "knowledge" && args[1] === "review-entity") {
+    const repository = new SqliteEntityAdmissionRepository(databasePath);
+    try {
+      const admission = await new ReviewEntityCandidate(
+        repository,
+        repository,
+        { generate: randomUUID },
+        { now: () => new Date() },
+      ).execute({
+        profileId: requiredOption(args, "--profile"),
+        candidateId: requiredOption(args, "--candidate"),
+        disposition: requiredOption(args, "--decision") as AdmissionDisposition,
+        reason: requiredOption(args, "--reason"),
+        reviewerId: requiredOption(args, "--reviewer"),
+        reviewerAuthority: requiredOption(args, "--reviewer-authority") as ReviewerAuthority,
+        identityResolution: {
+          duplicates: (option(args, "--duplicates") ?? "not-needed") as "not-needed" | "distinct",
+          conflicts: (option(args, "--conflicts") ?? "not-needed") as "not-needed" | "resolved",
+          ...(option(args, "--resolution-reason")
+            ? { reason: option(args, "--resolution-reason")! }
+            : {}),
+        },
+        correlationId: requiredOption(args, "--correlation-id"),
+        idempotencyKey: requiredOption(args, "--idempotency-key"),
+      });
+      return Object.freeze({ kind: "entity-candidate-reviewed", admission, databasePath });
+    } finally {
+      repository.close();
+    }
   }
 
   throw new Error(usage());

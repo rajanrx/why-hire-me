@@ -29,6 +29,19 @@ test("captures and extracts citable text with stable artefact identity", async (
       if(staged.kind==="entity-candidate-staged"&&restaged.kind==="entity-candidate-staged"){
         assert.equal(staged.candidate.id,restaged.candidate.id);assert.equal(staged.reused,false);assert.equal(restaged.reused,true);
         assert.equal(staged.candidate.evidence[0]?.snapshotId,captured.capture.snapshot.id);
+        const reviewArgs=["knowledge","review-entity","--profile",created.profile.id,"--candidate",staged.candidate.id,
+          "--decision","accepted","--reason","Confirmed from my selected evidence","--reviewer","local-user",
+          "--reviewer-authority","person","--correlation-id","corr-review-1","--idempotency-key","review-1"];
+        const reviewed=await runCli(reviewArgs,{WHY_HIRE_ME_HOME:root});
+        const retriedReview=await runCli(reviewArgs,{WHY_HIRE_ME_HOME:root});
+        assert.equal(reviewed.kind,"entity-candidate-reviewed");
+        assert.equal(retriedReview.kind,"entity-candidate-reviewed");
+        if(reviewed.kind==="entity-candidate-reviewed"&&retriedReview.kind==="entity-candidate-reviewed"){
+          assert.equal(reviewed.admission.decision.disposition,"accepted");
+          assert.equal(reviewed.admission.entity?.data.attributes.displayName,"Built systems");
+          assert.equal(retriedReview.admission.reused,true);
+          assert.equal(retriedReview.admission.entity?.id,reviewed.admission.entity?.id);
+        }
       }
     }
     const database = new Database(join(root,"knowledge.db"), { readonly: true });
@@ -39,6 +52,8 @@ test("captures and extracts citable text with stable artefact identity", async (
       assert.equal(lineage.snapshot_id,captured.capture.snapshot.id); assert.equal(lineage.extractor_id,"utf8-text"); assert.equal(lineage.extractor_version,"1.0.0");
       assert.equal((database.prepare("SELECT count(*) AS count FROM entity_candidates").get() as {count:number}).count,1);
       assert.equal((database.prepare("SELECT count(*) AS count FROM candidate_submissions").get() as {count:number}).count,2);
+      assert.equal((database.prepare("SELECT count(*) AS count FROM canonical_entities").get() as {count:number}).count,1);
+      assert.equal((database.prepare("SELECT count(*) AS count FROM entity_admission_decisions").get() as {count:number}).count,1);
     } finally { database.close(); }
     const other=await runCli(["profile","create","--name","Other"],{WHY_HIRE_ME_HOME:root});
     assert.equal(other.kind,"profile-created");
