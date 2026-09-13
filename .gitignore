@@ -1,7 +1,7 @@
 .idea/
 dist/
 node_modules/
-release/
+/release/
 *.db
 *.db-shm
 *.db-wal
