@@ -1,0 +1,39 @@
+schema: why-hire-me-intent/v1
+change: career-portfolio-output
+references:
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Portfolio statements and graph relationships must remain traceable to evidence.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: The person previews and authorises the exact portfolio before any hosted delivery.
+  - type: goal
+    id: G-7
+    path: intent/specs/prd.md
+    reason: Offline HTML and hosted publishers are replaceable output adapters over one release.
+  - type: goal
+    id: G-8
+    path: intent/specs/prd.md
+    reason: A skill can coordinate the local-first portfolio journey incrementally.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Publication owns projections, delivery, destination state, and public locators.
+  - type: port
+    id: ports-publication
+    path: intent/specs/domains/dom-publication/ports.md
+    reason: ProjectionBuilder and DestinationPublisher keep rendering and hosting vendors behind ports.
+  - type: adr
+    id: adr-0006
+    path: intent/specs/adr/0006-publish-versioned-portable-knowledge-releases.md
+    reason: Every destination must consume the same vendor-neutral release.
+  - type: adr
+    id: adr-0017
+    path: intent/specs/adr/0017-render-an-offline-portfolio-before-hosted-delivery.md
+    reason: The offline projection precedes and remains independent from hosted delivery.
+  - type: adr
+    id: adr-0014
+    path: intent/specs/adr/0014-automate-versioned-plugin-releases.md
+    reason: The end-user release archive remains separate from repository development guidance.

@@ -1,225 +1,127 @@
 # Why Hire Me
 
-**Why Hire Me helps people build a private, evidence-backed picture of their career that AI can explore for deeper, fairer, asynchronous hiring.**
+**Turn the real evidence behind your career into private knowledge that AI can explore—and share
+only the story you choose.**
 
-Bring together real examples of experience, strengths, contributions, and growth. AI can help turn
-that evidence into connected knowledge and ask thoughtful follow-up questions. You review what it
-proposes and decide what becomes trusted knowledge or leaves your computer.
+A CV cannot hold every decision, contribution, lesson, credential, or piece of work that shows what
+you can do. Why Hire Me helps you recover that context, connect it to evidence, and use AI for
+thoughtful, asynchronous career conversations.
 
-The project is generic across professions. Source-code inspection is one possible input, not an
-assumption about the person or their role.
+## 🚀 Start in three steps
 
-## What works today
+| Step | What to do | Status |
+|---|---|---|
+| 1 · Install | Run `npx skills add rajanrx/why-hire-me --skill '*' -g`, choose your AI app, then restart it | ✅ Available |
+| 2 · Explore | Ask: “Use `why-hire-me:evidence-led-interviewer` to explore this project and understand my contribution.” | ✅ Available |
+| 3 · Share | Review your knowledge, generate an offline career portfolio, then optionally publish it through the platform of your choice | 🧭 Portfolio planned |
 
-The current command-line workflow can:
+You stay in control throughout. AI may explore and propose; you decide what becomes trusted
+knowledge and what can leave your computer.
 
-1. create a local person profile;
-2. capture one explicitly selected file as an immutable SHA-256 snapshot;
-3. extract deterministic text from UTF-8 `.txt`, `.md`, and `.markdown` files;
-4. cite the extracted text by one-based line range;
-5. stage typed entity proposals for human review; and
-6. accept, reject, or defer a proposal with an auditable reason.
+## ✨ AI skills
 
-Supported entity types are `Person`, `Organisation`, `Engagement`, `Role`, `Work`, `Contribution`,
-`Artefact`, `Technology`, `TechnologyUse`, and `Credential`.
+| Skill | What it helps you do | Status |
+|---|---|---|
+| `why-hire-me:evidence-led-interviewer` | Explore career evidence and ask focused follow-up questions without unsupported profiling | ✅ Available |
+| `why-hire-me:daily-work-diary` | Privately reconstruct your day, decisions, progress, and learning before useful details disappear | ✅ Available |
+| `why-hire-me:career-portfolio` | Generate an appealing offline HTML portfolio with an overview, evidence graph, and résumé | 🧭 Planned |
 
-Only an accepted proposal becomes a canonical entity. Staged, rejected, and deferred proposals
-cannot merge identities, run instructions, influence an evaluation, or publish themselves. PDF,
-DOCX, OCR, automatic AI extraction, claims, querying, knowledge releases, GitHub delivery, and
-NotebookLM delivery are not implemented yet.
+Plugin-aware hosts use the `why-hire-me:<skill>` namespace. Skill-only hosts may show the same
+capabilities without the prefix because individual skill names stay portable. The installer
+supports Codex, Claude Code, Gemini CLI, Qwen Code, and other compatible agent hosts.
 
-```mermaid
-flowchart LR
-    Source[Selected source] --> Snapshot[Immutable snapshot]
-    Snapshot --> Text[Citable text artefact]
-    Text --> Candidate[Typed candidate]
-    Candidate --> Review[Accept, reject, or defer]
-    Review -->|accepted only| Knowledge[Canonical entity]
-    Knowledge --> View[Future authorised view]
-    View --> Destination[Future AI or hiring destination]
-```
+Other useful prompts:
 
-## Install the AI skills
-
-You do not need to clone this repository. With Node.js 22.20 or newer installed, run one command:
-
-```sh
-npx skills add rajanrx/why-hire-me --skill '*' -g
-```
-
-Choose your AI application when asked, then restart it. Native plugin hosts expose the skills under
-the plugin namespace:
-
-- `why-hire-me:daily-work-diary` helps you privately reflect on what you achieved and learnt today;
-- `why-hire-me:evidence-led-interviewer` explores career evidence and asks useful follow-up
-  questions.
-
-Portable skill-only hosts may show the same capabilities without the `why-hire-me:` prefix. The
-prefix is supplied by the plugin host; it is deliberately not embedded in each portable skill's
-name.
-
-The open Skills installer supports Codex, Claude Code, Gemini CLI, Qwen Code, and many other agent
-applications. It installs from this public repository and lets you choose the compatible host on
-your computer.
-
-These skills guide AI conversations. They do not yet install the local knowledge runtime. ChatGPT,
-the OpenAI API, Claude web, Gemini web, DeepSeek chat, and other model-only surfaces cannot run the
-repository's local commands through a skill. That access will come through the planned MCP server
-and an end-user installer.
+- “Use `why-hire-me:daily-work-diary` to help me remember what I achieved today.”
+- “Find the strongest evidence of my contribution and ask about anything important that is
+  missing.”
+- “Help me prepare career evidence for an asynchronous interview without scoring or profiling me.”
 
 ### Claude Code plugin marketplace
-
-Claude Code users can alternatively install the repository as a versioned plugin:
 
 ```sh
 claude plugin marketplace add rajanrx/why-hire-me
 claude plugin install why-hire-me@why-hire-me
 ```
 
-See the [open Skills installer](https://github.com/vercel-labs/skills) and
-[Claude Code plugin guide](https://code.claude.com/docs/en/discover-plugins) for their supported
-hosts and installation behaviour.
+## 🧭 From career evidence to something people can explore
 
-## Run the development CLI
-
-The knowledge runtime is still a developer preview. You need Node.js 22 or newer and pnpm 10.
-
-```sh
-git clone https://github.com/rajanrx/why-hire-me.git
-cd why-hire-me
-pnpm install
-pnpm run check
+```mermaid
+flowchart LR
+    Sources[📄 Career sources] --> Explore[✨ AI exploration]
+    Explore --> Review[✅ Your review]
+    Review --> Knowledge[🧠 Trusted knowledge]
+    Knowledge --> View[🔐 Authorised view]
+    View --> Local[🖥️ Offline portfolio]
+    View --> Connectors[🔌 Optional destinations]
 ```
 
-Create a profile. The command returns JSON containing `profile.id`.
+The design works across professions. A résumé, portfolio, document, credential, link, work sample,
+or selected source-code folder can be an input. Source-code inspection is one adapter, not an
+assumption about the person or their role.
 
-```sh
-pnpm run cli profile create --name "Your Name"
-```
+The local runtime can already capture a selected text file, preserve an immutable snapshot, create
+precise citations, stage typed entities, and record an accept, reject, or defer decision. Only
+accepted proposals become canonical knowledge.
 
-Capture one file. Copy the profile ID from the previous result. This command returns `capture.id`
-and the immutable snapshot digest.
+## 🌐 Your career portfolio, local first
 
-```sh
-pnpm run cli source ingest \
-  --profile "<profile-id>" \
-  --file "<resume-or-work-file>"
-```
+The planned `career-portfolio` output will turn one authorised, versioned knowledge release into a
+polished static HTML portfolio containing:
 
-Extract citable text. Copy the capture ID from the capture result. This returns
-`extraction.artifact.id` and its line count.
+- a clear career overview;
+- an explorable graph of roles, organisations, work, contributions, technologies, and credentials;
+- an evidence-backed résumé that is easy to read and print; and
+- visible sources, limitations, release version, and freshness information.
 
-```sh
-pnpm run cli evidence extract-text \
-  --profile "<profile-id>" \
-  --capture "<capture-id>"
-```
+The report will work locally without an account, analytics, remote fonts, or a network connection.
+It will remain an output projection—not a second source of truth—and will never add unreviewed
+claims.
 
-Stage an entity proposal against an inclusive line range. Copy the text artefact ID from the
-extraction result.
+Hosted sharing will use replaceable destination adapters, so people can choose the platform that
+suits them. Firebase Hosting is one possible adapter, not an architectural dependency. After
+explicit sign-in and a final preview, a connector can publish the same static portfolio and return
+its shareable address. Credentials stay outside the release, and “uploaded” remains distinct from
+“public”. The offline report keeps working without any hosted platform. Pricing and quotas belong
+to the selected destination rather than the core product.
 
-```sh
-pnpm run cli knowledge stage-entity \
-  --profile "<profile-id>" \
-  --type Organisation \
-  --name "Example organisation" \
-  --artifact "<text-artifact-id>" \
-  --lines 1:2 \
-  --generator-type human \
-  --generator local-user \
-  --generator-version 1 \
-  --uncertainty low \
-  --uncertainty-rationale "Named explicitly in the selected evidence" \
-  --review person-required \
-  --policy private \
-  --actor local-user \
-  --correlation-id "<your-trace-id>"
-```
+## 🛡️ Trust is part of the product
 
-The CLI stores private data in `~/.why-hire-me` by default. Set `WHY_HIRE_ME_HOME`, or pass
-`--database <path>`, to use another location. Commands return structured JSON so scripts and future
-AI tools can use the same application boundary.
+| Principle | What it means |
+|---|---|
+| 🔐 Private by default | Sources and knowledge stay local unless you approve a bounded output |
+| 🔎 Evidence first | Factual knowledge keeps its source and derivation instead of becoming generated prose |
+| ✅ Human reviewed | AI cannot promote its own proposals into trusted knowledge |
+| 🔌 Vendor independent | GPT, Gemini, NotebookLM, GitHub, Firebase, and future systems remain replaceable adapters |
+| 📦 Portable | Versioned releases can be validated and used without the original application |
+| ⚖️ Hiring aware | Discovery stays separate from formal evaluation, scoring, or hiring decisions |
 
-Review the proposal. Acceptance creates the first canonical entity; rejection and deferral leave
-canonical knowledge unchanged. Copy the candidate ID returned by the staging command.
+## 🏗️ Built to grow without losing its centre
 
-```sh
-pnpm run cli knowledge review-entity \
-  --profile "<profile-id>" \
-  --candidate "<candidate-id>" \
-  --decision accepted \
-  --reason "I confirmed this from my selected evidence" \
-  --reviewer local-user \
-  --reviewer-authority person \
-  --correlation-id "<your-trace-id>" \
-  --idempotency-key "<stable-retry-key>"
-```
-
-If the candidate reports possible duplicates or conflicts, acceptance also requires
-`--duplicates distinct` or `--conflicts resolved`, plus `--resolution-reason`. Deferring preserves
-the review trail and allows a later decision. Acceptance and rejection are terminal.
-
-## Architecture
-
-The core uses hexagonal architecture. Domain and application code own the ports. Filesystems,
-SQLite, source readers, model providers, AI hosts, and publication destinations are replaceable
-adapters that depend inwards.
-
+Why Hire Me uses hexagonal architecture. Domain and application code own the ports; filesystems,
+SQLite, AI providers, interfaces, and publication destinations plug in as replaceable adapters.
 TypeScript is the primary runtime. Go is reserved for a measured performance bottleneck behind a
-versioned port. SQLite stores local metadata; source snapshots and derived text use private,
-content-addressed files. The semantic model is a logical graph of entities and first-class claims,
-not a commitment to a graph database.
+versioned port.
 
-Read the [product requirements](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/prd.md),
+Developers can follow the complete [local CLI guide](https://github.com/rajanrx/why-hire-me/blob/main/docs/development-cli.md).
+The durable design lives in the [product requirements](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/prd.md),
 [architecture](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/architecture.md),
 [ontology](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/_ontology.md), and
-[first-release RFC](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/rfc/RFC-001-first-knowledge-release.md)
-for the durable design. These development documents remain in the repository rather than the
+[first-release RFC](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/rfc/RFC-001-first-knowledge-release.md).
+Development intent, OpenSpec changes, source files, and tests stay in the repository rather than the
 end-user release archive.
 
-## AI plugin
+## 📜 Licence and project identity
 
-The repository includes Codex and Claude plugin manifests. Its current skills are
-`evidence-led-interviewer` for evidence-led career discovery and structured evaluation, and
-`daily-work-diary` for private reflection. Skills coordinate conversations and tools; they do not
-own or bypass domain data.
-
-Changesets prepares versions and release notes. GitHub Actions validates every change and creates a
-tagged GitHub release with a plugin bundle and SHA-256 checksum after the version pull request is
-merged. The bundle contains the runnable plugin, skills, compiled runtime, and user documentation.
-Development material such as `intent`, `openspec`, source files, and tests stays in the repository.
-A graphical end-user installer and hosted destination connectors are future work.
-
-## Licence and project name
-
-Why Hire Me is open-source software licensed under
-[GNU AGPL-3.0-or-later](LICENSE). You may use, study, modify, and redistribute it under that
-licence. If you operate a modified version over a network, its users must be offered the
-corresponding source as required by the AGPL.
+Why Hire Me is open-source software licensed under [GNU AGPL-3.0-or-later](LICENSE). You may use,
+study, modify, and redistribute it under that licence. Modified versions operated over a network
+must offer their corresponding source as required by the AGPL.
 
 The [trademark policy](TRADEMARKS.md) protects the Why Hire Me name and branding. Forks may describe
 their origin or compatibility, but they must use a distinct product identity and must not imply
-official approval. Misuse in hiring must be addressed through product governance, consent, audit,
-and hosted-service terms rather than by restricting open-source fields of use.
-
-## Change governance
-
-Durable intent lives under `intent/specs`. Proposed behaviour starts as an intent-linked OpenSpec
-change under `openspec/changes`, receives one quick review, and is implemented only after approval.
-Completed changes are archived and their capability specifications remain under `openspec/specs`.
-The project deliberately uses no review council.
-
-Use these checks before committing:
-
-```sh
-pnpm run check
-pnpm run spec:validate
-```
-
-Run `pnpm changeset` for a releasable change. After it reaches `main`, automation prepares the
-version and release-notes pull request. Merging that pull request publishes the GitHub release.
+official approval.
 
 > [!important] Your next steps
-> - [ ] Install both AI skills with the one-command installer above.
-> - [ ] Restart your AI application and ask it to help explore your career evidence.
-> - [ ] Read the architecture and first-release RFC before proposing a new adapter or domain.
+> - [ ] Install the available AI skills.
+> - [ ] Start one evidence-led career conversation.
+> - [ ] Follow the project to help shape the offline portfolio and optional hosted sharing.

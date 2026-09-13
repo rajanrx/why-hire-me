@@ -37,7 +37,8 @@ sharing policy.
 
 - GitHub Release bundle publisher;
 - NotebookLM source synchroniser;
-- hosted web experience;
+- offline static career portfolio with overview, knowledge graph, and résumé;
+- hosted static-site publisher for an approved portfolio projection, such as Firebase Hosting;
 - downloadable archive;
 - API or MCP knowledge server.
 

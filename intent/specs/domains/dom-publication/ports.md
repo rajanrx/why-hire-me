@@ -43,3 +43,15 @@ digest or equivalence evidence, and next synchronisation token.
 
 “Uploaded”, “shared”, and “public” are different states. An adapter must not infer visibility from
 a successful upload response.
+
+## Career portfolio projection
+
+The planned static portfolio is produced through `ProjectionBuilder` from one release. It contains
+an overview, graph, résumé, evidence references, limitations, freshness, and release identity. It
+must remain usable offline and must not load remote code, fonts, analytics, or other required
+resources.
+
+A hosted-platform adapter implements `DestinationPublisher`. It receives the portfolio projection,
+not canonical storage access. Authentication remains behind `CredentialProvider`; preview,
+delivery, observed visibility, and retraction remain distinct application steps. Firebase Hosting
+is one possible adapter, not part of the port contract.

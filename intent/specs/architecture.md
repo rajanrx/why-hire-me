@@ -118,8 +118,10 @@ flowchart LR
     publisher --> delivery["Delivery status and public locator"]
 ```
 
-A GitHub release asset and a NotebookLM notebook are deliveries of the same logical release, not
-independent sources of truth.
+A local HTML career portfolio, Firebase-hosted copy, GitHub release asset, and NotebookLM notebook
+are projections or deliveries of the same logical release, not independent sources of truth. The
+offline portfolio is built first; a hosted adapter receives that projection and never reads
+canonical storage.
 
 ## Primary flow: evaluate a person
 
@@ -189,10 +191,11 @@ The first vertical slice may use:
 - résumé-file and explicitly scoped local-workspace input adapters;
 - the `evidence-led-interviewer` and `daily-work-diary` enrichment skills;
 - a SQLite semantic repository with content-addressed snapshot files;
-- a local directory/ archive as the first release adapter.
+- a local directory/archive as the first release adapter; and
+- an offline static career portfolio as the first human-facing output projection.
 
-These are reference adapters, not architecture commitments. GitHub and NotebookLM follow only
-after the portable release contract works locally.
+These are reference adapters, not architecture commitments. Firebase Hosting, GitHub, and
+NotebookLM follow only after the portable release and offline projection work locally.
 
 ## Decisions still open
 
