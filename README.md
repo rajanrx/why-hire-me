@@ -26,7 +26,7 @@ knowledge and what can leave your computer.
 | `why-hire-me:daily-work-diary` | 🧭 Workflow | Privately reconstruct your day, decisions, progress, and learning before useful details disappear | ✅ Available |
 | `why-hire-me:input-resume-explorer` | 📥 Input | Explore a résumé and propose typed career knowledge with precise citations | ✅ Available |
 | `why-hire-me:input-work-evidence-explorer` | 📥 Input | Inspect authorised code, designs, writing, case work, and other local work for meaningful evidence | ✅ Available |
-| `why-hire-me:input-career-reference-explorer` | 📥 Input | Follow approved links, portfolios, publications, and credentials while preserving their origin and verification state | 🧭 Upcoming |
+| `why-hire-me:input-career-reference-explorer` | 📥 Input | Follow approved links, portfolios, publications, and credentials while preserving their origin and verification state | ✅ Available |
 | `why-hire-me:knowledge-curator` | 🛡️ Governance | Review semantic proposals, resolve ambiguity, and connect accepted entities and claims without creating a dumping ground | 🧭 Upcoming |
 | `why-hire-me:output-career-knowledge-guide` | 📤 Output | Answer a person's or authorised visitor's questions with evidence from a bounded knowledge view | 🧭 Upcoming |
 | `why-hire-me:async-interview` | ⚖️ Evaluation | Prepare and run structured, role-relevant asynchronous interviews without replacing accountable human decisions | 🧭 Upcoming |
