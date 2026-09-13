@@ -1,5 +1,27 @@
 # why-hire-me
 
+## 0.6.0
+
+### Minor Changes
+
+- 44c9b66: Add `why-hire-me:input-career-reference-explorer` for bounded exploration of portfolios,
+  publications, credentials, and other links with explicit identity and verification state.
+- 08f02f9: Add `why-hire-me:async-interview` for structured, accessible asynchronous evaluation with declared
+  criteria and accountable human outcomes.
+- 91eef0c: Add a truthful public-static Firebase Hosting publisher beneath the career publisher.
+- ad8fcf9: Add the governed GitHub release destination skill beneath the career publisher.
+- 1fe0a77: Add `why-hire-me:job-application-tailor` for evidence-traceable opportunity analysis, truthful résumé
+  and cover-letter drafting, and explicit gap evaluation.
+- 62c1228: Add `why-hire-me:knowledge-curator` for bounded, evidence-aware semantic review with explicit human
+  admission authority.
+- 636e10d: Add capability-aware NotebookLM synchronisation as a destination leaf.
+- e4ebce4: Add `why-hire-me:output-career-portfolio` for validated preview and local-first generation of an
+  accessible, evidence-backed static career portfolio.
+- 65d5322: Add `why-hire-me:output-career-publisher` and formalise a scalable parent, destination-skill, and
+  connector publication tree.
+- cf702fc: Add `why-hire-me:output-career-knowledge-guide` for evidence-linked Q&A within one authorised,
+  versioned career knowledge view or portable release.
+
 ## 0.5.0
 
 ### Minor Changes
