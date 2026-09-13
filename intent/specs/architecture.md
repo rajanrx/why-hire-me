@@ -1,10 +1,10 @@
 ---
 id: architecture
 status: proposed
-version: 0.5.0
+version: 0.7.0
 date: 2026-09-14
 owner: architecture
-relied_on_adrs: [adr-0001, adr-0002, adr-0003, adr-0004, adr-0005, adr-0006, adr-0007, adr-0008, adr-0009, adr-0010, adr-0011, adr-0012, adr-0013]
+relied_on_adrs: [adr-0001, adr-0002, adr-0003, adr-0004, adr-0005, adr-0006, adr-0007, adr-0008, adr-0009, adr-0010, adr-0011, adr-0012, adr-0013, adr-0014, adr-0015]
 ---
 
 # Architecture
@@ -60,6 +60,20 @@ flowchart LR
 Installation grants no implicit authority. Each connector is optional, declares its required
 permissions, and receives credentials at runtime. Host-specific packaging may change while domain
 and release contracts remain portable.
+
+Skills are installed directly from the public repository. GitHub Actions validates changes before
+Changesets prepares a version pull request. Merging that pull request creates a tagged GitHub
+release with a tested plugin bundle and checksum. This distribution pipeline packages adapters; it
+does not enter the domain core.
+
+```mermaid
+flowchart LR
+    Change[Reviewed change] --> CI[Continuous validation]
+    CI --> Version[Changesets version PR]
+    Version --> Release[Tagged GitHub release]
+    Release --> Bundle[Plugin bundle and checksum]
+    Repository[Public skills] --> Installer[One-command installer]
+```
 
 ## Domain responsibilities
 

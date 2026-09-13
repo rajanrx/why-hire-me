@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Local-first, evidence-backed knowledge for asynchronous hiring.",
+  "description": "A private, evidence-backed career profile for thoughtful asynchronous hiring.",
+  "license": "AGPL-3.0-or-later",
   "packageManager": "pnpm@10.28.0",
   "engines": {
     "node": ">=22"
@@ -13,18 +14,24 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "changeset": "changeset",
     "check": "pnpm run build && pnpm run test && pnpm run spec:validate",
     "cli": "tsx src/apps/cli/main.ts",
+    "release:bundle": "node scripts/release/build-bundle.mjs",
+    "release:publish": "pnpm run build && changeset publish",
     "spec:validate": "openspec validate --all --strict --no-interactive && openspec validate --archived --strict --no-interactive && tsx scripts/spec/validate-intent-links.ts",
-    "test": "tsx --test src/**/*.test.ts"
+    "test": "tsx --test src/**/*.test.ts",
+    "version-packages": "changeset version && node scripts/release/sync-plugin-version.mjs"
   },
   "dependencies": {
     "better-sqlite3": "12.11.1"
   },
   "devDependencies": {
+    "@changesets/cli": "3.0.2",
+    "@fission-ai/openspec": "1.13.0",
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.5.1",
-    "@fission-ai/openspec": "1.13.0",
+    "tar": "7.5.22",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
     "yaml": "^2.8.1"

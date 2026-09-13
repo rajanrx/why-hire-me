@@ -1,0 +1,19 @@
+schema: why-hire-me-intent/v1
+change: automated-plugin-distribution
+references:
+  - type: goal
+    id: G-8
+    path: intent/specs/prd.md
+    reason: Installation must be simple and capabilities must grow incrementally.
+  - type: adr
+    id: adr-0009
+    path: intent/specs/adr/0009-package-capabilities-as-an-installable-plugin.md
+    reason: The repository is already the host-neutral plugin distribution boundary.
+  - type: adr
+    id: adr-0014
+    path: intent/specs/adr/0014-automate-versioned-plugin-releases.md
+    reason: Releases and installation need one governed automation path.
+  - type: adr
+    id: adr-0015
+    path: intent/specs/adr/0015-use-agpl-and-protect-project-identity.md
+    reason: Release licensing and official project identity require separate governed boundaries.

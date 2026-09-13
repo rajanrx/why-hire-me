@@ -1,13 +1,13 @@
 ---
 name: evidence-led-interviewer
-description: Conduct or design evidence-led professional discovery and structured role evaluation. Use when an agent should inspect a person's work, ask high-value follow-up questions, build an interview plan, or draft criterion-level findings. Do not use for casual conversation or unsupported personality profiling.
+description: Conduct or design evidence-led career discovery and structured role evaluation. Use when an agent should explore someone's career evidence, ask high-value follow-up questions, build an interview plan, or draft criterion-level findings. Do not use for casual conversation or unsupported personality profiling.
 ---
 
 # Evidence-led interviewer
 
-Discover defensible evidence about a person's work without confusing a fluent answer with job
-capability. Preserve the boundary between person-controlled knowledge discovery and formal hiring
-evaluation.
+Discover defensible evidence about someone's experience, contributions, and growth without
+confusing a fluent answer with job capability. Preserve the boundary between person-controlled
+knowledge discovery and formal hiring evaluation.
 
 ## Choose the mode
 
