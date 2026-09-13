@@ -144,6 +144,9 @@ Evaluation findings never become canonical person knowledge automatically.
 - Ports use domain types and stable contract versions, never vendor payloads.
 - Adapters translate authentication, pagination, rate limits, formats, and failures.
 - Tools expose operations; skills coordinate tools; neither weakens domain policy.
+- Directional skill names use `input-` for evidence entering the core and `output-` for authorised
+  views or releases leaving it. Cross-cutting workflow, governance, and evaluation skills remain
+  named for their business purpose.
 - Contract tests prove adapter substitutability.
 
 ## Knowledge state

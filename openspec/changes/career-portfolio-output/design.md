@@ -62,5 +62,5 @@ may be a reference implementation, but its concepts do not enter the core contra
 ## Migration Plan
 
 No data migration occurs during planning. Implement authorised views and local releases first, then
-add the renderer, the `career-portfolio` skill, and finally one reference hosting adapter in separate
-reviewed changes.
+add the renderer, the `output-career-portfolio` skill, and finally one reference hosting adapter in
+separate reviewed changes.

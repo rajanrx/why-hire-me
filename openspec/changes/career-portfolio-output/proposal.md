@@ -9,7 +9,7 @@ give a cloud destination access to private canonical knowledge.
 - Build an offline static HTML portfolio from one authorised, versioned release.
 - Present a career overview, explorable graph, evidence-backed résumé, sources, limitations, and
   freshness.
-- Add `career-portfolio` as the planned AI skill coordinating preview and generation.
+- Add `output-career-portfolio` as the planned AI skill coordinating preview and generation.
 - Support optional hosted-platform adapters for the same static projection, with Firebase Hosting
   as one possible reference implementation.
 - Keep credentials, plan limits, delivery state, and public visibility outside release content.

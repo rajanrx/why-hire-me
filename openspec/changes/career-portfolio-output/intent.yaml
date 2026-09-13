@@ -34,6 +34,10 @@ references:
     path: intent/specs/adr/0017-render-an-offline-portfolio-before-hosted-delivery.md
     reason: The offline projection precedes and remains independent from hosted delivery.
   - type: adr
+    id: adr-0018
+    path: intent/specs/adr/0018-mark-directional-skills-as-input-or-output.md
+    reason: The portfolio skill is visibly identified as an output workflow.
+  - type: adr
     id: adr-0014
     path: intent/specs/adr/0014-automate-versioned-plugin-releases.md
     reason: The end-user release archive remains separate from repository development guidance.
