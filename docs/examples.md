@@ -18,6 +18,7 @@ use.
 | `why-hire-me:async-interview` | [Prepare and run a structured asynchronous interview](examples/async-interview.md) |
 | `why-hire-me:job-application-tailor` | [Tailor a truthful job application](examples/job-application-tailor.md) |
 | `why-hire-me:output-career-portfolio` | [Generate a local-first career portfolio](examples/output-career-portfolio.md) |
+| `why-hire-me:output-career-publisher` | [Route an authorised release to chosen destinations](examples/output-career-publisher.md) |
 
 As each upcoming skill ships, it receives a separate example page and moves into this table.
 
