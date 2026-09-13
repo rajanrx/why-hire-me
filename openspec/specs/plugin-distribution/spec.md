@@ -14,7 +14,7 @@ and offers installation into compatible agent hosts.
 #### Scenario: A person installs the skills
 
 - **WHEN** the person runs the documented global installation command
-- **THEN** the installer discovers both current skills and prompts for a compatible agent host
+- **THEN** the installer discovers the three current skills and prompts for a compatible agent host
 
 ### Requirement: Continuous validation
 

@@ -1,0 +1,47 @@
+schema: why-hire-me-intent/v1
+change: input-resume-explorer
+references:
+  - type: goal
+    id: G-1
+    path: intent/specs/prd.md
+    reason: Résumé observations become typed proposals rather than an isolated summary.
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Proposals retain precise source locators and derivation limits.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: The person authorises the source and reviews every proposed meaning.
+  - type: goal
+    id: G-6
+    path: intent/specs/prd.md
+    reason: The workflow can use different document readers behind the acquisition boundary.
+  - type: goal
+    id: G-8
+    path: intent/specs/prd.md
+    reason: The résumé workflow is useful as a standalone installed skill and grows with tools.
+  - type: domain
+    id: dom-evidence-acquisition
+    path: intent/specs/domains/dom-evidence-acquisition/domain.md
+    reason: Evidence Acquisition owns source authorisation, capture, snapshots, and provenance.
+  - type: domain
+    id: dom-knowledge-enrichment
+    path: intent/specs/domains/dom-knowledge-enrichment/domain.md
+    reason: Knowledge Enrichment owns exploration, questions, and candidate proposals.
+  - type: adr
+    id: adr-0004
+    path: intent/specs/adr/0004-distinguish-domains-skills-tools-and-connectors.md
+    reason: The skill coordinates tools without becoming an input connector or domain.
+  - type: adr
+    id: adr-0005
+    path: intent/specs/adr/0005-admit-knowledge-through-a-governed-staging-boundary.md
+    reason: Résumé-derived proposals have no canonical authority.
+  - type: adr
+    id: adr-0018
+    path: intent/specs/adr/0018-mark-directional-skills-as-input-or-output.md
+    reason: The name identifies evidence flowing into the knowledge pipeline.
+  - type: standard
+    id: std-knowledge-admission
+    path: intent/specs/standards/knowledge/std-knowledge-admission.md
+    reason: Candidate shape and review behaviour prepare proposals for governed admission.
