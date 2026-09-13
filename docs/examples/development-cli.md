@@ -1,0 +1,76 @@
+# Development CLI example
+
+This is a representative governed path through the local developer runtime. The exact IDs, digests,
+paths, and timestamps will differ.
+
+## 1. Create a profile
+
+```sh
+pnpm run cli profile create --name "Ada Example"
+```
+
+```json
+{
+  "kind": "profile-created",
+  "profile": {
+    "id": "generated-profile-id",
+    "displayName": "Ada Example"
+  },
+  "databasePath": "/home/ada/.why-hire-me/knowledge.db"
+}
+```
+
+## 2. Capture one selected text file
+
+```sh
+pnpm run cli source ingest \
+  --profile "generated-profile-id" \
+  --file "/home/ada/career/resume.md"
+```
+
+```json
+{
+  "kind": "source-captured",
+  "capture": {
+    "id": "generated-capture-id",
+    "outcome": "completed",
+    "requestedLocator": "/home/ada/career/resume.md",
+    "snapshot": {
+      "digest": "64-character-sha256-digest"
+    }
+  }
+}
+```
+
+Only the selected regular file is read. The current extractor supports UTF-8 `.txt`, `.md`, and
+`.markdown`; PDF, DOCX, OCR, and directory traversal are not yet supported by this CLI slice.
+
+## 3. Extract citable text
+
+```sh
+pnpm run cli evidence extract-text \
+  --profile "generated-profile-id" \
+  --capture "generated-capture-id"
+```
+
+```json
+{
+  "kind": "text-extracted",
+  "extraction": {
+    "outcome": "completed",
+    "artifact": {
+      "id": "generated-text-artifact-id",
+      "lineCount": 24
+    }
+  }
+}
+```
+
+## 4. Stage, then review
+
+Use the returned artefact ID and precise line range with `knowledge stage-entity`. The result is an
+`entity-candidate-staged` record, not canonical knowledge. Use `knowledge review-entity` to accept,
+reject, or defer it; only an accepted review can create a canonical entity.
+
+See the [development CLI reference](../development-cli.md) for the complete commands and required
+governance options.

@@ -27,6 +27,8 @@ test("release bundle contains end-user files and excludes development material",
   for (const required of [
     `${root}/.codex-plugin/plugin.json`,
     `${root}/.claude-plugin/plugin.json`,
+    `${root}/docs/examples.md`,
+    `${root}/docs/examples/development-cli.md`,
     `${root}/dist/apps/cli/main.js`,
     `${root}/skills/daily-work-diary/SKILL.md`,
     `${root}/skills/evidence-led-interviewer/SKILL.md`,
@@ -35,13 +37,15 @@ test("release bundle contains end-user files and excludes development material",
     assert.ok(entries.includes(required), `missing distributable entry: ${required}`);
   }
 
-  for (const developmentDirectory of ["docs", "intent", "openspec", "src", ".github", ".changeset"]) {
+  for (const developmentDirectory of ["intent", "openspec", "src", ".github", ".changeset"]) {
     assert.equal(
       entries.some((entry) => entry.startsWith(`${root}/${developmentDirectory}/`)),
       false,
       `${developmentDirectory} must not be shipped in the end-user bundle`,
     );
   }
+
+  assert.equal(entries.includes(`${root}/docs/development-cli.md`), false);
 
   assert.equal(entries.some((entry) => entry.includes(".test.")), false);
   assert.equal(entries.some((entry) => entry.endsWith(".js.map")), false);
