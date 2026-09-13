@@ -1,0 +1,20 @@
+{
+  "name": "why-hire-me",
+  "version": "0.1.0",
+  "description": "Build and explore a private, evidence-backed picture of your career.",
+  "author": {
+    "name": "Rajan Rauniyar",
+    "url": "https://github.com/rajanrx"
+  },
+  "homepage": "https://github.com/rajanrx/why-hire-me",
+  "repository": "https://github.com/rajanrx/why-hire-me",
+  "license": "AGPL-3.0-or-later",
+  "keywords": [
+    "career",
+    "hiring",
+    "knowledge",
+    "evidence",
+    "interview",
+    "local-first"
+  ]
+}

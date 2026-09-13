@@ -1,0 +1,18 @@
+{
+  "name": "why-hire-me",
+  "description": "Evidence-backed career tools for thoughtful, asynchronous hiring.",
+  "owner": {
+    "name": "Rajan Rauniyar"
+  },
+  "plugins": [
+    {
+      "name": "why-hire-me",
+      "description": "Build and explore a private, evidence-backed picture of your career.",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "Rajan Rauniyar"
+      }
+    }
+  ]
+}

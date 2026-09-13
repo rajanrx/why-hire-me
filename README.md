@@ -1,10 +1,10 @@
 # Why Hire Me
 
-**Why Hire Me builds a private, evidence-backed account of a person's work that AI agents can explore for deeper, fairer, asynchronous hiring.**
+**Why Hire Me helps people build a private, evidence-backed picture of their career that AI can explore for deeper, fairer, asynchronous hiring.**
 
-People can bring evidence from different sources, turn it into linked knowledge, review what AI
-proposes, and later share a controlled view with hiring tools or other AI products. The person owns
-the source material and decides what becomes trusted knowledge or leaves their computer.
+Bring together real examples of experience, strengths, contributions, and growth. AI can help turn
+that evidence into connected knowledge and ask thoughtful follow-up questions. You review what it
+proposes and decide what becomes trusted knowledge or leaves your computer.
 
 The project is generic across professions. Source-code inspection is one possible input, not an
 assumption about the person or their role.
@@ -37,9 +37,44 @@ flowchart LR
     View --> Destination[Future AI or hiring destination]
 ```
 
-## Run it locally
+## Install the AI skills
 
-You need Node.js 22 or newer and pnpm 10.
+You do not need to clone this repository. With Node.js 22.20 or newer installed, run one command:
+
+```sh
+npx skills add rajanrx/why-hire-me --skill '*' -g
+```
+
+Choose your AI application when asked, then restart it. The installer adds both current skills:
+
+- `evidence-led-interviewer` explores career evidence and asks useful follow-up questions;
+- `daily-work-diary` helps you privately reflect on what you achieved and learnt today.
+
+The open Skills installer supports Codex, Claude Code, Gemini CLI, Qwen Code, and many other agent
+applications. It installs from this public repository and lets you choose the compatible host on
+your computer.
+
+These skills guide AI conversations. They do not yet install the local knowledge runtime. ChatGPT,
+the OpenAI API, Claude web, Gemini web, DeepSeek chat, and other model-only surfaces cannot run the
+repository's local commands through a skill. That access will come through the planned MCP server
+and an end-user installer.
+
+### Claude Code plugin marketplace
+
+Claude Code users can alternatively install the repository as a versioned plugin:
+
+```sh
+claude plugin marketplace add rajanrx/why-hire-me
+claude plugin install why-hire-me@why-hire-me
+```
+
+See the [open Skills installer](https://github.com/vercel-labs/skills) and
+[Claude Code plugin guide](https://code.claude.com/docs/en/discover-plugins) for their supported
+hosts and installation behaviour.
+
+## Run the development CLI
+
+The knowledge runtime is still a developer preview. You need Node.js 22 or newer and pnpm 10.
 
 ```sh
 git clone https://github.com/rajanrx/why-hire-me.git
@@ -47,45 +82,6 @@ cd why-hire-me
 pnpm install
 pnpm run check
 ```
-
-### Install the AI skills
-
-The repository currently ships two portable Agent Skills: `evidence-led-interviewer` and
-`daily-work-diary`. Install them into the agent application that runs your chosen model. The skills
-guide conversations; continue to run the local data commands from this repository.
-
-| Agent host | Models it can use | Install for local development |
-|---|---|---|
-| Codex | OpenAI and configured providers | Copy both folders from `skills/` to `~/.codex/skills/`, then start a new Codex session. |
-| Claude Code | Claude | Run `claude --plugin-dir .` from this repository. |
-| Gemini CLI | Gemini | Run `gemini skills link ./skills/evidence-led-interviewer` and `gemini skills link ./skills/daily-work-diary`. |
-| Qwen Code | Qwen and configured providers | Copy both folders from `skills/` to `~/.qwen/skills/`. |
-| Deep Code | DeepSeek | Copy both folders from `skills/` to `~/.agents/skills/`. |
-
-For Codex, Qwen Code, or Deep Code on macOS or Linux:
-
-```sh
-# Choose one destination for your agent host.
-SKILL_HOME="$HOME/.codex/skills"       # Codex
-# SKILL_HOME="$HOME/.qwen/skills"     # Qwen Code
-# SKILL_HOME="$HOME/.agents/skills"   # Deep Code
-
-mkdir -p "$SKILL_HOME"
-cp -R skills/evidence-led-interviewer "$SKILL_HOME/"
-cp -R skills/daily-work-diary "$SKILL_HOME/"
-```
-
-Restart the agent after copying skills. Gemini CLI can instead reload linked skills with
-`/skills reload`. Claude Code validates this repository as a local plugin and loads it for the
-session through `--plugin-dir`.
-
-These instructions install the current conversational skills. ChatGPT, the OpenAI API, Claude web,
-Gemini web, DeepSeek chat, and other model-only surfaces cannot run the repository's local CLI by
-installing a skill. Cross-client tool access will require the planned MCP server and packaged
-release. See the official guides for [Claude Code plugins](https://code.claude.com/docs/en/plugins),
-[Gemini CLI skills](https://geminicli.com/docs/cli/using-agent-skills/),
-[Qwen Code skills](https://qwenlm.github.io/qwen-code-docs/en/users/features/skills/), and
-[Deep Code skills](https://api-docs.deepseek.com/quick_start/agent_integrations/deepcode/).
 
 Create a profile. The command returns JSON containing `profile.id`.
 
@@ -153,13 +149,26 @@ Read the [product requirements](intent/specs/prd.md), [architecture](intent/spec
 
 ## AI plugin
 
-The repository includes a Codex plugin manifest at `.codex-plugin/plugin.json`. Its current skills
-are `evidence-led-interviewer` for evidence-led professional discovery and structured evaluation,
-and `daily-work-diary` for private work reflection. Skills coordinate conversations and tools; they
-do not own or bypass domain data.
+The repository includes Codex and Claude plugin manifests. Its current skills are
+`evidence-led-interviewer` for evidence-led career discovery and structured evaluation, and
+`daily-work-diary` for private reflection. Skills coordinate conversations and tools; they do not
+own or bypass domain data.
 
-The runtime commands are still development interfaces. A packaged end-user installer and hosted
-destination connectors are future work.
+Changesets prepares versions and release notes. GitHub Actions validates every change and creates a
+tagged GitHub release with a plugin bundle and SHA-256 checksum after the version pull request is
+merged. A graphical end-user installer and hosted destination connectors are future work.
+
+## Licence and project name
+
+Why Hire Me is open-source software licensed under
+[GNU AGPL-3.0-or-later](LICENSE). You may use, study, modify, and redistribute it under that
+licence. If you operate a modified version over a network, its users must be offered the
+corresponding source as required by the AGPL.
+
+The [trademark policy](TRADEMARKS.md) protects the Why Hire Me name and branding. Forks may describe
+their origin or compatibility, but they must use a distinct product identity and must not imply
+official approval. Misuse in hiring must be addressed through product governance, consent, audit,
+and hosted-service terms rather than by restricting open-source fields of use.
 
 ## Change governance
 
@@ -175,7 +184,10 @@ pnpm run check
 pnpm run spec:validate
 ```
 
+Run `pnpm changeset` for a releasable change. After it reaches `main`, automation prepares the
+version and release-notes pull request. Merging that pull request publishes the GitHub release.
+
 > [!important] Your next steps
-> - [ ] Run the local workflow with a small UTF-8 résumé or work note.
+> - [ ] Install both AI skills with the one-command installer above.
+> - [ ] Restart your AI application and ask it to help explore your career evidence.
 > - [ ] Read the architecture and first-release RFC before proposing a new adapter or domain.
-> - [ ] Open an intent-linked OpenSpec change for new behaviour.

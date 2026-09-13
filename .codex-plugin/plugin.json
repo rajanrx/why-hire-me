@@ -1,24 +1,32 @@
 {
   "name": "why-hire-me",
   "version": "0.1.0",
-  "description": "Build and explore portable, evidence-backed knowledge about a person's work.",
+  "description": "Build and explore a private, evidence-backed picture of your career.",
   "author": {
     "name": "Rajan Rauniyar",
     "url": "https://github.com/rajanrx"
   },
   "homepage": "https://github.com/rajanrx/why-hire-me",
   "repository": "https://github.com/rajanrx/why-hire-me",
-  "license": "MIT",
-  "keywords": ["hiring", "knowledge", "evidence", "interview", "local-first"],
+  "license": "AGPL-3.0-or-later",
+  "keywords": [
+    "hiring",
+    "knowledge",
+    "evidence",
+    "interview",
+    "local-first"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Why Hire Me",
-    "shortDescription": "Explore evidence-backed knowledge about your work.",
-    "longDescription": "Build a private, portable account of your work through evidence-led discovery and deliberate sharing.",
+    "shortDescription": "Explore the evidence behind your career.",
+    "longDescription": "Build a private, portable career profile from real experience and share it on your terms.",
     "developerName": "Rajan Rauniyar",
     "category": "Productivity",
-    "capabilities": ["Interactive"],
+    "capabilities": [
+      "Interactive"
+    ],
     "websiteURL": "https://github.com/rajanrx/why-hire-me",
-    "defaultPrompt": "Help me build an evidence-backed account of my work."
+    "defaultPrompt": "Help me build an evidence-backed picture of my career."
   }
 }
