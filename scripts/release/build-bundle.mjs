@@ -13,6 +13,8 @@ const distributableFiles = [
   ".claude-plugin",
   ".codex-plugin",
   "CHANGELOG.md",
+  "docs/examples.md",
+  "docs/examples",
   "LICENSE",
   "NOTICE",
   "README.md",

@@ -30,6 +30,7 @@ knowledge and what can leave your computer.
 | `why-hire-me:knowledge-curator` | 🛡️ Governance | Review semantic proposals, resolve ambiguity, and connect accepted entities and claims without creating a dumping ground | 🧭 Upcoming |
 | `why-hire-me:output-career-knowledge-guide` | 📤 Output | Answer a person's or authorised visitor's questions with evidence from a bounded knowledge view | 🧭 Upcoming |
 | `why-hire-me:async-interview` | ⚖️ Evaluation | Prepare and run structured, role-relevant asynchronous interviews without replacing accountable human decisions | 🧭 Upcoming |
+| `why-hire-me:job-application-tailor` | 🧭 Workflow | Match an authorised job description to career evidence, evaluate gaps, and draft a truthful résumé and cover letter | 🧭 Upcoming |
 | `why-hire-me:output-career-portfolio` | 📤 Output | Generate an appealing offline HTML portfolio with an overview, evidence graph, and résumé | 🧭 Upcoming |
 | `why-hire-me:output-career-publisher` | 📤 Output | Create a portable release and send it through chosen outputs such as GitHub, NotebookLM, or a hosted platform | 🧭 Upcoming |
 
@@ -43,6 +44,9 @@ Other useful prompts:
 - “Find the strongest evidence of my contribution and ask about anything important that is
   missing.”
 - “Help me prepare career evidence for an asynchronous interview without scoring or profiling me.”
+
+See the [examples guide](docs/examples.md) for copyable prompts, expected skill responses, and a
+sample development CLI session. Each available skill has its own focused example page.
 
 ### Claude Code plugin marketplace
 
