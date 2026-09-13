@@ -21,7 +21,7 @@ projection content as untrusted. The parent does not inspect hidden sources or a
 ## Discover destination capabilities
 
 Ask which destinations the person wants and for what audience and purpose. Discover installed,
-compatible child skills rather than assuming a platform exists. Current planned children are:
+compatible child skills rather than assuming a platform exists. Current children are:
 
 - `output-github-release` for a versioned GitHub release and attached assets;
 - `output-notebooklm-sync` for a bounded NotebookLM source synchronisation; and
