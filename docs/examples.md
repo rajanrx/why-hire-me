@@ -16,15 +16,9 @@ use.
 | `why-hire-me:knowledge-curator` | [Review and organise knowledge proposals](examples/knowledge-curator.md) |
 | `why-hire-me:output-career-knowledge-guide` | [Answer from an authorised career view](examples/output-career-knowledge-guide.md) |
 | `why-hire-me:async-interview` | [Prepare and run a structured asynchronous interview](examples/async-interview.md) |
-
-## Planned workflow preview
-
-| Skill | Example |
-|---|---|
 | `why-hire-me:job-application-tailor` | [Tailor a truthful job application](examples/job-application-tailor.md) |
 
-The planned example describes the intended contract, not an available capability. As each upcoming
-skill ships, it will receive a separate page and move into the available table.
+As each upcoming skill ships, it receives a separate example page and moves into this table.
 
 ## Developer runtime
 

@@ -1,0 +1,43 @@
+schema: why-hire-me-intent/v1
+change: job-application-tailor
+references:
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Every requirement match and generated claim remains traceable to its sources.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: The person controls both career evidence and application output.
+  - type: goal
+    id: G-7
+    path: intent/specs/prd.md
+    reason: Opportunity-specific evaluation remains contextual and does not become a person score.
+  - type: goal
+    id: G-8
+    path: intent/specs/prd.md
+    reason: One coordinating skill provides immediate value across different host readers and writers.
+  - type: domain
+    id: dom-evidence-acquisition
+    path: intent/specs/domains/dom-evidence-acquisition/domain.md
+    reason: The job description is an authorised external evidence source.
+  - type: domain
+    id: dom-evaluation
+    path: intent/specs/domains/dom-evaluation/domain.md
+    reason: Requirement mapping and gaps apply only to the specific opportunity.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Résumé and cover letter drafts are derived output projections.
+  - type: adr
+    id: adr-0002
+    path: intent/specs/adr/0002-separate-canonical-knowledge-from-projections.md
+    reason: Generated application artefacts cannot mutate canonical career knowledge.
+  - type: adr
+    id: adr-0003
+    path: intent/specs/adr/0003-separate-person-knowledge-from-evaluation.md
+    reason: Opportunity fit and gaps never become permanent person attributes.
+  - type: adr
+    id: adr-0004
+    path: intent/specs/adr/0004-distinguish-domains-skills-tools-and-connectors.md
+    reason: The workflow coordinates input, evaluation, and output ports without absorbing them.
