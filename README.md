@@ -13,7 +13,7 @@ thoughtful, asynchronous career conversations.
 |---|---|---|
 | 1 · Install | Run `npx skills add rajanrx/why-hire-me --skill '*' -g`, choose your AI app, then restart it | ✅ Available |
 | 2 · Explore | Ask: “Use `why-hire-me:evidence-led-interviewer` to explore this project and understand my contribution.” | ✅ Available |
-| 3 · Share | Review your knowledge, generate an offline career portfolio, then optionally publish it through the platform of your choice | 🧭 Portfolio planned |
+| 3 · Share | Review your knowledge, generate an offline career portfolio, then optionally publish it through the platform of your choice | 🧭 Upcoming |
 
 You stay in control throughout. AI may explore and propose; you decide what becomes trusted
 knowledge and what can leave your computer.
@@ -24,7 +24,14 @@ knowledge and what can leave your computer.
 |---|---|---|
 | `why-hire-me:evidence-led-interviewer` | Explore career evidence and ask focused follow-up questions without unsupported profiling | ✅ Available |
 | `why-hire-me:daily-work-diary` | Privately reconstruct your day, decisions, progress, and learning before useful details disappear | ✅ Available |
-| `why-hire-me:career-portfolio` | Generate an appealing offline HTML portfolio with an overview, evidence graph, and résumé | 🧭 Planned |
+| `why-hire-me:resume-explorer` | Import a résumé and propose typed career knowledge with precise citations | 🧭 Upcoming |
+| `why-hire-me:work-evidence-explorer` | Inspect authorised code, designs, writing, case work, and other local work for meaningful evidence | 🧭 Upcoming |
+| `why-hire-me:career-reference-explorer` | Follow approved links, portfolios, publications, and credentials while preserving their origin and verification state | 🧭 Upcoming |
+| `why-hire-me:knowledge-curator` | Review semantic proposals, resolve ambiguity, and connect accepted entities and claims without creating a dumping ground | 🧭 Upcoming |
+| `why-hire-me:career-knowledge-guide` | Answer a person's or authorised visitor's questions with evidence from a bounded knowledge view | 🧭 Upcoming |
+| `why-hire-me:async-interview` | Prepare and run structured, role-relevant asynchronous interviews without replacing accountable human decisions | 🧭 Upcoming |
+| `why-hire-me:career-portfolio` | Generate an appealing offline HTML portfolio with an overview, evidence graph, and résumé | 🧭 Upcoming |
+| `why-hire-me:career-publisher` | Create a portable release and send it through chosen outputs such as GitHub, NotebookLM, or a hosted platform | 🧭 Upcoming |
 
 Plugin-aware hosts use the `why-hire-me:<skill>` namespace. Skill-only hosts may show the same
 capabilities without the prefix because individual skill names stay portable. The installer
@@ -66,7 +73,7 @@ accepted proposals become canonical knowledge.
 
 ## 🌐 Your career portfolio, local first
 
-The planned `career-portfolio` output will turn one authorised, versioned knowledge release into a
+The upcoming `career-portfolio` output will turn one authorised, versioned knowledge release into a
 polished static HTML portfolio containing:
 
 - a clear career overview;
