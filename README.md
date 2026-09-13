@@ -48,6 +48,45 @@ pnpm install
 pnpm run check
 ```
 
+### Install the AI skills
+
+The repository currently ships two portable Agent Skills: `evidence-led-interviewer` and
+`daily-work-diary`. Install them into the agent application that runs your chosen model. The skills
+guide conversations; continue to run the local data commands from this repository.
+
+| Agent host | Models it can use | Install for local development |
+|---|---|---|
+| Codex | OpenAI and configured providers | Copy both folders from `skills/` to `~/.codex/skills/`, then start a new Codex session. |
+| Claude Code | Claude | Run `claude --plugin-dir .` from this repository. |
+| Gemini CLI | Gemini | Run `gemini skills link ./skills/evidence-led-interviewer` and `gemini skills link ./skills/daily-work-diary`. |
+| Qwen Code | Qwen and configured providers | Copy both folders from `skills/` to `~/.qwen/skills/`. |
+| Deep Code | DeepSeek | Copy both folders from `skills/` to `~/.agents/skills/`. |
+
+For Codex, Qwen Code, or Deep Code on macOS or Linux:
+
+```sh
+# Choose one destination for your agent host.
+SKILL_HOME="$HOME/.codex/skills"       # Codex
+# SKILL_HOME="$HOME/.qwen/skills"     # Qwen Code
+# SKILL_HOME="$HOME/.agents/skills"   # Deep Code
+
+mkdir -p "$SKILL_HOME"
+cp -R skills/evidence-led-interviewer "$SKILL_HOME/"
+cp -R skills/daily-work-diary "$SKILL_HOME/"
+```
+
+Restart the agent after copying skills. Gemini CLI can instead reload linked skills with
+`/skills reload`. Claude Code validates this repository as a local plugin and loads it for the
+session through `--plugin-dir`.
+
+These instructions install the current conversational skills. ChatGPT, the OpenAI API, Claude web,
+Gemini web, DeepSeek chat, and other model-only surfaces cannot run the repository's local CLI by
+installing a skill. Cross-client tool access will require the planned MCP server and packaged
+release. See the official guides for [Claude Code plugins](https://code.claude.com/docs/en/plugins),
+[Gemini CLI skills](https://geminicli.com/docs/cli/using-agent-skills/),
+[Qwen Code skills](https://qwenlm.github.io/qwen-code-docs/en/users/features/skills/), and
+[Deep Code skills](https://api-docs.deepseek.com/quick_start/agent_integrations/deepcode/).
+
 Create a profile. The command returns JSON containing `profile.id`.
 
 ```sh
