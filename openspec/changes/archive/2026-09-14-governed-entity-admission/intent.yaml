@@ -1,0 +1,39 @@
+schema: why-hire-me-intent/v1
+change: governed-entity-admission
+references:
+  - type: goal
+    id: G-1
+    path: intent/specs/prd.md
+    reason: Accepted entities establish the first trusted semantic records in a career profile.
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Admission keeps evidence and decision provenance attached to trusted meaning.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: Review and canonical writes remain within the person's knowledge space.
+  - type: domain
+    id: dom-person-knowledge
+    path: intent/specs/domains/dom-person-knowledge/domain.md
+    reason: Person Knowledge owns canonical records and their admission rules.
+  - type: domain
+    id: semantic-contract-person-knowledge
+    path: intent/specs/domains/dom-person-knowledge/semantic-contract.md
+    reason: Canonical entities and activities follow the portable semantic envelope.
+  - type: adr
+    id: adr-0005
+    path: intent/specs/adr/0005-admit-knowledge-through-a-governed-staging-boundary.md
+    reason: Every candidate must cross an explicit admission boundary.
+  - type: adr
+    id: adr-0016
+    path: intent/specs/adr/0016-own-admission-in-person-knowledge.md
+    reason: The canonical domain owns admission while adapters translate staged proposals.
+  - type: adr
+    id: adr-0009
+    path: intent/specs/adr/0009-package-capabilities-as-an-installable-plugin.md
+    reason: The plugin name supplies the namespace while individual skills stay portable.
+  - type: standard
+    id: std-knowledge-admission
+    path: intent/specs/standards/knowledge/std-knowledge-admission.md
+    reason: The use case enforces the minimum checks required for canonical admission.
