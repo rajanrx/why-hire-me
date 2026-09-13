@@ -1,5 +1,12 @@
 # why-hire-me
 
+## 0.4.0
+
+### Minor Changes
+
+- 84a8a5d: Add `why-hire-me:input-resume-explorer` for provenance-aware résumé exploration, typed career
+  knowledge proposals, and focused follow-up questions.
+
 ## 0.3.3
 
 ### Patch Changes
