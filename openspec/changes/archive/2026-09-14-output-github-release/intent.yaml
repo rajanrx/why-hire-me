@@ -1,0 +1,27 @@
+schema: why-hire-me-intent/v1
+change: output-github-release
+references:
+  - type: goal
+    id: G-4
+    path: intent/specs/prd.md
+    reason: A portable career release can be consumed through a replaceable GitHub destination.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: Exact assets, destination, visibility, and action require human control.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Publication owns delivery attempts and observed remote state.
+  - type: port
+    id: ports-publication
+    path: intent/specs/domains/dom-publication/ports.md
+    reason: GitHub remains a replaceable DestinationPublisher adapter.
+  - type: adr
+    id: adr-0006
+    path: intent/specs/adr/0006-publish-versioned-portable-knowledge-releases.md
+    reason: The leaf consumes an authorised immutable release rather than canonical knowledge.
+  - type: adr
+    id: adr-0019
+    path: intent/specs/adr/0019-compose-publication-as-parent-and-destination-skills.md
+    reason: GitHub-specific workflow belongs in a child skill and connector.
