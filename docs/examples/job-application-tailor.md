@@ -1,12 +1,8 @@
-# Job application tailor preview
-
-> [!note]
-> `why-hire-me:job-application-tailor` is planned. This page defines the intended experience and
-> will become executable when the skill ships.
+# Job application tailor example
 
 The workflow accepts one authorised job description from a URL, PDF, DOCX, plain-text file, or
-pasted text. It treats the description as opportunity evidence—not as career truth—and composes a
-role-specific view of reviewed career knowledge.
+pasted text that the AI host can read. It treats the description as opportunity evidence—not as
+career truth—and uses only a bounded view of reviewed career knowledge for application claims.
 
 ## Prompt
 
@@ -47,5 +43,6 @@ dates, employers, and meaning. The cover letter may connect that evidence into a
 must not turn `partial` or `insufficient-evidence` into a claim. Each material sentence should be
 traceable to the role requirement and reviewed career knowledge.
 
-The workflow prepares documents; it does not submit an application, contact an employer, or publish
-private knowledge.
+The workflow also returns a claim trace so each material résumé and cover-letter statement can be
+checked against a requirement and career record. It prepares documents; it does not submit an
+application, contact an employer, or publish private knowledge.

@@ -30,7 +30,7 @@ knowledge and what can leave your computer.
 | `why-hire-me:knowledge-curator` | 🛡️ Governance | Review semantic proposals, resolve ambiguity, and connect accepted entities and claims without creating a dumping ground | ✅ Available |
 | `why-hire-me:output-career-knowledge-guide` | 📤 Output | Answer a person's or authorised visitor's questions with evidence from a bounded knowledge view | ✅ Available |
 | `why-hire-me:async-interview` | ⚖️ Evaluation | Prepare and run structured, role-relevant asynchronous interviews without replacing accountable human decisions | ✅ Available |
-| `why-hire-me:job-application-tailor` | 🧭 Workflow | Match an authorised job description to career evidence, evaluate gaps, and draft a truthful résumé and cover letter | 🧭 Upcoming |
+| `why-hire-me:job-application-tailor` | 🧭 Workflow | Match an authorised job description to career evidence, evaluate gaps, and draft a truthful résumé and cover letter | ✅ Available |
 | `why-hire-me:output-career-portfolio` | 📤 Output | Generate an appealing offline HTML portfolio with an overview, evidence graph, and résumé | 🧭 Upcoming |
 | `why-hire-me:output-career-publisher` | 📤 Output | Preview a portable release and route it to one or more destination-specific publishing skills | 🧭 Upcoming |
 | `↳ why-hire-me:output-github-release` | 📤 Output | Publish an authorised, versioned knowledge release and assets through GitHub | 🧭 Upcoming |
