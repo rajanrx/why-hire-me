@@ -34,7 +34,7 @@ test("release bundle contains end-user files and excludes development material",
     assert.ok(entries.includes(required), `missing distributable entry: ${required}`);
   }
 
-  for (const developmentDirectory of ["intent", "openspec", "src", ".github", ".changeset"]) {
+  for (const developmentDirectory of ["docs", "intent", "openspec", "src", ".github", ".changeset"]) {
     assert.equal(
       entries.some((entry) => entry.startsWith(`${root}/${developmentDirectory}/`)),
       false,
