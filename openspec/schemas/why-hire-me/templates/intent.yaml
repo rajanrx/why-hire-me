@@ -1,0 +1,7 @@
+schema: why-hire-me-intent/v1
+change: <change-directory-name>
+references:
+  - type: <goal|domain|adr|rfc|standard>
+    id: <typed-id>
+    path: intent/specs/<path>
+    reason: <why this intent applies to the change>

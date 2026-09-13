@@ -13,8 +13,9 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "check": "pnpm run build && pnpm run test",
+    "check": "pnpm run build && pnpm run test && pnpm run spec:validate",
     "cli": "tsx src/apps/cli/main.ts",
+    "spec:validate": "openspec validate --all --strict --no-interactive && tsx scripts/spec/validate-intent-links.ts",
     "test": "tsx --test src/**/*.test.ts"
   },
   "dependencies": {
@@ -23,8 +24,10 @@
   "devDependencies": {
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.5.1",
+    "@fission-ai/openspec": "1.13.0",
     "tsx": "^4.23.13",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "yaml": "^2.8.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

@@ -1,0 +1,45 @@
+schema: why-hire-me
+
+context: |
+  Language: en
+  All artifacts must be written in en.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  Durable product intent lives under intent/specs. OpenSpec owns proposed and
+  in-flight changes under openspec/changes. A change must reference exact intent
+  files and typed IDs through intent.yaml; it must not copy durable intent into
+  proposal, spec, or design artifacts.
+
+  The architecture is hexagonal. Domain and application modules own ports;
+  adapters depend inward. TypeScript is the primary runtime. Go is permitted
+  only for a measured hot path behind a versioned port, as defined by adr-0010.
+
+  Architecture diagrams use Mermaid by default. Use draw.io only when Mermaid
+  cannot express the layout, and commit the editable source.
+
+rules:
+  proposal:
+    - Keep the proposal concise and state explicit non-goals.
+    - Name capabilities, not implementation components.
+  intent:
+    - Reference only exact paths under intent/specs and typed IDs present in those files.
+    - Explain why each reference constrains or motivates this change.
+  specs:
+    - Define observable behaviour and failure cases without choosing adapters.
+  design:
+    - Show how dependencies point inward and identify each port and adapter affected.
+  tasks:
+    - Prefer RED, GREEN, and REFACTOR ordering for testable behaviour.
+    - Every task must include an observable verification.
+  review:
+    - Use one quick reviewer; no council is required.
+    - Record APPROVED or CHANGES_REQUESTED with concrete findings.
+
+operations:
+  apply:
+    guidance:
+      - Apply only after review.md records APPROVED.
+      - Run pnpm run check and pnpm run spec:validate before completion.
+  archive:
+    guidance:
+      - Confirm durable intent links still resolve before archiving.

@@ -1,0 +1,43 @@
+schema: why-hire-me-intent/v1
+change: resume-source-ingestion
+references:
+  - type: goal
+    id: G-1
+    path: intent/specs/prd.md
+    reason: Captured sources are the starting material for connected knowledge.
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Immutable source evidence is required for traceable AI-derived knowledge.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: A person must explicitly select and control the source being captured.
+  - type: goal
+    id: G-6
+    path: intent/specs/prd.md
+    reason: Local files are the first implementation of the pluggable input contract.
+  - type: goal
+    id: G-8
+    path: intent/specs/prd.md
+    reason: Local ingestion is an incremental capability of the installable plugin.
+  - type: domain
+    id: dom-evidence-acquisition
+    path: intent/specs/domains/dom-evidence-acquisition/domain.md
+    reason: This domain owns source scope, capture runs, provenance, and immutable snapshots.
+  - type: adr
+    id: adr-0001
+    path: intent/specs/adr/0001-own-ports-in-a-hexagonal-core.md
+    reason: The core must own source-reader and snapshot-repository contracts.
+  - type: adr
+    id: adr-0004
+    path: intent/specs/adr/0004-distinguish-domains-skills-tools-and-connectors.md
+    reason: The local-file reader is a connector rather than a new domain.
+  - type: adr
+    id: adr-0010
+    path: intent/specs/adr/0010-use-typescript-for-the-core-and-go-for-proven-hot-paths.md
+    reason: TypeScript implements this unprofiled path; Go requires measured justification.
+  - type: adr
+    id: adr-0011
+    path: intent/specs/adr/0011-use-intent-linked-openspec-with-one-review.md
+    reason: This change must retain typed intent links and pass one quick review before apply.
