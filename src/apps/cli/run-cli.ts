@@ -46,9 +46,14 @@ import { NodeCommandRunner } from "../../adapters/publication/node-command-runne
 import { FetchPublicUrlObserver } from "../../adapters/publication/fetch-public-url-observer.js";
 import { PublishCareerPortfolio } from "../../domains/publication/application/publish-career-portfolio.js";
 import type { CareerPortfolioManifest } from "../../domains/publication/domain/career-portfolio.js";
+import type { PortfolioInclusionDecision } from "../../domains/publication/domain/career-portfolio-selection.js";
 import { LocalPublicationLedger } from "../../adapters/publication/local-publication-ledger.js";
 
 export type CliResult =
+  | {
+      readonly kind: "career-portfolio-preview";
+      readonly preview: Awaited<ReturnType<BuildCareerPortfolio["preview"]>>;
+    }
   | {
       readonly kind: "profile-created";
       readonly profile: PersonProfile;
@@ -147,7 +152,8 @@ export function usage(): string {
     "  why-hire-me knowledge create-view --profile <id> --purpose <text> --audience <private|restricted|public> --expires-at <RFC3339> --confirm [options]",
     "  why-hire-me release create --profile <id> --view <id> [--releases <path>]",
     "  why-hire-me release validate --path <release-directory>",
-    "  why-hire-me portfolio build --release <release-directory> [--portfolios <path>]",
+    "  why-hire-me portfolio preview --release <directory> --inclusion-map <json-file>",
+    "  why-hire-me portfolio build --release <directory> --inclusion-map <json-file> --confirm [--portfolios <path>]",
     "  why-hire-me portfolio publish-firebase --portfolio <directory> --project <id> --site <id> --mode <preview-channel|live> --confirm-public [options]",
     "",
     "Environment:",
@@ -334,13 +340,18 @@ export async function runCli(
     return Object.freeze({ kind: "knowledge-release-validated", directory, validation });
   }
 
-  if (args[0] === "portfolio" && args[1] === "build") {
+  if (args[0] === "portfolio" && (args[1] === "preview" || args[1] === "build")) {
     const releaseDirectory = resolve(requiredOption(args, "--release"));
+    const inclusionPath = resolve(requiredOption(args, "--inclusion-map"));
+    const inclusionDecisions = JSON.parse(await readFile(inclusionPath, "utf8")) as PortfolioInclusionDecision[];
+    if (!Array.isArray(inclusionDecisions)) throw new Error("Portfolio inclusion map must be a JSON array.");
     const digester = new NodeReleaseDigester();
-    const result = await new BuildCareerPortfolio(new LocalKnowledgeReleaseReader(digester),
+    const useCase = new BuildCareerPortfolio(new LocalKnowledgeReleaseReader(digester),
       new StaticHtmlCareerPortfolioRenderer(digester), new LocalCareerPortfolioRepository(portfolioRoot, digester),
-      { now: () => new Date() })
-      .execute({ releaseDirectory });
+      { now: () => new Date() });
+    if (args[1] === "preview") return Object.freeze({ kind: "career-portfolio-preview",
+      preview: await useCase.preview({ releaseDirectory, inclusionDecisions }) });
+    const result = await useCase.execute({ releaseDirectory, inclusionDecisions, approvedByPerson: args.includes("--confirm") });
     return Object.freeze({ kind: "career-portfolio-created", directory: result.directory,
       manifest: result.projection.manifest, reused: result.reused });
   }

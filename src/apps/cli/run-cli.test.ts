@@ -121,7 +121,15 @@ test("runs the governed source-to-offline-portfolio journey", async () => {
     const validation = await runCli(["release", "validate", "--path", released.directory, "--database", database]);
     assert.equal(validation.kind, "knowledge-release-validated");
     if (validation.kind === "knowledge-release-validated") assert.equal(validation.validation.valid, true);
+    const inclusionMap = join(root, "inclusion-map.json");
+    await writeFile(inclusionMap, `${JSON.stringify([{ recordId: reviewed.kind === "entity-candidate-reviewed" ? reviewed.admission.entity?.id : "",
+      status: "featured", rationale: "Primary work selected for the local portfolio.", summarisedUnderRecordId: null }])}\n`);
+    const preview = await runCli(["portfolio", "preview", "--release", released.directory,
+      "--inclusion-map", inclusionMap, "--database", database, "--portfolios", join(root, "portfolios")]);
+    assert.equal(preview.kind, "career-portfolio-preview");
+    if (preview.kind === "career-portfolio-preview") assert.equal(preview.preview.inclusion.complete, true);
     const portfolio = await runCli(["portfolio", "build", "--release", released.directory,
+      "--inclusion-map", inclusionMap, "--confirm",
       "--database", database, "--portfolios", join(root, "portfolios")]);
     assert.equal(portfolio.kind, "career-portfolio-created");
     if (portfolio.kind === "career-portfolio-created") {

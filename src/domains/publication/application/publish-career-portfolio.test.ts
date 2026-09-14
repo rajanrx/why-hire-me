@@ -36,7 +36,7 @@ async function fixture(root: string) {
       "claims.ndjson": 0, "evidence.ndjson": 0, "activities.ndjson": 0, "aliases.ndjson": 0 },
     limitations: [], compatibility: { minimumReader: "0.1.0" } } satisfies KnowledgeReleaseManifest;
   const release: ValidatedKnowledgeRelease = { directory: "/release", manifest, records: [] };
-  const projection = new StaticHtmlCareerPortfolioRenderer(digester).render(release);
+  const projection = new StaticHtmlCareerPortfolioRenderer(digester).render(release, []);
   const stored = await new LocalCareerPortfolioRepository(root, digester).create(projection);
   return { digester, projection, directory: stored.directory };
 }

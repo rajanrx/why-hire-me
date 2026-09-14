@@ -104,8 +104,14 @@ pnpm run cli release validate \
 ## 7. Build the offline portfolio
 
 ```sh
+pnpm run cli portfolio preview \
+  --release "/home/ada/.why-hire-me/releases/generated-release-id" \
+  --inclusion-map "/home/ada/inclusion-map.json"
+
 pnpm run cli portfolio build \
-  --release "/home/ada/.why-hire-me/releases/generated-release-id"
+  --release "/home/ada/.why-hire-me/releases/generated-release-id" \
+  --inclusion-map "/home/ada/inclusion-map.json" \
+  --confirm
 ```
 
 The result contains a deterministic portfolio ID, projection digest, manifest, and local directory.

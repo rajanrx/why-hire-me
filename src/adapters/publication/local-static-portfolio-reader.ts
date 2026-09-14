@@ -8,23 +8,33 @@ import type { ReleaseDigester } from "../../domains/publication/ports/knowledge-
 function isFileManifest(value: unknown): value is CareerPortfolioManifest["files"][number] {
   if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
   const file = value as Record<string, unknown>;
-  return typeof file.path === "string" && ["index.html", "portfolio.json"].includes(file.path) &&
+  return typeof file.path === "string" && ["index.html", "styles.css", "app.js", "portfolio.json"].includes(file.path) &&
     Number.isSafeInteger(file.bytes) && Number(file.bytes) >= 0 &&
     typeof file.sha256 === "string" && /^[a-f0-9]{64}$/.test(file.sha256);
+}
+
+function isInclusionDecision(value: unknown): boolean {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+  const decision = value as Record<string, unknown>;
+  return typeof decision.recordId === "string" && decision.recordId.length > 0 &&
+    ["featured", "supporting", "summarised", "excluded", "deferred"].includes(String(decision.status)) &&
+    typeof decision.rationale === "string" && decision.rationale.trim().length > 0 &&
+    (decision.summarisedUnderRecordId === null || typeof decision.summarisedUnderRecordId === "string");
 }
 
 export class LocalStaticPortfolioReader implements StaticPortfolioReader {
   public constructor(private readonly digester: ReleaseDigester, private readonly clock: { now(): Date }) {}
   public async validate(directory: string, expected: CareerPortfolioManifest) {
     const errors: string[] = [];
-    if (expected === null || typeof expected !== "object" || expected.schema !== "why-hire-me.portfolio/v0.1" ||
-      expected.entryPoint !== "index.html" || expected.rendererVersion !== "0.1.0" ||
+    if (expected === null || typeof expected !== "object" || expected.schema !== "why-hire-me.portfolio/v0.2" ||
+      expected.entryPoint !== "index.html" || expected.rendererVersion !== "0.2.0" ||
       !/^release-[a-f0-9]{24}$/.test(expected.releaseId ?? "") ||
       !/^[a-f0-9]{64}$/.test(expected.releaseDigest ?? "") ||
       typeof expected.authorisationExpiresAt !== "string" || !Number.isFinite(Date.parse(expected.authorisationExpiresAt)) ||
       typeof expected.generatedAt !== "string" || !Number.isFinite(Date.parse(expected.generatedAt)) ||
       !Array.isArray(expected.limitations) || !expected.limitations.every((item) => typeof item === "string") ||
-      !Array.isArray(expected.files) || expected.files.length !== 2 || !expected.files.every(isFileManifest)) {
+      !Array.isArray(expected.inclusionDecisions) || !expected.inclusionDecisions.every(isInclusionDecision) ||
+      !Array.isArray(expected.files) || expected.files.length !== 4 || !expected.files.every(isFileManifest)) {
       return Object.freeze({ valid: false, errors: Object.freeze(["Portfolio manifest structure is invalid."]) });
     }
     const now = this.clock.now();
@@ -35,7 +45,8 @@ export class LocalStaticPortfolioReader implements StaticPortfolioReader {
       rendererVersion: expected.rendererVersion, releaseId: expected.releaseId,
       releaseDigest: expected.releaseDigest, authorisationExpiresAt: expected.authorisationExpiresAt,
       generatedAt: expected.generatedAt,
-      entryPoint: expected.entryPoint, files: expected.files, limitations: expected.limitations }));
+      entryPoint: expected.entryPoint, files: expected.files, limitations: expected.limitations,
+      inclusionDecisions: expected.inclusionDecisions }));
     if (expected.projectionDigest !== projectionDigest || expected.portfolioId !== `portfolio-${projectionDigest.slice(0, 24)}`) {
       errors.push("Portfolio identity does not match its files and renderer.");
     }
@@ -47,11 +58,11 @@ export class LocalStaticPortfolioReader implements StaticPortfolioReader {
       errors.push("Stored portfolio identity does not match the confirmed manifest.");
     }
     const entries = await readdir(directory).catch(() => [] as string[]);
-    const expectedEntries = new Set(["index.html", "portfolio.json", "portfolio-manifest.json"]);
+    const expectedEntries = new Set(["index.html", "styles.css", "app.js", "portfolio.json", "portfolio-manifest.json"]);
     for (const entry of entries) if (!expectedEntries.has(entry)) errors.push(`Unexpected portfolio entry: ${entry}.`);
     const seen = new Set<string>();
     for (const file of expected.files) {
-      if (basename(file.path) !== file.path || !["index.html", "portfolio.json"].includes(file.path) || seen.has(file.path)) {
+      if (basename(file.path) !== file.path || !["index.html", "styles.css", "app.js", "portfolio.json"].includes(file.path) || seen.has(file.path)) {
         errors.push(`Unsafe portfolio path: ${file.path}.`); continue;
       }
       seen.add(file.path);
@@ -62,7 +73,7 @@ export class LocalStaticPortfolioReader implements StaticPortfolioReader {
         if (content.byteLength !== file.bytes || this.digester.sha256(content) !== file.sha256) errors.push(`${file.path} differs from its manifest.`);
       } catch { errors.push(`${file.path} cannot be read.`); }
     }
-    for (const name of ["index.html", "portfolio.json"]) if (!seen.has(name)) errors.push(`Portfolio manifest omits ${name}.`);
+    for (const name of ["index.html", "styles.css", "app.js", "portfolio.json"]) if (!seen.has(name)) errors.push(`Portfolio manifest omits ${name}.`);
     return Object.freeze({ valid: errors.length === 0, errors: Object.freeze(errors) });
   }
 }

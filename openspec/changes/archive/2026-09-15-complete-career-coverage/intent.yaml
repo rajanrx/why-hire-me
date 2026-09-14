@@ -1,0 +1,31 @@
+schema: why-hire-me-intent/v1
+change: complete-career-coverage
+references:
+  - type: goal
+    id: G-1
+    path: intent/specs/prd.md
+    reason: Distinct career knowledge must remain linked instead of collapsing into prose.
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Every extracted and presented achievement must remain traceable to source evidence.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: The person reviews extraction meaning and the exact portfolio inclusion map.
+  - type: domain
+    id: dom-knowledge-enrichment
+    path: intent/specs/domains/dom-knowledge-enrichment/domain.md
+    reason: Source-unit interpretation and proposal coverage belong to Knowledge Enrichment.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Portfolio selection and projection belong to Publication.
+  - type: adr
+    id: adr-0002
+    path: intent/specs/adr/0002-separate-canonical-knowledge-from-projections.md
+    reason: Inclusion decisions affect a projection without rewriting canonical knowledge.
+  - type: adr
+    id: adr-0017
+    path: intent/specs/adr/0017-render-an-offline-portfolio-before-hosted-delivery.md
+    reason: The improved experience remains offline and precedes publication.

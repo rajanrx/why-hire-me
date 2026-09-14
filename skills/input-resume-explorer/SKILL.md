@@ -32,6 +32,25 @@ say the résumé or proposals were imported, stored, admitted, or verified. If t
 read reliably, ask for an accessible PDF, DOCX, plain-text, or Markdown version supported by the
 host; do not guess from partial extraction.
 
+## Inventory the source before selecting stories
+
+Complete extraction before prioritising, summarising, or selecting career stories. Create one source
+unit for every substantive employment bullet, project, contribution, reported outcome, artefact,
+credential, publication, and technology-use statement. Give every unit a stable ID, the strongest
+available source locator, a faithful meaning, and its Role or Engagement context.
+
+Split a compound unit when it describes materially different products, decisions, contributions,
+outcomes, audiences, or evidence links. Keep the original unit as a `split` disposition, create
+locatable child units, and retain their shared Engagement. Reporting infrastructure and a customer-
+facing reporting product, for example, are normally distinct Work or Contribution proposals even
+when one bullet names both.
+
+Give every source unit exactly one disposition: `proposed-entity`, `proposed-claim`, `ambiguity`,
+`duplicate`, `excluded`, `non-career-content`, or `split`. A duplicate names its merge target; a split
+names every child; and every merge, exclusion, non-career classification, ambiguity, and split has a
+plain rationale. Similar work or a more prominent item in the same role is never a reason to omit a
+unit silently.
+
 ## Build the evidence map
 
 Preserve page, section, line, table-cell, or other stable locators available from the reader. Record
@@ -68,11 +87,17 @@ Prioritise a small number of questions that resolve:
 Ask one primary question at a time. A polished résumé sentence is not stronger evidence than a
 plain answer with a traceable source.
 
-## Prepare proposals for review
+## Reconcile coverage and prepare proposals for review
 
 Read [`references/resume-exploration-record.md`](references/resume-exploration-record.md) before
 creating the result. Separate source observations, proposed entities, proposed claims, uncertainty,
 questions, and exclusions.
+
+Compare the completed ledger to the source before returning. Report total, captured, merged,
+excluded, ambiguous, split, and unresolved counts and list every unresolved source-unit ID. Do not
+call exploration complete while a unit lacks a disposition, a required rationale, a valid merge or
+split target, or a referenced proposal. Word count, page count, section count, and “representative
+stories” are not coverage checks.
 
 In `governed-import` mode, submit only proposals supported by precise authorised evidence. Use the
 candidate and admission tools through their public interfaces. Candidate creation is not approval;
@@ -83,7 +108,7 @@ machine-readable copy if useful, but do not write files unless the person asks.
 
 ## Stop conditions
 
-Stop when the useful résumé map is reviewed, the person declines further questions, the source is
+Stop when the reconciled résumé map is reviewed, the person declines further questions, the source is
 unreadable, or further questioning would add little information. Report unresolved ambiguity and
 tool limitations plainly. Do not continue into formal evaluation, résumé rewriting, external
 verification, or publication unless the person starts that separate workflow.

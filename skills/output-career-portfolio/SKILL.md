@@ -31,20 +31,39 @@ Use one mode:
   local static files, but the production builder is unavailable; or
 - `blocked`: release authority, validation, readable content, or safe local output is missing.
 
-When the bundled reference CLI is available, `portfolio build --release <release-directory>` is the
-`governed-render` implementation. It validates the release again, writes a content-addressed portfolio
-directory, and returns its manifest and projection digest. Its availability does not bypass the exact
-preview and local-generation approval required below.
+When the bundled reference CLI is available, use `portfolio preview --release <release-directory>
+--inclusion-map <json-file>` and then `portfolio build` with the same arguments plus `--confirm` as
+the `governed-render` implementation. It validates the release and total inclusion map again, writes
+a content-addressed portfolio directory, and returns its manifest and projection digest. Its
+availability does not bypass the exact preview and local-generation approval required below.
 
 A local prototype must be labelled `prototype`, record generator and limitations, and never claim
 byte determinism, production validation, or Publication-port persistence. Do not use an unvalidated
 release for factual output without the person's explicit review of the extracted content.
 
+## Account for every achievement
+
+Before choosing headlines or layout, enumerate every authorised `Work`, `Contribution`, and reported
+outcome in the release. Give each exactly one inclusion status:
+
+- `featured` for a primary narrative;
+- `supporting` for a complete secondary index or section;
+- `summarised` only when a named parent item preserves its meaning;
+- `excluded` with a specific editorial, audience, privacy, evidence, or space rationale; or
+- `deferred` while clarification remains necessary.
+
+Selection may consider audience, relevance, impact, uniqueness, evidence strength, and space. It
+must not let one employer-level summary erase distinct products, contributions, outcomes, or
+technical contexts. Reconcile the map against the release. Missing, duplicate, invalid, and deferred
+decisions prevent generation.
+
 ## Prepare the exact preview
 
-Before writing files, show the selected release, mode, output location, included sections, excluded
-records, redactions, warnings, and whether an existing path would be replaced. Ask the person to
-approve this exact local projection. Approval to generate locally is not approval to publish.
+Before writing files, show the selected release, mode, output location, included sections, redactions,
+warnings, whether an existing path would be replaced, and the complete inclusion map with every
+featured, supporting, summarised, excluded, and deferred achievement plus its rationale. List any
+unresolved IDs. Ask the person to approve this exact local projection only after showing the map.
+Approval to generate locally is not approval to publish.
 
 Use only content allowed by the release. Derived headings and navigation may reorganise it. New
 narrative or résumé language must be either present in the release, mechanically derived without
@@ -64,10 +83,17 @@ Provide, when the release supports them:
 7. limitations, unresolved conflicts, freshness, and excluded-content notes; and
 8. release identity, version, generation mode, renderer version, and integrity details.
 
-Use progressive disclosure so the graph does not dominate the story. Prefer a coherent visual system,
-strong typography, restrained colour, generous spacing, and clear status language over generic cards
-or decorative dashboards. Avoid recruiter surveillance, analytics, engagement tracking, scoring, and
-visitor fingerprinting.
+Treat the result as a professional, navigable replacement for a conventional résumé, not a marketing
+landing page. Default to a restrained light theme with strong editorial typography, quiet colour,
+generous spacing, and precise status language. Lead with distinct work and career context, then use
+progressive disclosure for technical depth, evidence, and provenance. Avoid slogans, decorative
+system maps, generic card dashboards, recruiter surveillance, analytics, engagement tracking,
+scoring, and visitor fingerprinting.
+
+The graph must use actual release relationships, make every visible node selectable by keyboard and
+pointer, open useful contextual detail, and never silently cap the node set. If relationships are
+absent, say so rather than drawing implied connections. Provide a searchable structured record
+explorer and a complete relationship list so technical exploration remains useful without the graph.
 
 ## Make offline and accessible behaviour explicit
 
