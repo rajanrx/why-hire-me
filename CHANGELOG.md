@@ -1,5 +1,11 @@
 # why-hire-me
 
+## 0.9.1
+
+### Patch Changes
+
+- 0560abc: Make featured career evidence nearly neutral and widen the desktop drill-down navigator for more comfortable reading.
+
 ## 0.9.0
 
 ### Minor Changes
