@@ -1,11 +1,11 @@
 {
   "schema": "why-hire-me.portfolio-template/v0.1",
   "portfolioSchema": "why-hire-me.portfolio/v0.3",
-  "rendererVersion": "0.3.0",
+  "rendererVersion": "0.3.1",
   "theme": {
     "default": "light",
     "density": "compact",
-    "featuredBackground": "#f7f8ec",
+    "featuredBackground": "#fdfdfb",
     "darkDefaultAllowed": false
   },
   "lenses": [
@@ -22,7 +22,7 @@
     "ordinaryRowsOpenNavigator": false,
     "explicitExploreControl": true,
     "navigator": "wide-side-panel",
-    "navigatorMaximumWidth": "660px",
+    "navigatorMaximumWidth": "720px",
     "graphFocusControlInNavigator": true
   },
   "graph": {
