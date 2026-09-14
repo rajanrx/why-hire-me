@@ -1,0 +1,46 @@
+{
+  "schema": "why-hire-me.portfolio-template/v0.1",
+  "portfolioSchema": "why-hire-me.portfolio/v0.3",
+  "rendererVersion": "0.3.0",
+  "theme": {
+    "default": "light",
+    "density": "compact",
+    "featuredBackground": "#f7f8ec",
+    "darkDefaultAllowed": false
+  },
+  "lenses": [
+    "experience",
+    "expertise",
+    "graph",
+    "evidence"
+  ],
+  "experience": {
+    "groupByExplicitEngagement": true,
+    "preserveUngroupedAchievements": true
+  },
+  "entityExploration": {
+    "ordinaryRowsOpenNavigator": false,
+    "explicitExploreControl": true,
+    "navigator": "wide-side-panel",
+    "navigatorMaximumWidth": "660px",
+    "graphFocusControlInNavigator": true
+  },
+  "graph": {
+    "click": "focus",
+    "doubleClick": "explore",
+    "contextMenu": "explore",
+    "longPress": "explore",
+    "keyboardActivation": "explore",
+    "requiresEquivalentRelationshipList": true
+  },
+  "semanticPresentation": {
+    "featuredItemsUseFaintBackground": true,
+    "technologyCategoriesRequireExplicitClaims": true,
+    "categoryPredicate": "technology.belongs_to_category"
+  },
+  "offline": {
+    "remoteAssetsAllowed": false,
+    "analyticsAllowed": false,
+    "networkRequestsAllowed": false
+  }
+}

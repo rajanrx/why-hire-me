@@ -1,8 +1,9 @@
 ---
 id: adr-0015
-status: accepted
+status: superseded
 date: 2026-09-14
 owner: product
+supersededBy: adr-0020
 ---
 
 # ADR-0015: Use AGPL and protect project identity

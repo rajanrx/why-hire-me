@@ -1,0 +1,19 @@
+schema: why-hire-me-intent/v1
+change: source-available-commercial-license
+references:
+  - type: goal
+    id: G-4
+    path: intent/specs/prd.md
+    reason: Local-first privacy rules out covert licence telemetry from a person's portfolio.
+  - type: adr
+    id: adr-0009
+    path: intent/specs/adr/0009-package-capabilities-as-an-installable-plugin.md
+    reason: The licence boundary applies to the installable plugin and its release archive.
+  - type: adr
+    id: adr-0014
+    path: intent/specs/adr/0014-automate-versioned-plugin-releases.md
+    reason: Automated archives must carry the current licence and commercial terms.
+  - type: adr
+    id: adr-0020
+    path: intent/specs/adr/0020-use-source-available-personal-license.md
+    reason: This change implements the accepted source-available licensing decision.

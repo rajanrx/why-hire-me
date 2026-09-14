@@ -62,7 +62,7 @@ Map only supported career concepts:
 - `Person` when the document owner is confirmed;
 - `Organisation`, `Engagement`, and `Role` for employment or other professional relationships;
 - `Work`, `Contribution`, and `Artefact` for outcomes and what the person did;
-- `Technology` and contextual `TechnologyUse`, not unsupported skill ratings; and
+- `Technology`, contextual `TechnologyUse`, and reviewed `TechnologyCategory` proposals, not unsupported skill ratings; and
 - `Credential` with its issuer, subject, dates, identifier, and verification state where present.
 
 Do not flatten “worked at an organisation” into a permanent person attribute. Do not silently merge

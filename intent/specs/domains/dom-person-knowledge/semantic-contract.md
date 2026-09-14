@@ -53,7 +53,7 @@ URLs, usernames, issuer identifiers, and vendor IDs are aliases or external refe
 `data` contains:
 
 - `entityType`: controlled type such as `Person`, `Organisation`, `Engagement`, `Role`, `Work`,
-  `Contribution`, `Artefact`, `Technology`, `TechnologyUse`, or `Credential`;
+  `Contribution`, `Artefact`, `Technology`, `TechnologyUse`, `TechnologyCategory`, or `Credential`;
 - `attributes`: values valid for that entity type; and
 - optional `validTime`: when the entity state applied in the world.
 

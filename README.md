@@ -97,6 +97,9 @@ account, analytics, remote fonts, or a network connection.
 It will remain an output projection—not a second source of truth—and will never add unreviewed
 claims.
 
+The [canonical template contract](templates/career-portfolio/README.md), fictional sample release,
+and deterministic sample generator keep this presentation consistent as the knowledge model grows.
+
 Hosted sharing uses replaceable destination adapters, so people can choose the platform that
 suits them. Firebase Hosting is one possible adapter, not an architectural dependency. After
 explicit sign-in and a final preview, a compatible connector can publish the same static portfolio and return
@@ -135,13 +138,16 @@ end-user release archive.
 
 ## 📜 Licence and project identity
 
-Why Hire Me is open-source software licensed under [GNU AGPL-3.0-or-later](LICENSE). You may use,
-study, modify, and redistribute it under that licence. Modified versions operated over a network
-must offer their corresponding source as required by the AGPL.
+Why Hire Me is source-available under the [PolyForm Strict License 1.0.0](LICENSE). Qualifying
+non-commercial use is free; the public licence does not permit modification or redistribution.
+Commercial, professional, recruiting, consulting, internal-business, or other revenue-connected use
+not otherwise permitted by that licence requires a [separate paid licence](COMMERCIAL-LICENSING.md).
+Generated builds carry a privacy-preserving public marker; see
+[licensing and public-use discovery](docs/licensing.md).
 
-The [trademark policy](TRADEMARKS.md) protects the Why Hire Me name and branding. Forks may describe
-their origin or compatibility, but they must use a distinct product identity and must not imply
-official approval.
+The [trademark policy](TRADEMARKS.md) separately protects the Why Hire Me name and branding. A public
+GitHub repository can still be technically forked through GitHub; the licence controls legal rights
+to modify and redistribute rather than removing GitHub's interface.
 
 > [!important] Your next steps
 > - [ ] Install the available AI skills.

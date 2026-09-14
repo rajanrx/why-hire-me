@@ -4,6 +4,7 @@ import type {
   KnowledgeReleaseReader,
 } from "../ports/career-portfolio-ports.js";
 import { CareerPortfolioValidationError } from "../domain/career-portfolio.js";
+import type { ResumeLength } from "../domain/career-portfolio.js";
 import { authorisedPortfolioAchievements, reconcilePortfolioInclusion, type PortfolioInclusionDecision } from "../domain/career-portfolio-selection.js";
 
 export class BuildCareerPortfolio {
@@ -26,23 +27,25 @@ export class BuildCareerPortfolio {
     return Object.freeze({ release, achievements, inclusion });
   }
 
-  public async preview(input: { readonly releaseDirectory: string; readonly inclusionDecisions: readonly PortfolioInclusionDecision[] }) {
+  public async preview(input: { readonly releaseDirectory: string; readonly inclusionDecisions: readonly PortfolioInclusionDecision[]; readonly resumeLength?: ResumeLength }) {
     const prepared = await this.prepare(input.releaseDirectory, input.inclusionDecisions);
+    const options = Object.freeze({ resumeLength: input.resumeLength ?? "complete" });
     const projectionManifest = prepared.inclusion.complete
-      ? this.renderer.render(prepared.release, prepared.inclusion.decisions).manifest : null;
+      ? this.renderer.render(prepared.release, prepared.inclusion.decisions, options).manifest : null;
     return Object.freeze({ releaseId: prepared.release.manifest.releaseId, subject: prepared.release.manifest.subject,
       purpose: prepared.release.manifest.purpose, audience: prepared.release.manifest.audience,
       achievements: prepared.achievements, inclusion: prepared.inclusion,
-      projectionManifest, warnings: Object.freeze([...prepared.release.manifest.limitations]), approvedByPerson: false });
+      resumeLength: options.resumeLength, projectionManifest, warnings: Object.freeze([...prepared.release.manifest.limitations]), approvedByPerson: false });
   }
 
-  public async execute(input: { readonly releaseDirectory: string; readonly inclusionDecisions: readonly PortfolioInclusionDecision[]; readonly approvedByPerson: boolean }) {
+  public async execute(input: { readonly releaseDirectory: string; readonly inclusionDecisions: readonly PortfolioInclusionDecision[]; readonly approvedByPerson: boolean; readonly resumeLength?: ResumeLength }) {
     const prepared = await this.prepare(input.releaseDirectory, input.inclusionDecisions);
     if (!input.approvedByPerson) throw new CareerPortfolioValidationError("The exact portfolio inclusion preview requires person approval.");
     if (!prepared.inclusion.complete) {
       const detail = [...prepared.inclusion.unresolvedRecordIds, ...prepared.inclusion.errors].join("; ");
       throw new CareerPortfolioValidationError(`Portfolio inclusion coverage is incomplete: ${detail}`);
     }
-    return this.portfolios.create(this.renderer.render(prepared.release, prepared.inclusion.decisions));
+    return this.portfolios.create(this.renderer.render(prepared.release, prepared.inclusion.decisions,
+      Object.freeze({ resumeLength: input.resumeLength ?? "complete" })));
   }
 }

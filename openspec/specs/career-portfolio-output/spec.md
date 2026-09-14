@@ -25,12 +25,13 @@ identity.
 
 ### Requirement: Portfolio communicates evidence-backed career knowledge
 
-The portfolio SHALL provide a career overview, navigable knowledge graph, readable and printable
-résumé, evidence references, limitations, freshness, release identity, and an inclusion decision for
-every authorised Work, Contribution, and reported outcome. The exact preview SHALL show the complete
-inclusion map before person approval. In release schema 0.1, a reported-outcome Claim SHALL identify
-itself with `data.claimType: reported-outcome` so the projection can include it without interpreting
-free text.
+The portfolio SHALL present the same authorised records through compact Experience, Expertise,
+Graph, and Evidence lenses; provide a readable printable résumé; preserve evidence references,
+limitations, freshness, release identity, and total inclusion decisions; and allow continuous
+traversal between every displayed entity and its explicit relationships. The exact preview SHALL
+show the complete inclusion map before person approval. In release schema 0.1, a reported-outcome
+Claim SHALL identify itself with `data.claimType: reported-outcome` so the projection can include it
+without interpreting free text.
 
 #### Scenario: A visitor follows a career statement
 
@@ -63,6 +64,51 @@ free text.
 
 - **WHEN** the release contains no explicit claim relationship for displayed records
 - **THEN** the portfolio states the limitation and does not imply relationships with decorative lines
+
+#### Scenario: Visitor follows Go into project context
+
+- **GIVEN** explicit release claims connect a Technology to technology use, work, and an engagement
+- **WHEN** a visitor selects that Technology and then selects the connected project
+- **THEN** the visitor can inspect the project, its connected achievements, technology context, and evidence and can navigate back without losing the original lens
+
+#### Scenario: Visitor opens an entity directly
+
+- **WHEN** a visitor opens a stable entity fragment from a link or browser context menu
+- **THEN** the same entity inspector and explicit connected records are available without requiring a prior click path
+
+#### Scenario: Related technologies share a reviewed category
+
+- **GIVEN** Technology records such as messaging products explicitly belong to one TechnologyCategory
+- **WHEN** a visitor explores that category or any member technology
+- **THEN** the portfolio exposes the category, its distinct technologies, and their contextual uses without treating the products as aliases or interchangeable skills
+
+#### Scenario: Approved key achievement is featured
+
+- **GIVEN** the approved inclusion map marks an achievement as `featured`
+- **WHEN** that achievement appears in Experience, Expertise, Graph, Evidence, or the side navigator
+- **THEN** it receives a restrained, faint background treatment while non-featured content remains visually neutral
+
+#### Scenario: Visitor uses ordinary row interaction
+
+- **WHEN** a visitor clicks or selects ordinary text in a career row
+- **THEN** no side navigator opens unless the visitor activates the explicit explore control
+
+### Requirement: Résumé length is an approved projection choice
+
+The portfolio preview SHALL identify a résumé-length preference of one page, two pages, three pages,
+or complete before local generation approval. The choice SHALL participate in deterministic
+projection identity. The skill SHALL ask the person for this preference instead of inferring one
+page from conventional advice.
+
+#### Scenario: Experienced person requests a complete résumé
+
+- **WHEN** the person chooses `complete` during the exact preview
+- **THEN** the printable projection retains all included career records and does not silently compress them to one page
+
+#### Scenario: Résumé preference is omitted by an older CLI caller
+
+- **WHEN** the CLI receives no résumé-length option
+- **THEN** it reports and uses `complete` without excluding authorised records
 
 ### Requirement: Static output is private and portable by default
 

@@ -48,18 +48,22 @@ test("renders deterministic, escaped, offline and accessible portfolio files", a
     assert.equal(second.reused, true);
     assert.deepEqual(preview.projectionManifest, first.projection.manifest);
     assert.match(html, /Content-Security-Policy/);
+    assert.match(html, /why-hire-me\.build\/v1/);
     assert.match(html, /Skip to career record/);
     assert.match(html, /role="img"/);
-    assert.match(html, /Relationship index/);
-    assert.match(html, /Portfolio inclusion map/);
+    assert.match(html, /Experience/);
+    assert.match(html, /Expertise/);
+    assert.match(html, /Career graph/);
+    assert.match(html, /class="entity-drill"/);
     assert.match(html, /No explicit claim relationships are present/);
     assert.doesNotMatch(html, /<img src=x/);
     assert.doesNotMatch(html, /https?:\/\//);
     assert.match(html, /&lt;script&gt;/);
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
     assert.equal(new Set(ids).size, ids.length);
-    assert.equal(first.projection.files["index.html"], renderer.render(release, inclusion).files["index.html"]);
+    assert.equal(first.projection.files["index.html"], renderer.render(release, inclusion, { resumeLength: "complete" }).files["index.html"]);
     assert.match(first.projection.files["styles.css"], /color-scheme:light/);
+    assert.match(first.projection.files["styles.css"], /width:min\(660px,62vw\)/);
     assert.match(first.projection.files["styles.css"], /@media print/);
     assert.doesNotMatch(first.projection.files["styles.css"], /prefers-color-scheme:dark/);
     await assert.rejects(() => useCase.execute({ releaseDirectory: "/release", inclusionDecisions: [], approvedByPerson: true }), /coverage is incomplete/);
@@ -84,10 +88,54 @@ test("keeps large record sets navigable and renders only explicit relationships"
   const richRelease = { ...release, records };
   const decision = [{ recordId: "entity-0", status: "featured" as const,
     rationale: "Relevant work with explicit technical context.", summarisedUnderRecordId: null }];
-  const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester()).render(richRelease, decision);
-  assert.equal([...projection.files["index.html"].matchAll(/class="graph-node"/g)].length, 22);
+  const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester()).render(richRelease, decision, { resumeLength: "complete" });
   assert.match(projection.files["index.html"], /work\.has_technology_use/);
-  assert.match(projection.files["app.js"], /record-search/);
+  assert.match(projection.files["app.js"], /contextmenu/);
+  assert.match(projection.files["app.js"], /pointerdown/);
+  assert.match(projection.files["app.js"], /dataset\.node/);
   assert.match(projection.files["app.js"], /keydown/);
   assert.doesNotMatch(projection.files["index.html"], /No explicit claim relationships are present/);
+});
+
+test("resume length participates in deterministic projection identity", () => {
+  const renderer = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester());
+  const complete = renderer.render(release, inclusion, { resumeLength: "complete" });
+  const twoPages = renderer.render(release, inclusion, { resumeLength: "two-pages" });
+  assert.equal(complete.manifest.resumeLength, "complete");
+  assert.equal(twoPages.manifest.resumeLength, "two-pages");
+  assert.notEqual(complete.manifest.projectionDigest, twoPages.manifest.projectionDigest);
+  assert.match(twoPages.files["index.html"], /resume-two-pages/);
+});
+
+test("canonical template keeps featured evidence subtle and semantic navigation explicit", async () => {
+  const fixture = JSON.parse(await readFile(join(process.cwd(),
+    "skills/output-career-portfolio/assets/sample-release.json"), "utf8")) as {
+      release: ValidatedKnowledgeRelease;
+      inclusionDecisions: readonly PortfolioInclusionDecision[];
+      options: { resumeLength: "two-pages" };
+    };
+  const contract = JSON.parse(await readFile(join(process.cwd(),
+    "skills/output-career-portfolio/assets/template-contract.json"), "utf8")) as {
+      rendererVersion: string;
+      theme: { default: string; density: string; featuredBackground: string; darkDefaultAllowed: boolean };
+      lenses: string[];
+    };
+  const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
+    .render(fixture.release, fixture.inclusionDecisions, fixture.options);
+
+  assert.equal(contract.rendererVersion, projection.manifest.rendererVersion);
+  assert.deepEqual(contract.lenses, ["experience", "expertise", "graph", "evidence"]);
+  assert.equal(contract.theme.default, "light");
+  assert.equal(contract.theme.density, "compact");
+  assert.equal(contract.theme.darkDefaultAllowed, false);
+  assert.match(projection.files["styles.css"], new RegExp(contract.theme.featuredBackground));
+  assert.match(projection.files["index.html"], /career-row featured/);
+  assert.match(projection.files["index.html"], /class="role"/);
+  assert.match(projection.files["index.html"], /Northstar Systems/);
+  assert.match(projection.files["index.html"], /Principal engineer/);
+  assert.match(projection.files["app.js"], /technology\.belongs_to_category/);
+  assert.match(projection.files["app.js"], /expertise-category/);
+  assert.match(projection.files["app.js"], /data-focus-graph/);
+  assert.match(projection.files["app.js"], /graph\.addEventListener\("keydown"/);
+  assert.doesNotMatch(projection.files["app.js"], /g\.dataset\.entity=n\.id/);
 });

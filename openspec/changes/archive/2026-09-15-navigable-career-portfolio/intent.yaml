@@ -1,0 +1,27 @@
+schema: why-hire-me-intent/v1
+change: navigable-career-portfolio
+references:
+  - type: goal
+    id: G-1
+    path: intent/specs/prd.md
+    reason: Visitors need to explore linked career knowledge through more than one fixed narrative.
+  - type: goal
+    id: G-2
+    path: intent/specs/prd.md
+    reason: Every drill-down must remain traceable to authorised evidence.
+  - type: goal
+    id: G-5
+    path: intent/specs/prd.md
+    reason: The person must choose and approve the résumé projection length.
+  - type: domain
+    id: dom-publication
+    path: intent/specs/domains/dom-publication/domain.md
+    reason: Multi-lens presentation and print length are replaceable Publication projections.
+  - type: adr
+    id: adr-0002
+    path: intent/specs/adr/0002-separate-canonical-knowledge-from-projections.md
+    reason: Entity navigation is a read model and does not rewrite canonical knowledge.
+  - type: adr
+    id: adr-0017
+    path: intent/specs/adr/0017-render-an-offline-portfolio-before-hosted-delivery.md
+    reason: The richer interface remains local and portable before any publication.

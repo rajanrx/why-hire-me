@@ -1,4 +1,4 @@
-import type { CareerPortfolioProjection, ValidatedKnowledgeRelease } from "../domain/career-portfolio.js";
+import type { CareerPortfolioOptions, CareerPortfolioProjection, ValidatedKnowledgeRelease } from "../domain/career-portfolio.js";
 import type { PortfolioInclusionDecision } from "../domain/career-portfolio-selection.js";
 
 export interface KnowledgeReleaseReader {
@@ -6,7 +6,7 @@ export interface KnowledgeReleaseReader {
 }
 
 export interface CareerPortfolioRenderer {
-  render(release: ValidatedKnowledgeRelease, inclusionDecisions: readonly PortfolioInclusionDecision[]): CareerPortfolioProjection;
+  render(release: ValidatedKnowledgeRelease, inclusionDecisions: readonly PortfolioInclusionDecision[], options: CareerPortfolioOptions): CareerPortfolioProjection;
 }
 
 export interface CareerPortfolioRepository {

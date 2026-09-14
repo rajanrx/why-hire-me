@@ -23,6 +23,7 @@ lookup without becoming identity.
 | **Artefact** | A tangible output or record of work. |
 | **Technology** | A tool, method, platform, language, framework, or technique. |
 | **Technology use** | The contextual use of a technology in work or a contribution. |
+| **Technology category** | A reviewed grouping used to navigate related technologies without merging their identities. |
 | **Credential** | A qualification, certification, licence, award, or attestation issued to a subject. |
 | **Claim** | An attributable semantic statement about an identified subject. |
 | **Evidence** | A precise reference supporting or contradicting a claim. |
@@ -36,6 +37,8 @@ lookup without becoming identity.
    properties of the person.
 4. Technologies attach through `Technology use` to the work or contribution where they were used.
    A skill claim may be derived from these uses but is not the same thing as a tag.
+   A technology may separately link to a reviewed `Technology category`; for example, several
+   distinct messaging products may share a messaging-and-eventing category without becoming aliases.
 5. A certification is a `Credential` connecting its subject, issuer organisation, type, issue and
    expiry dates, identifier, verification state, and evidence.
 6. An `Alias` records value, namespace, language, and validity where relevant. Alias matching may

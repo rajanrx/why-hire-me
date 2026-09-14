@@ -13,9 +13,11 @@ const distributableFiles = [
   ".claude-plugin",
   ".codex-plugin",
   "CHANGELOG.md",
+  "COMMERCIAL-LICENSING.md",
   "docs/examples.md",
   "docs/examples",
   "docs/stability.md",
+  "docs/licensing.md",
   "LICENSE",
   "NOTICE",
   "README.md",
@@ -23,6 +25,9 @@ const distributableFiles = [
   "dist",
   "package.json",
   "skills",
+  "scripts/license",
+  "scripts/portfolio",
+  "templates",
 ];
 
 await mkdir(outputDirectory, { recursive: true });

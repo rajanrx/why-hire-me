@@ -1,60 +1,287 @@
-import type { CareerPortfolioProjection, ValidatedKnowledgeRelease } from "../../domains/publication/domain/career-portfolio.js";
+import type {
+  CareerPortfolioOptions,
+  CareerPortfolioProjection,
+  ValidatedKnowledgeRelease,
+} from "../../domains/publication/domain/career-portfolio.js";
 import type { PortfolioInclusionDecision } from "../../domains/publication/domain/career-portfolio-selection.js";
 import type { ReleaseInputRecord } from "../../domains/publication/domain/knowledge-release.js";
 import type { CareerPortfolioRenderer } from "../../domains/publication/ports/career-portfolio-ports.js";
 import type { ReleaseDigester } from "../../domains/publication/ports/knowledge-release-ports.js";
 
-const esc=(v:string)=>v.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
-const obj=(v:unknown):Record<string,unknown>=>typeof v==="object"&&v!==null&&!Array.isArray(v)?v as Record<string,unknown>:{};
-const txt=(v:unknown):string|null=>typeof v==="string"&&v.trim()?v.trim():null;
+const esc = (value: string) =>
+  value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+const object = (value: unknown): Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+const text = (value: unknown): string | null =>
+  typeof value === "string" && value.trim() ? value.trim() : null;
 
-interface Item { readonly id:string; readonly type:string; readonly name:string; readonly summary:string|null; readonly recordedAt:string; readonly details:readonly {label:string;value:string}[]; readonly inclusion:PortfolioInclusionDecision|null }
+interface PortfolioItem {
+  readonly id: string;
+  readonly type: string;
+  readonly name: string;
+  readonly summary: string | null;
+  readonly recordedAt: string;
+  readonly details: readonly {
+    readonly label: string;
+    readonly value: string;
+  }[];
+  readonly inclusion: PortfolioInclusionDecision | null;
+}
 
-function itemFrom(record:ReleaseInputRecord,inclusion:PortfolioInclusionDecision|null):Item{
-  const data=obj(record.data),attributes=obj(data.attributes);
-  const details=Object.entries(attributes).filter(([key])=>!["displayName","summary","description"].includes(key)).flatMap(([key,value])=>{
-    const rendered=typeof value==="string"||typeof value==="number"||typeof value==="boolean"?String(value):Array.isArray(value)&&value.every((part)=>typeof part==="string")?value.join(" · "):null;
-    return rendered===null?[]:[{label:key.replace(/([A-Z])/g," $1").replace(/^./,(c)=>c.toUpperCase()),value:rendered}];
+interface PortfolioRelation {
+  readonly subject: string;
+  readonly object: string;
+  readonly predicate: string;
+}
+
+function itemFrom(
+  record: ReleaseInputRecord,
+  inclusion: PortfolioInclusionDecision | null,
+): PortfolioItem {
+  const data = object(record.data),
+    attributes = object(data.attributes);
+  const details = Object.entries(attributes)
+    .filter(([key]) => !["displayName", "summary", "description"].includes(key))
+    .flatMap(([key, value]) => {
+      const rendered =
+        typeof value === "string" ||
+        typeof value === "number" ||
+        typeof value === "boolean"
+          ? String(value)
+          : Array.isArray(value) &&
+              value.every((part) => typeof part === "string")
+            ? value.join(" · ")
+            : null;
+      return rendered === null
+        ? []
+        : [
+            {
+              label: key
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, (character) => character.toUpperCase()),
+              value: rendered,
+            },
+          ];
+    });
+  const literal = object(data.object);
+  const type =
+    record.recordType === "Claim" && data.claimType === "reported-outcome"
+      ? "Reported outcome"
+      : record.recordType === "Evidence"
+        ? "Evidence"
+        : (text(data.entityType) ?? record.recordType);
+  return Object.freeze({
+    id: record.id,
+    type,
+    name:
+      text(attributes.displayName) ??
+      text(data.statement) ??
+      text(literal.value) ??
+      record.id,
+    summary:
+      text(attributes.summary) ??
+      text(attributes.description) ??
+      text(data.context),
+    recordedAt: record.recordedAt,
+    details: Object.freeze(details),
+    inclusion,
   });
-  const literal=obj(data.object);
-  return Object.freeze({id:record.id,type:record.recordType==="Claim"&&data.claimType==="reported-outcome"?"Reported outcome":txt(data.entityType)??"Career record",
-    name:txt(attributes.displayName)??txt(data.statement)??txt(literal.value)??record.id,
-    summary:txt(attributes.summary)??txt(attributes.description)??txt(data.context),recordedAt:record.recordedAt,details:Object.freeze(details),inclusion});
 }
 
-function relationFrom(record:ReleaseInputRecord){
-  const data=obj(record.data),subject=txt(data.subjectId)??txt(data.subject)??txt(obj(data.subject).ref),target=txt(data.objectId)??txt(data.object)??txt(obj(data.object).ref);
-  return subject&&target?{subject,object:target,predicate:txt(data.predicate)??txt(data.predicateId)??"related to"}:null;
+function relationFrom(record: ReleaseInputRecord): PortfolioRelation | null {
+  const data = object(record.data),
+    subject =
+      text(data.subjectId) ??
+      text(data.subject) ??
+      text(object(data.subject).ref);
+  const target =
+    text(data.objectId) ?? text(data.object) ?? text(object(data.object).ref);
+  return subject && target
+    ? {
+        subject,
+        object: target,
+        predicate:
+          text(data.predicate) ?? text(data.predicateId) ?? "related to",
+      }
+    : null;
 }
 
-const styles=`:root{color-scheme:light;--paper:#f4f1ea;--surface:#fff;--ink:#17202a;--muted:#5d6872;--line:#d7d3ca;--navy:#17324d;--blue:#275d85;--rust:#a34f32;--soft:#e8eef2;--shadow:0 18px 50px rgba(23,32,42,.08);font:16px/1.55 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink)}a{color:var(--blue);text-underline-offset:.2em}button{font:inherit}.skip{position:fixed;left:-9999px;top:1rem;z-index:20}.skip:focus{left:1rem;background:var(--ink);color:#fff;padding:.7rem 1rem}.shell{width:min(1240px,calc(100% - 2rem));margin:auto}.masthead{background:var(--surface);border-bottom:1px solid var(--line)}.masthead-grid{display:grid;grid-template-columns:1fr auto;gap:2rem;padding:2.6rem 0 2rem}.kicker,.section-label,.record-type{margin:0 0 .55rem;color:var(--rust);font-size:.72rem;font-weight:750;letter-spacing:.13em;text-transform:uppercase}h1{margin:0;font:500 clamp(2.6rem,6vw,5.2rem)/1 Georgia,serif;letter-spacing:-.04em}.position{max-width:62ch;margin:1rem 0 0;color:var(--muted);font-size:1.05rem}.release-summary{display:grid;grid-template-columns:repeat(3,minmax(95px,1fr));align-self:end;border:1px solid var(--line);background:var(--paper)}.release-summary div{padding:1rem 1.2rem}.release-summary div+div{border-left:1px solid var(--line)}.release-summary strong{display:block;color:var(--navy);font:500 1.8rem Georgia,serif}.release-summary span{color:var(--muted);font-size:.72rem}.section-nav{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line)}.section-nav .shell{display:flex;gap:1.4rem;overflow:auto;padding:.75rem 0}.section-nav a{color:var(--muted);font-size:.78rem;font-weight:700;text-decoration:none;white-space:nowrap}main{padding:2rem 0 5rem}.brief{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.38fr);gap:2rem}.panel{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}.overview{padding:clamp(1.5rem,4vw,3.5rem)}h2{margin:.2rem 0 1rem;font:500 clamp(2rem,4vw,3.3rem)/1.08 Georgia,serif;letter-spacing:-.025em}.overview p,.section-heading p:last-child{max-width:72ch;color:var(--muted)}.scope{padding:1.5rem}.scope dl,.record-facts{margin:0}.scope dl div,.record-facts div{display:flex;justify-content:space-between;gap:1rem;padding:.65rem 0;border-bottom:1px solid var(--line)}dt{color:var(--muted)}dd{margin:0;font-weight:650;text-align:right}.section{margin-top:4rem}.section-heading{display:flex;justify-content:space-between;align-items:end;gap:2rem;margin-bottom:1.3rem}.achievement-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1rem}.achievement{display:flex;min-height:190px;flex-direction:column;padding:1.35rem;background:var(--surface);border:1px solid var(--line);text-align:left;cursor:pointer}.achievement:hover,.achievement:focus-visible,.achievement[aria-current=true]{border-color:var(--blue);box-shadow:var(--shadow);transform:translateY(-2px)}.achievement .status{align-self:flex-start;margin-bottom:auto;padding:.22rem .5rem;background:var(--soft);color:var(--navy);font-size:.66rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase}.achievement strong{margin-top:1.2rem;font:500 1.35rem Georgia,serif}.achievement small{margin-top:.4rem;color:var(--muted)}.explorer{display:grid;grid-template-columns:minmax(240px,.32fr) minmax(0,.68fr);min-height:520px}.record-index{padding:1rem;border-right:1px solid var(--line)}.tools{display:grid;gap:.65rem;margin-bottom:1rem}.tools input,.tools select{width:100%;padding:.72rem .8rem;background:#fff;border:1px solid var(--line);color:var(--ink)}.record-list{display:grid;gap:.4rem;max-height:620px;overflow:auto}.record-button{display:flex;justify-content:space-between;gap:1rem;width:100%;padding:.75rem;background:transparent;border:0;border-bottom:1px solid var(--line);color:var(--ink);text-align:left;cursor:pointer}.record-button span{color:var(--muted);font-size:.72rem}.record-button:hover,.record-button:focus-visible,.record-button[aria-current=true]{background:var(--soft);color:var(--navy)}.detail-pane{padding:clamp(1.4rem,4vw,3rem)}.record-detail h3{margin:.2rem 0 1rem;font:500 clamp(2rem,4vw,3.6rem)/1.05 Georgia,serif}.record-summary{max-width:65ch;font-size:1.08rem}.muted,.record-meta{color:var(--muted)}.record-meta{margin-top:2rem;font-size:.78rem}.decision{margin-top:2rem;padding:1rem;border-left:3px solid var(--rust);background:#faf7f1}.decision span{display:block;color:var(--rust);font-size:.68rem;font-weight:750;text-transform:uppercase}.graph-wrap{overflow:auto;background:var(--surface);border:1px solid var(--line)}.graph{display:block;min-width:900px;width:100%;height:auto}.graph-edge{fill:none;stroke:#b9c6ce;stroke-width:1.5}.graph-node{cursor:pointer}.graph-node rect{fill:#fff;stroke:#aebbc4}.graph-node:hover rect,.graph-node:focus rect{fill:var(--soft);stroke:var(--blue);stroke-width:2}.graph-node text{fill:var(--ink);font-size:12px}.graph-node .node-type{fill:var(--rust);font-size:9px;font-weight:700;letter-spacing:.08em}.relationship-list{display:grid;gap:.5rem;margin:1rem 0 0;padding:0;list-style:none}.relationship-list li{padding:.75rem 1rem;background:var(--surface);border:1px solid var(--line)}.resume-sheet{padding:clamp(1.5rem,5vw,4rem);background:#fff;border:1px solid var(--line)}.resume-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin:0;padding:0;list-style:none;border-top:1px solid var(--ink)}.resume-list li{padding:1rem;border-bottom:1px solid var(--line)}.resume-list strong{display:block}.resume-list span{color:var(--muted);font-size:.8rem}.coverage-table{width:100%;border-collapse:collapse;background:#fff}.coverage-table th,.coverage-table td{padding:.75rem;border-bottom:1px solid var(--line);text-align:left}.coverage-table th{color:var(--muted);font-size:.72rem;text-transform:uppercase}.notice{padding:1.25rem;background:#fff;border-left:4px solid var(--rust)}footer{padding:2rem 0;border-top:1px solid var(--line);color:var(--muted);font-size:.78rem}:focus-visible{outline:3px solid #d8896e;outline-offset:3px}@media(max-width:780px){.masthead-grid,.brief,.explorer{grid-template-columns:1fr}.release-summary{margin-top:1rem}.record-index{border-right:0;border-bottom:1px solid var(--line)}.section-heading{display:block}.coverage-table{display:block;overflow:auto}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}@media print{@page{size:A4;margin:13mm}body{background:#fff;font-size:9pt}.section-nav,.brief,.achievement-grid,.explorer,.graph-wrap,.relationship-list,.coverage-table,.notice,footer{display:none!important}.section{margin-top:0}.section:not(#resume){display:none}.resume-sheet{padding:0;border:0}.resume-list{grid-template-columns:1fr 1fr}.masthead-grid{padding:0 0 5mm}.release-summary{display:none}h1{font-size:25pt}h2{font-size:17pt}}\n`;
+const styles = `:root{color-scheme:light;--paper:#fbfbfa;--surface:#fff;--ink:#18202a;--muted:#657080;--line:#dfe3e8;--soft:#f2f5f8;--blue:#1769aa;--blue-soft:#eaf3fb;--green:#26735c;--shadow:0 8px 30px rgba(24,32,42,.07);font:14px/1.55 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0}a{color:var(--blue);text-underline-offset:3px}button,input,select{font:inherit;color:inherit}.skip{position:fixed;top:-60px;left:12px;z-index:40;background:var(--ink);color:#fff;padding:8px 12px}.skip:focus{top:8px}.topbar{height:58px;position:sticky;top:0;z-index:10;display:grid;grid-template-columns:minmax(180px,1fr) auto minmax(180px,1fr);align-items:center;padding:0 28px;border-bottom:1px solid var(--line);background:rgba(251,251,250,.96);backdrop-filter:blur(12px)}.wordmark{font-weight:720;color:var(--ink);text-decoration:none}.tabs{display:flex;height:100%;gap:4px}.tabs button{border:0;border-bottom:2px solid transparent;background:transparent;padding:0 13px;color:var(--muted);cursor:pointer}.tabs button[aria-selected=true],.tabs button:hover{color:var(--ink);border-color:var(--blue)}.release-id{justify-self:end;color:var(--muted);font-size:11px}.shell{max-width:1220px;margin:auto;padding:0 28px}.profile{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(300px,.6fr);gap:48px;padding:42px 0 32px;border-bottom:1px solid var(--line)}.overline{margin:0 0 6px;color:var(--blue);font-size:10px;font-weight:750;letter-spacing:.11em;text-transform:uppercase}.profile h1{margin:0;font-size:34px;line-height:1.1;letter-spacing:-.035em}.lead{max-width:720px;margin:12px 0 0;color:#344152;font-size:16px}.facts{display:grid;grid-template-columns:1fr 1fr;margin:0;border:1px solid var(--line);border-radius:8px;background:#fff}.facts div{padding:10px 13px;border-bottom:1px solid var(--line)}.facts div:nth-child(odd){border-right:1px solid var(--line)}dt{color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}dd{margin:2px 0 0}.view{padding:28px 0 56px}.heading{display:flex;justify-content:space-between;align-items:end;margin-bottom:20px}.heading h2{margin:0;font-size:24px;letter-spacing:-.025em}.heading>p{max-width:520px;margin:0;color:var(--muted);font-size:13px}.experience-layout,.graph-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:26px;align-items:start}.career-list{border-top:1px solid var(--line)}.career-row{display:grid;grid-template-columns:130px minmax(0,1fr) auto;gap:16px;padding:10px 7px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}.career-row:hover{background:var(--blue-soft)}.career-row .kind{color:var(--muted);font-size:10px;text-transform:uppercase}.career-row strong{font-weight:650}.career-row small{color:var(--muted)}.inspector{position:sticky;top:80px;padding:18px;border:1px solid var(--line);border-radius:8px;background:#fff;box-shadow:var(--shadow)}.inspector h3{margin:10px 0 5px;font-size:18px;line-height:1.3}.inspector .meta{color:var(--muted);font-size:11px}.inspector p{color:#354253}.entity-link{color:inherit;text-decoration:underline;text-decoration-color:#afc4d6}.entity-link:hover{color:var(--blue)}.connections{display:grid;margin-top:14px;border-top:1px solid var(--line)}.connections a{display:grid;grid-template-columns:1fr auto;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}.connections a:hover strong{color:var(--blue)}.connections span{color:var(--muted);font-size:10px}.explore-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px}.tools{position:sticky;top:80px}.tools input,.tools select{width:100%;height:36px;padding:0 10px;border:1px solid var(--line);border-radius:6px;background:#fff}.expertise-list{display:grid;max-height:520px;overflow:auto;margin-top:9px}.expertise-list button{display:flex;justify-content:space-between;border:0;border-radius:5px;background:transparent;padding:6px 8px;text-align:left;cursor:pointer}.expertise-list button[aria-current=true],.expertise-list button:hover{color:var(--blue);background:var(--blue-soft)}.result-head{padding-bottom:13px;border-bottom:1px solid var(--line)}.result-head h3{margin:0;font-size:24px}.usage{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.usage a{font-weight:650}.usage span{color:var(--muted);font-size:11px}.graph-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:10px}.graph-toolbar select{height:32px;border:1px solid var(--line);border-radius:5px;background:#fff}.graph-wrap{min-height:500px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff}.graph{display:block;min-width:760px;width:100%;height:auto}.graph-edge{stroke:#cbd3da;stroke-width:1}.graph-node{cursor:pointer}.graph-node circle{fill:#fff;stroke:#8e9aaa;stroke-width:1.5}.graph-node:focus circle,.graph-node:hover circle{stroke:var(--blue);stroke-width:3}.graph-node text{fill:var(--ink);font-size:10px}.relationship-list{margin-top:14px}.relationship-list details{padding:7px 0;border-bottom:1px solid var(--line)}.relationship-list summary{cursor:pointer;font-weight:650}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:7px;background:#fff}table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:9px 11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--muted);font-size:10px;text-transform:uppercase}.notice{max-width:760px;margin-top:22px;padding-top:15px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}.drawer{position:fixed;z-index:31;inset:0 0 0 auto;width:min(440px,calc(100vw - 24px));display:flex;flex-direction:column;background:#fff;border-left:1px solid var(--line);box-shadow:-18px 0 45px rgba(24,32,42,.14);transform:translateX(105%);transition:transform .18s ease}.drawer.open{transform:none}.drawer header{height:52px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid var(--line)}.drawer header button{border:0;background:transparent;color:var(--blue);cursor:pointer}.drawer header p{overflow:hidden;margin:0;color:var(--muted);font-size:11px;white-space:nowrap;text-overflow:ellipsis}.drawer-body{padding:22px;overflow:auto}.drawer-body h2{margin:4px 0 6px;font-size:23px;line-height:1.25}.scrim{position:fixed;z-index:30;inset:0;border:0;background:rgba(24,32,42,.2)}footer{padding:20px 28px;border-top:1px solid var(--line);color:var(--muted);font-size:11px}:focus-visible{outline:3px solid #aad1ef;outline-offset:2px}@media(max-width:820px){.topbar{grid-template-columns:1fr auto;padding:0 16px}.release-id{display:none}.tabs{position:fixed;z-index:20;bottom:0;left:0;right:0;height:52px;justify-content:center;border-top:1px solid var(--line);background:#fff}.shell{padding:0 16px}.profile,.experience-layout,.graph-layout{grid-template-columns:1fr}.inspector{position:static}.explore-layout{grid-template-columns:1fr}.tools{position:static}.expertise-list{display:flex;overflow:auto}.expertise-list button{white-space:nowrap}.profile{gap:20px}footer{margin-bottom:52px}}@media(max-width:540px){.profile h1{font-size:28px}.facts{grid-template-columns:1fr}.career-row{grid-template-columns:1fr;gap:2px}.heading{display:block}.heading>p{margin-top:5px}.usage{grid-template-columns:1fr}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.drawer{transition:none}}@media print{@page{size:A4;margin:13mm}.topbar,.tabs,.inspector,.heading>p,.drawer,.scrim,footer{display:none!important}.shell{max-width:none;padding:0}.profile{padding:0 0 14px}.view{display:none!important}.view[data-view=experience]{display:block!important;padding-top:14px}.career-row{padding:5px 0;break-inside:avoid}body.resume-one-page{font-size:9px}body.resume-two-pages{font-size:11px}body.resume-three-pages{font-size:12px}}
+`;
 
-const app=`(()=>{"use strict";const buttons=[...document.querySelectorAll("[data-record]")],details=[...document.querySelectorAll("[data-detail]")],search=document.querySelector("#record-search"),filter=document.querySelector("#record-filter");function select(id,navigate=false){buttons.forEach(b=>b.setAttribute("aria-current",String(b.dataset.record===id)));details.forEach(d=>d.hidden=d.dataset.detail!==id);if(id)history.replaceState(null,"","#record-"+encodeURIComponent(id));if(navigate)document.querySelector("#records")?.scrollIntoView()}buttons.forEach(b=>b.addEventListener("click",()=>select(b.dataset.record,b.classList.contains("achievement")||b.classList.contains("graph-node"))));function apply(){const q=(search?.value||"").toLowerCase(),type=filter?.value||"all";document.querySelectorAll(".record-button").forEach(b=>{b.hidden=!(b.textContent.toLowerCase().includes(q)&&(type==="all"||b.dataset.type===type))})}search?.addEventListener("input",apply);filter?.addEventListener("change",apply);document.querySelectorAll(".graph-node").forEach(n=>n.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select(n.dataset.record,true)}}));const hash=decodeURIComponent(location.hash.replace("#record-","")),first=hash&&details.some(d=>d.dataset.detail===hash)?hash:buttons[0]?.dataset.record;if(first)select(first)})();\n`;
+const app = `(()=>{"use strict";const root=document.querySelector("#portfolio-data"),model=JSON.parse(root.dataset.model),items=new Map(model.items.map(i=>[i.id,i])),relations=model.relations,links=id=>relations.filter(r=>r.subject===id||r.object===id),other=(r,id)=>r.subject===id?r.object:r.subject,esc=v=>String(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[c]),href=id=>"#entity/"+encodeURIComponent(id),entity=(id,label,klass="")=>'<a class="entity-link '+klass+'" href="'+href(id)+'" data-entity="'+esc(id)+'">'+esc(label)+'</a>';let trail=[],returnHash="#experience";const drawer=document.querySelector("#drawer"),body=document.querySelector("#drawer-body"),path=document.querySelector("#drawer-path"),back=document.querySelector("#drawer-back"),scrim=document.querySelector("#scrim");function connections(id){return links(id).map(r=>{const target=items.get(other(r,id));return target?'<a href="'+href(target.id)+'" data-entity="'+esc(target.id)+'"><strong>'+esc(target.name)+'</strong><span>'+esc(r.predicate)+'</span></a>':""}).join("")}function renderEntity(id){const item=items.get(id);if(!item)return false;body.innerHTML='<p class="overline">'+esc(item.type)+'</p><h2>'+esc(item.name)+'</h2>'+(item.summary?'<p>'+esc(item.summary)+'</p>':'<p>No reviewed narrative is present in this release.</p>')+(item.details.length?'<dl>'+item.details.map(d=>'<div><dt>'+esc(d.label)+'</dt><dd>'+esc(d.value)+'</dd></div>').join("")+'</dl>':"")+'<section><p class="overline">Connected career knowledge</p><div class="connections">'+(connections(id)||'<p>No explicit relationships connect this record.</p>')+'</div></section>'+(item.inclusion?'<p class="notice">'+esc(item.inclusion.status)+' · '+esc(item.inclusion.rationale)+'</p>':'')+'<p class="meta">Record '+esc(item.id)+' · '+esc(item.recordedAt)+'</p>';return true}function open(id,push=true){if(!drawer.classList.contains("open"))returnHash=location.hash&&!location.hash.startsWith("#entity/")?location.hash:"#experience";if(push&&trail.at(-1)!==id)trail.push(id);else if(!push)trail=[id];if(!renderEntity(id))return;drawer.classList.add("open");drawer.setAttribute("aria-hidden","false");scrim.hidden=false;back.disabled=trail.length<2;path.textContent=trail.map(x=>items.get(x)?.name||x).join(" / ");history.replaceState(null,"",href(id))}function close(){drawer.classList.remove("open");drawer.setAttribute("aria-hidden","true");scrim.hidden=true;trail=[];history.replaceState(null,"",returnHash)}document.addEventListener("click",e=>{const link=e.target.closest("[data-entity]");if(!link)return;e.preventDefault();open(link.dataset.entity)});back.addEventListener("click",()=>{if(trail.length>1){trail.pop();open(trail.at(-1),false)}});document.querySelector("#drawer-close").addEventListener("click",close);scrim.addEventListener("click",close);document.addEventListener("keydown",e=>{if(e.key==="Escape"&&drawer.classList.contains("open"))close()});const views=[...document.querySelectorAll(".view")],tabs=[...document.querySelectorAll("[data-tab]")];function setView(id){views.forEach(v=>v.hidden=v.dataset.view!==id);tabs.forEach(t=>t.setAttribute("aria-selected",String(t.dataset.tab===id)))}tabs.forEach(t=>t.addEventListener("click",()=>{setView(t.dataset.tab);history.replaceState(null,"","#"+t.dataset.tab)}));const tech=model.items.filter(i=>i.type.toLowerCase()==="technology"),expertiseList=document.querySelector("#expertise-list"),results=document.querySelector("#expertise-results");function neighbourhood(id){const seen=new Set([id]);for(let depth=0;depth<2;depth++)for(const current of [...seen])for(const relation of links(current))seen.add(other(relation,current));return [...seen].filter(x=>x!==id&&items.has(x)).map(x=>items.get(x))}function showExpertise(id){const item=items.get(id),near=neighbourhood(id);expertiseList.querySelectorAll("button").forEach(b=>b.setAttribute("aria-current",String(b.dataset.expertise===id)));results.innerHTML='<div class="result-head"><h3>'+entity(id,item.name)+'</h3><p>'+near.length+' connected records through explicit relationships.</p></div>'+near.map(n=>'<div class="usage"><span>'+esc(n.type)+'</span>'+entity(n.id,n.name)+'</div>').join("")}expertiseList.innerHTML=tech.map(t=>'<button data-expertise="'+esc(t.id)+'"><span>'+esc(t.name)+'</span><small>'+neighbourhood(t.id).length+'</small></button>').join("")||'<p>No Technology entities are connected in this release.</p>';expertiseList.addEventListener("click",e=>{const b=e.target.closest("[data-expertise]");if(b)showExpertise(b.dataset.expertise)});if(tech[0])showExpertise(tech[0].id);const search=document.querySelector("#expertise-search");search.addEventListener("input",()=>expertiseList.querySelectorAll("button").forEach(b=>b.hidden=!b.textContent.toLowerCase().includes(search.value.toLowerCase())));const graph=document.querySelector("#graph"),focus=document.querySelector("#graph-focus");focus.innerHTML=model.items.map(i=>'<option value="'+esc(i.id)+'">'+esc(i.name)+' · '+esc(i.type)+'</option>').join("");function draw(id){const selected=items.get(id),near=neighbourhood(id),nodes=[selected,...near],ids=new Set(nodes.map(n=>n.id)),edges=relations.filter(r=>ids.has(r.subject)&&ids.has(r.object));graph.querySelectorAll(".generated").forEach(n=>n.remove());const coords=new Map([[id,{x:400,y:250}]]);near.forEach((n,k)=>{const angle=2*Math.PI*k/Math.max(near.length,1);coords.set(n.id,{x:400+300*Math.cos(angle),y:250+200*Math.sin(angle)})});edges.forEach(r=>{const a=coords.get(r.subject),b=coords.get(r.object),line=document.createElementNS("http://www.w3.org/2000/svg","line");Object.entries({x1:a.x,y1:a.y,x2:b.x,y2:b.y,class:"graph-edge generated"}).forEach(([k,v])=>line.setAttribute(k,v));graph.appendChild(line)});nodes.forEach(n=>{const p=coords.get(n.id),g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","graph-node generated");g.setAttribute("tabindex","0");g.setAttribute("role","link");g.dataset.entity=n.id;const c=document.createElementNS("http://www.w3.org/2000/svg","circle");c.setAttribute("cx",p.x);c.setAttribute("cy",p.y);c.setAttribute("r",n.id===id?28:11);const t=document.createElementNS("http://www.w3.org/2000/svg","text");t.setAttribute("x",p.x+(n.id===id?0:17));t.setAttribute("y",p.y+4);t.setAttribute("text-anchor",n.id===id?"middle":"start");t.textContent=n.name.length>28?n.name.slice(0,26)+"…":n.name;g.append(c,t);graph.appendChild(g)});document.querySelector("#graph-list").innerHTML=edges.map(r=>'<details><summary>'+esc(items.get(r.subject).name)+' → '+esc(items.get(r.object).name)+'</summary><p>'+esc(r.predicate)+'</p></details>').join("")||'<p>No explicit relationships are connected to this focus.</p>';document.querySelector("#graph-inspector").innerHTML='<p class="overline">Focused entity</p><h3>'+entity(selected.id,selected.name)+'</h3><p>'+esc(selected.type)+' · '+near.length+' connected records</p><div class="connections">'+connections(id)+'</div>'}focus.addEventListener("change",()=>draw(focus.value));if(model.items[0]){focus.value=tech[0]?.id||model.items[0].id;draw(focus.value)}document.querySelector("#evidence-search").addEventListener("input",e=>document.querySelectorAll("#evidence-body tr").forEach(row=>row.hidden=!row.textContent.toLowerCase().includes(e.target.value.toLowerCase())));document.querySelectorAll(".graph-node").forEach(n=>n.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open(n.dataset.entity)}}));const hash=location.hash;if(hash.startsWith("#entity/"))open(decodeURIComponent(hash.slice(8)),false);else{const view=hash.slice(1);if(views.some(v=>v.dataset.view===view))setView(view)}})();
+`;
 
-export class StaticHtmlCareerPortfolioRenderer implements CareerPortfolioRenderer {
-  public constructor(private readonly digester:ReleaseDigester){}
-  public render(release:ValidatedKnowledgeRelease,inclusionDecisions:readonly PortfolioInclusionDecision[]):CareerPortfolioProjection{
-    const decisions=new Map(inclusionDecisions.map((d)=>[d.recordId,d])),excluded=new Set(inclusionDecisions.filter((d)=>d.status==="excluded").map((d)=>d.recordId));
-    const displayRecords=release.records.filter((r)=>(r.recordType==="Entity"||(r.recordType==="Claim"&&obj(r.data).claimType==="reported-outcome"))&&!excluded.has(r.id)),evidence=release.records.filter((r)=>r.recordType==="Evidence"),activities=release.records.filter((r)=>r.recordType==="Activity");
-    const items=displayRecords.map((r)=>itemFrom(r,decisions.get(r.id)??null)),achievements=items.filter((i)=>i.inclusion!==null&&i.inclusion.status!=="summarised"),types=[...new Set(items.map((i)=>i.type))].sort();
-    const recordIds=new Set(release.records.map((r)=>r.id));
-    const relations=release.records.filter((r)=>r.recordType==="Claim").flatMap((r)=>{const rel=relationFrom(r);return rel&&recordIds.has(rel.subject)&&recordIds.has(rel.object)?[rel]:[]});
-    const points=new Map(items.map((i,n)=>[i.id,{x:55+(n%4)*235,y:45+Math.floor(n/4)*88}])),height=Math.max(160,95+Math.ceil(Math.max(items.length,1)/4)*88);
-    const edges=relations.flatMap((r)=>{const a=points.get(r.subject),b=points.get(r.object);return a&&b?[`<path class="graph-edge" d="M${a.x+180} ${a.y+28} C${a.x+205} ${a.y+28},${b.x-25} ${b.y+28},${b.x} ${b.y+28}"/>`]:[]}).join("");
-    const nodes=items.map((i)=>{const p=points.get(i.id)!;return `<g class="graph-node" tabindex="0" role="button" data-record="${esc(i.id)}" aria-label="Explore ${esc(i.name)}" transform="translate(${p.x} ${p.y})"><rect width="180" height="56" rx="4"/><text class="node-type" x="12" y="18">${esc(i.type.toUpperCase())}</text><text x="12" y="39">${esc(i.name.slice(0,25))}</text></g>`}).join("");
-    const detail=(i:Item)=>`<article class="record-detail" data-detail="${esc(i.id)}" hidden><p class="record-type">${esc(i.type)}</p><h3>${esc(i.name)}</h3>${i.summary?`<p class="record-summary">${esc(i.summary)}</p>`:"<p class=\"record-summary muted\">No reviewed narrative is present in this release.</p>"}${i.details.length?`<dl class="record-facts">${i.details.map((d)=>`<div><dt>${esc(d.label)}</dt><dd>${esc(d.value)}</dd></div>`).join("")}</dl>`:""}${i.inclusion?`<p class="decision"><span>${esc(i.inclusion.status)}</span>${esc(i.inclusion.rationale)}</p>`:""}<p class="record-meta">Record <code>${esc(i.id)}</code> · recorded ${esc(i.recordedAt)}</p></article>`;
-    const recordButtons=items.map((i)=>`<button class="record-button" type="button" data-record="${esc(i.id)}" data-type="${esc(i.type)}"><strong>${esc(i.name)}</strong><span>${esc(i.type)}</span></button>`).join("")||"<p>No career records are present.</p>";
-    const cards=achievements.map((i)=>`<button class="achievement" type="button" data-record="${esc(i.id)}"><span class="status">${esc(i.inclusion!.status)}</span><strong>${esc(i.name)}</strong><small>${esc(i.type)} · open full context</small></button>`).join("")||"<p class=\"notice\">No Work or Contribution record was selected.</p>";
-    const relationshipList=relations.map((r)=>`<li><code>${esc(r.subject)}</code> <strong>${esc(r.predicate)}</strong> <code>${esc(r.object)}</code></li>`).join("")||"<li>No explicit claim relationships are present; the renderer has not invented any.</li>";
-    const resumeList=items.map((i)=>`<li><strong>${esc(i.name)}</strong><span>${esc(i.type)}</span>${i.summary?`<p>${esc(i.summary)}</p>`:""}</li>`).join("")||"<li>No career records were included.</li>";
-    const rows=inclusionDecisions.map((d)=>`<tr><td><code>${esc(d.recordId)}</code></td><td>${esc(d.status)}</td><td>${esc(d.rationale)}</td></tr>`).join(""),limits=release.manifest.limitations.map((l)=>`<li>${esc(l)}</li>`).join(""),title=esc(release.manifest.subject.displayName);
-    const options=types.map((t)=>`<option value="${esc(t)}">${esc(t)}</option>`).join("");
-    const html=`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'"><title>${title} · Career record</title><link rel="stylesheet" href="styles.css"><script src="app.js" defer></script></head><body><a class="skip" href="#career-record">Skip to career record</a><header class="masthead"><div class="shell masthead-grid"><div><p class="kicker">Evidence-backed career record</p><h1>${title}</h1><p class="position">A person-reviewed, navigable view prepared for ${esc(release.manifest.purpose)}. Follow individual records to inspect context instead of relying on a one-page summary.</p></div><div class="release-summary" aria-label="Release summary"><div><strong>${achievements.length}</strong><span>selected achievements</span></div><div><strong>${relations.length}</strong><span>explicit relationships</span></div><div><strong>${evidence.length}</strong><span>evidence records</span></div></div></div></header><nav class="section-nav" aria-label="Career record sections"><div class="shell"><a href="#career-record">Brief</a><a href="#achievements">Achievements</a><a href="#records">Record explorer</a><a href="#relationships">Knowledge graph</a><a href="#resume">Printable résumé</a><a href="#coverage">Coverage</a></div></nav><main id="career-record" class="shell"><div class="brief"><section class="panel overview"><p class="section-label">Career brief</p><h2>Explore the work behind the résumé.</h2><p>This structured projection keeps distinct work visible, connects technical context only where the release supports it, and preserves every editorial decision.</p></section><aside class="panel scope"><p class="section-label">Release scope</p><dl><div><dt>Release</dt><dd>${esc(release.manifest.releaseId)}</dd></div><div><dt>Audience</dt><dd>${esc(release.manifest.audience)}</dd></div><div><dt>Records</dt><dd>${items.length}</dd></div><div><dt>Expires</dt><dd>${esc(release.manifest.view.expiresAt.slice(0,10))}</dd></div></dl></aside></div><section class="section" id="achievements"><div class="section-heading"><div><p class="section-label">Achievement index</p><h2>Distinct work, kept distinct.</h2></div><p>Each item opens its governed context. Employer summaries do not replace underlying achievements.</p></div><div class="achievement-grid">${cards}</div></section><section class="section" id="records"><div class="section-heading"><div><p class="section-label">Career knowledge</p><h2>Record explorer</h2></div><p>Search by work, role, organisation, technology, or contribution, then inspect the exact record.</p></div><div class="panel explorer"><aside class="record-index"><div class="tools"><label for="record-search">Search records</label><input id="record-search" type="search" autocomplete="off"><label for="record-filter">Filter by type</label><select id="record-filter"><option value="all">All record types</option>${options}</select></div><div class="record-list">${recordButtons}</div></aside><div class="detail-pane" aria-live="polite">${items.map(detail).join("")||"<p>No record is available.</p>"}</div></div></section><section class="section" id="relationships"><div class="section-heading"><div><p class="section-label">Technical context</p><h2>Knowledge graph</h2></div><p>Selectable nodes open record detail. Lines appear only for explicit release relationships.</p></div>${items.length?`<div class="graph-wrap"><svg class="graph" role="img" aria-labelledby="graph-title graph-desc" viewBox="0 0 1000 ${height}"><title id="graph-title">Career knowledge relationship graph</title><desc id="graph-desc">Interactive records and explicit relationships, repeated in the relationship index.</desc>${edges}${nodes}</svg></div>`:"<p>No graph records are present.</p>"}<h3>Relationship index</h3><ul class="relationship-list">${relationshipList}</ul></section><section class="section" id="resume"><div class="section-heading"><div><p class="section-label">Print view</p><h2>Evidence-backed résumé</h2></div><p>Printing produces a restrained résumé from the same authorised records.</p></div><article class="resume-sheet"><h2>${title}</h2><p>${esc(release.manifest.purpose)}</p><ul class="resume-list">${resumeList}</ul></article></section><section class="section" id="coverage"><div class="section-heading"><div><p class="section-label">Editorial accountability</p><h2>Portfolio inclusion map</h2></div><p>Every authorised Work, Contribution, and reported outcome has a visible disposition.</p></div><table class="coverage-table"><thead><tr><th>Achievement record</th><th>Disposition</th><th>Rationale</th></tr></thead><tbody>${rows}</tbody></table><div class="notice"><h3>Scope and limitations</h3><ul>${limits}</ul><p>${activities.length} provenance ${activities.length===1?"activity":"activities"} included. Public copies may remain after expiry.</p></div></section></main><footer><div class="shell">Release ${esc(release.manifest.releaseId)} · Renderer 0.2.0 · Offline by default · No analytics or network resources</div></footer></body></html>\n`;
-    const portfolioJson=`${JSON.stringify({schema:"why-hire-me.portfolio-data/v0.2",release:release.manifest,inclusionDecisions,records:release.records},null,2)}\n`;
-    const files=Object.freeze({"index.html":html,"styles.css":styles,"app.js":app,"portfolio.json":portfolioJson}),paths=["index.html","styles.css","app.js","portfolio.json"] as const;
-    const fileManifest=paths.map((path)=>Object.freeze({path,bytes:Buffer.byteLength(files[path]),sha256:this.digester.sha256(files[path])}));
-    const identity={schema:"why-hire-me.portfolio/v0.2" as const,rendererVersion:"0.2.0" as const,releaseId:release.manifest.releaseId,releaseDigest:release.manifest.releaseDigest,authorisationExpiresAt:release.manifest.view.expiresAt,generatedAt:release.manifest.createdAt,entryPoint:"index.html" as const,files:fileManifest,limitations:release.manifest.limitations,inclusionDecisions:Object.freeze([...inclusionDecisions])};
-    const projectionDigest=this.digester.sha256(JSON.stringify(identity));
-    return Object.freeze({files,manifest:Object.freeze({...identity,portfolioId:`portfolio-${projectionDigest.slice(0,24)}`,projectionDigest})});
+const enhancedStyles = `${styles}.drawer{width:min(660px,62vw)}.entity-pair{display:inline-flex;align-items:baseline;gap:5px}.entity-drill{display:inline-grid;width:18px;height:18px;place-items:center;border:1px solid var(--line);border-radius:4px;color:var(--blue);font-size:10px;text-decoration:none;background:#fff}.entity-drill:hover{border-color:var(--blue);background:var(--blue-soft)}.entity-graph-focus{display:inline-grid;width:25px;height:25px;margin-left:7px;place-items:center;vertical-align:3px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--green);cursor:pointer}.entity-graph-focus:hover{border-color:var(--green);background:#edf7f2}.role{display:grid;grid-template-columns:155px minmax(0,1fr);padding:0 0 24px}.role-meta{padding:2px 22px 0 0;color:var(--muted);font-size:12px}.role-meta strong,.role-meta span{display:block}.role-meta strong{color:var(--ink);font-size:14px}.role-content{position:relative;border-left:1px solid var(--line);padding:0 0 2px 24px}.role-content:before{content:\"\";position:absolute;left:-5px;top:5px;width:9px;height:9px;border:2px solid var(--blue);border-radius:50%;background:var(--surface)}.role-content h3{margin:0;font-size:17px}.role-summary{margin:3px 0 12px;color:var(--muted);font-size:13px}.ungrouped-career{border-top:1px solid var(--line);padding-top:12px}.career-row{grid-template-columns:130px minmax(0,1fr) auto 22px}.career-row.featured,.usage.featured,tr.featured td{background:#f7f8ec}.career-row.featured:hover,.usage.featured:hover,tr.featured:hover td{background:#f2f4df}.career-row.featured{box-shadow:inset 2px 0 #d9dfaa}.drawer-body[data-featured=true]{background:linear-gradient(180deg,#f8f9ef 0,#fff 170px)}.graph-node.featured circle{fill:#f7f8ec;stroke:#a7ad73}.expertise-category{display:block;color:var(--muted);font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}.graph-instruction{margin:-4px 0 12px;padding:8px 10px;border-left:2px solid var(--blue);background:var(--blue-soft);color:#405063;font-size:12px}@media(max-width:760px){.drawer{width:calc(100vw - 16px)}.role{grid-template-columns:110px minmax(0,1fr)}}@media(max-width:540px){.role{display:block}.role-meta{padding:0 0 7px}.role-content{padding-left:16px}}\n`;
+
+const enhancedApp = app
+  .replace("entity=(id,label,klass=\"\")=>'<a class=\"entity-link '+klass+'\" href=\"'+href(id)+'\" data-entity=\"'+esc(id)+'\">'+esc(label)+'</a>'", "entity=(id,label,klass=\"\")=>'<span class=\"entity-pair '+klass+'\"><span>'+esc(label)+'</span><a class=\"entity-drill\" href=\"'+href(id)+'\" data-entity=\"'+esc(id)+'\" aria-label=\"Explore '+esc(label)+'\">↗</a></span>'")
+  .replace("const tech=model.items.filter(i=>i.type.toLowerCase()===\"technology\"),expertiseList", "const tech=model.items.filter(i=>i.type.toLowerCase()===\"technology\"),categoryFor=t=>{const relation=relations.find(r=>r.predicate===\"technology.belongs_to_category\"&&r.subject===t.id);return relation?items.get(relation.object):null},expertiseList")
+  .replace("esc(t.name)+'</span><small>'+neighbourhood(t.id).length", "'<small class=\"expertise-category\">'+esc(categoryFor(t)?.name||\"Uncategorised\")+'</small>'+esc(t.name)+'</span><small>'+neighbourhood(t.id).length")
+  .replace("g.dataset.entity=n.id", "g.dataset.node=n.id")
+  .replace("open(n.dataset.entity)", "open(n.dataset.node)")
+  .replace("<h2>'+esc(item.name)+'</h2>", "<h2>'+esc(item.name)+' <button class=\"entity-graph-focus\" type=\"button\" data-focus-graph=\"'+esc(item.id)+'\" aria-label=\"Show '+esc(item.name)+' focused in the career graph\">◎</button></h2>")
+  .replace("body.innerHTML='<p class=\"overline\">'", "body.dataset.featured=String(item.inclusion?.status==='featured');body.innerHTML='<p class=\"overline\">'")
+  .replace("'<div class=\"usage\"><span>'+esc(n.type)+'", "'<div class=\"usage '+(n.inclusion?.status==='featured'?'featured':'')+'\"><span>'+esc(n.type)+'")
+  .replace('g.setAttribute("class","graph-node generated")', 'g.setAttribute("class","graph-node generated"+(n.inclusion?.status==="featured"?" featured":""))')
+  .replace('document.querySelectorAll(".graph-node").forEach(n=>n.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open(n.dataset.node)}}))', 'graph.addEventListener("keydown",e=>{const n=e.target.closest(".graph-node");if(n&&(e.key==="Enter"||e.key===" ")){e.preventDefault();open(n.dataset.node)}})')
+  .replace("const hash=location.hash;", "document.addEventListener('click',e=>{const control=e.target.closest('[data-focus-graph]');if(!control)return;const id=control.dataset.focusGraph;close();setView('graph-view');focus.value=id;draw(id);history.replaceState(null,'','#graph-view')});let graphPress=null;const cancelPress=()=>{if(graphPress){clearTimeout(graphPress.timer);graphPress=null}};graph.addEventListener('click',e=>{const n=e.target.closest('.graph-node');if(n){focus.value=n.dataset.node;draw(n.dataset.node)}});graph.addEventListener('dblclick',e=>{const n=e.target.closest('.graph-node');if(n){e.preventDefault();open(n.dataset.node)}});graph.addEventListener('contextmenu',e=>{const n=e.target.closest('.graph-node');if(n){e.preventDefault();open(n.dataset.node)}});graph.addEventListener('pointerdown',e=>{const n=e.target.closest('.graph-node');if(n)graphPress={x:e.clientX,y:e.clientY,timer:setTimeout(()=>{open(n.dataset.node);graphPress=null},500)}});graph.addEventListener('pointermove',e=>{if(graphPress&&(Math.abs(e.clientX-graphPress.x)>7||Math.abs(e.clientY-graphPress.y)>7))cancelPress()});graph.addEventListener('pointerup',cancelPress);graph.addEventListener('pointercancel',cancelPress);const hash=location.hash;");
+
+for (const requiredTemplateToken of [
+  "entity-drill",
+  "technology.belongs_to_category",
+  "expertise-category",
+  "data-focus-graph",
+  "dataset.node",
+  "contextmenu",
+  "pointerdown",
+  'graph.addEventListener("keydown"',
+]) {
+  if (!enhancedApp.includes(requiredTemplateToken)) {
+    throw new Error(`Canonical portfolio template assembly omitted ${requiredTemplateToken}.`);
+  }
+}
+
+export class StaticHtmlCareerPortfolioRenderer
+  implements CareerPortfolioRenderer
+{
+  public constructor(private readonly digester: ReleaseDigester) {}
+
+  public render(
+    release: ValidatedKnowledgeRelease,
+    inclusionDecisions: readonly PortfolioInclusionDecision[],
+    options: CareerPortfolioOptions,
+  ): CareerPortfolioProjection {
+    const decisions = new Map(
+      inclusionDecisions.map((decision) => [decision.recordId, decision]),
+    );
+    const excluded = new Set(
+      inclusionDecisions
+        .filter((decision) => decision.status === "excluded")
+        .map((decision) => decision.recordId),
+    );
+    const displayRecords = release.records.filter(
+      (record) =>
+        (record.recordType === "Entity" ||
+          record.recordType === "Evidence" ||
+          (record.recordType === "Claim" &&
+            object(record.data).claimType === "reported-outcome")) &&
+        !excluded.has(record.id),
+    );
+    const items = displayRecords.map((record) =>
+      itemFrom(record, decisions.get(record.id) ?? null),
+    );
+    const itemIds = new Set(items.map((item) => item.id));
+    const relations = release.records
+      .filter((record) => record.recordType === "Claim")
+      .flatMap((record) => {
+        const relation = relationFrom(record);
+        return relation &&
+          itemIds.has(relation.subject) &&
+          itemIds.has(relation.object)
+          ? [relation]
+          : [];
+      });
+    const achievements = items.filter((item) => item.inclusion !== null);
+    const evidence = items.filter((item) => item.type === "Evidence");
+    const model = esc(JSON.stringify({ items, relations }));
+    const drill = (item: PortfolioItem) => `<a class="entity-drill" href="#entity/${encodeURIComponent(item.id)}" data-entity="${esc(item.id)}" aria-label="Explore ${esc(item.name)}">↗</a>`;
+    const connected = (id: string, type: string) => relations
+      .flatMap((relation) => relation.subject === id ? [relation.object] : relation.object === id ? [relation.subject] : [])
+      .map((target) => items.find((item) => item.id === target))
+      .find((item) => item?.type.toLowerCase() === type.toLowerCase());
+    const renderAchievement = (item: PortfolioItem) =>
+      `<div class="career-row${item.inclusion!.status === "featured" ? " featured" : ""}"><span class="kind">${esc(item.type)}</span><strong>${esc(item.name)}</strong><small>${esc(item.inclusion!.status)}</small>${drill(item)}</div>`;
+    const groupedAchievementIds = new Set<string>();
+    const engagementRows = items
+      .filter((item) => item.type.toLowerCase() === "engagement")
+      .map((engagement) => {
+        const directIds = new Set(relations
+          .flatMap((relation) => relation.subject === engagement.id ? [relation.object] : relation.object === engagement.id ? [relation.subject] : []));
+        const workIds = new Set(achievements
+          .filter((achievement) => achievement.type.toLowerCase() === "work" && directIds.has(achievement.id))
+          .map((achievement) => achievement.id));
+        const grouped = achievements.filter((achievement) => directIds.has(achievement.id) || relations.some((relation) =>
+          (relation.subject === achievement.id && workIds.has(relation.object)) ||
+          (relation.object === achievement.id && workIds.has(relation.subject))));
+        grouped.forEach((achievement) => groupedAchievementIds.add(achievement.id));
+        if (!grouped.length) return "";
+        const organisation = connected(engagement.id, "Organisation");
+        const role = connected(engagement.id, "Role");
+        const dates = engagement.details.find((detail) => /date|period|timeline/i.test(detail.label))?.value ?? "";
+        return `<article class="role"><div class="role-meta"><strong>${esc(organisation?.name ?? engagement.name)} ${drill(organisation ?? engagement)}</strong>${dates ? `<span>${esc(dates)}</span>` : ""}</div><div class="role-content"><h3>${esc(role?.name ?? engagement.name)} ${drill(role ?? engagement)}</h3>${engagement.summary ? `<p class="role-summary">${esc(engagement.summary)}</p>` : ""}<div class="achievement-list">${grouped.map(renderAchievement).join("")}</div></div></article>`;
+      })
+      .join("");
+    const ungrouped = achievements.filter((achievement) => !groupedAchievementIds.has(achievement.id));
+    const careerRows = engagementRows + (ungrouped.length
+      ? `<section class="ungrouped-career" aria-label="Other career evidence">${engagementRows ? '<p class="overline">Other career evidence</p>' : ""}${ungrouped.map(renderAchievement).join("")}</section>`
+      : "") || "<p>No authorised career achievements are present.</p>";
+    const evidenceRows = items
+      .map(
+        (item) =>
+          `<tr${item.inclusion?.status === "featured" ? ' class="featured"' : ""}><td><code>${esc(item.id)}</code></td><td><span class="entity-pair"><span>${esc(item.name)}</span>${drill(item)}</span></td><td>${esc(item.type)}</td><td>${item.inclusion ? esc(item.inclusion.status) : "context"}</td></tr>`,
+      )
+      .join("");
+    const relationIndex =
+      relations
+        .map(
+          (relation) =>
+            `<details><summary>${esc(items.find((item) => item.id === relation.subject)?.name ?? relation.subject)} ${drill(items.find((item) => item.id === relation.subject)!)} → ${esc(items.find((item) => item.id === relation.object)?.name ?? relation.object)} ${drill(items.find((item) => item.id === relation.object)!)}</summary><p>${esc(relation.predicate)}</p></details>`,
+        )
+        .join("") ||
+      "<p>No explicit claim relationships are present; the renderer has not invented any.</p>";
+    const title = esc(release.manifest.subject.displayName);
+    const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'"><title>${title} · Career profile</title><link rel="stylesheet" href="styles.css"><script src="app.js" defer></script></head><body class="resume-${esc(options.resumeLength)}"><a class="skip" href="#content">Skip to career record</a><header class="topbar"><a class="wordmark" href="#experience">${title}</a><nav class="tabs" role="tablist" aria-label="Career profile views"><button data-tab="experience" role="tab" aria-selected="true">Experience</button><button data-tab="expertise" role="tab" aria-selected="false">Expertise</button><button data-tab="graph-view" role="tab" aria-selected="false">Graph</button><button data-tab="evidence" role="tab" aria-selected="false">Evidence</button></nav><span class="release-id">${esc(release.manifest.releaseId)}</span></header><main id="content" class="shell"><section class="profile"><div><p class="overline">Evidence-linked career profile</p><h1>${title}</h1><p class="lead">A compact, navigable view prepared for ${esc(release.manifest.purpose)}. Use the explore icon beside an entity to open its connected career context.</p></div><dl class="facts"><div><dt>Audience</dt><dd>${esc(release.manifest.audience)}</dd></div><div><dt>Career records</dt><dd>${achievements.length}</dd></div><div><dt>Relationships</dt><dd>${relations.length}</dd></div><div><dt>Résumé</dt><dd>${esc(options.resumeLength)}</dd></div></dl></section><section class="view" data-view="experience"><div class="heading"><div><p class="overline">Career</p><h2>Experience</h2></div><p>Use the explore icon beside a record to open its context and relationships.</p></div><div class="experience-layout"><div class="career-list">${careerRows}</div><aside class="inspector"><p class="overline">Career record</p><h3>Explore the evidence</h3><p>The explore icon opens a stable deep link in the side navigator without making every row disruptive.</p></aside></div></section><section class="view" data-view="expertise" hidden><div class="heading"><div><p class="overline">Explore by capability</p><h2>Expertise</h2></div><p>Technology views are derived only from explicit release relationships.</p></div><div class="explore-layout"><aside class="tools"><label for="expertise-search">Find expertise</label><input id="expertise-search" type="search"><div id="expertise-list" class="expertise-list"></div></aside><div id="expertise-results"></div></div></section><section class="view" data-view="graph-view" hidden><div class="heading"><div><p class="overline">Relationships</p><h2>Career graph</h2></div><p>Choose a focus, then inspect or drill into connected nodes.</p></div><p class="graph-instruction"><strong>Click</strong> to focus · <strong>double-click, right-click, or long-press</strong> to open the side navigator · <strong>Enter</strong> opens a focused node from the keyboard</p><div class="graph-toolbar"><label for="graph-focus">Focus</label><select id="graph-focus"></select></div><div class="graph-layout"><div class="graph-wrap"><svg id="graph" class="graph" viewBox="0 0 800 500" role="img" aria-labelledby="graph-title graph-desc"><title id="graph-title">Interactive career graph</title><desc id="graph-desc">A focused view of explicit career relationships.</desc></svg></div><aside id="graph-inspector" class="inspector"></aside></div><div id="graph-list" class="relationship-list">${relationIndex}</div></section><section class="view" data-view="evidence" hidden><div class="heading"><div><p class="overline">Traceability</p><h2>Evidence</h2></div><p>All displayed records remain available outside the graph.</p></div><div class="tools"><label for="evidence-search">Search records</label><input id="evidence-search" type="search"></div><div class="table-wrap"><table><thead><tr><th>Record</th><th>Name</th><th>Type</th><th>Use</th></tr></thead><tbody id="evidence-body">${evidenceRows}</tbody></table></div><div class="notice"><p>${evidence.length} evidence records · ${release.manifest.limitations.map(esc).join(" · ")}</p><p>Résumé projection: ${esc(options.resumeLength)}. Public copies may remain after the release authority expires.</p></div></section></main><aside id="drawer" class="drawer" aria-label="Entity explorer" aria-hidden="true"><header><button id="drawer-back" disabled>← Back</button><p id="drawer-path"></p><button id="drawer-close">Close</button></header><div id="drawer-body" class="drawer-body"></div></aside><button id="scrim" class="scrim" hidden aria-label="Close entity explorer"></button><div id="portfolio-data" hidden data-model="${model}"></div><footer>Renderer 0.3.0 · Offline by default · No analytics or network resources</footer></body></html>\n`;
+    const markedHtml = html.replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\"><meta name=\"generator\" content=\"why-hire-me.build/v1\">");
+    const portfolioJson = `${JSON.stringify({ schema: "why-hire-me.portfolio-data/v0.3", buildMarker: "why-hire-me.build/v1", release: release.manifest, options, inclusionDecisions, records: release.records }, null, 2)}\n`;
+    const files = Object.freeze({
+      "index.html": markedHtml,
+      "styles.css": enhancedStyles,
+      "app.js": enhancedApp,
+      "portfolio.json": portfolioJson,
+    });
+    const paths = [
+      "index.html",
+      "styles.css",
+      "app.js",
+      "portfolio.json",
+    ] as const;
+    const fileManifest = paths.map((path) =>
+      Object.freeze({
+        path,
+        bytes: Buffer.byteLength(files[path]),
+        sha256: this.digester.sha256(files[path]),
+      }),
+    );
+    const identity = {
+      schema: "why-hire-me.portfolio/v0.3" as const,
+      rendererVersion: "0.3.0" as const,
+      buildMarker: "why-hire-me.build/v1" as const,
+      resumeLength: options.resumeLength,
+      releaseId: release.manifest.releaseId,
+      releaseDigest: release.manifest.releaseDigest,
+      authorisationExpiresAt: release.manifest.view.expiresAt,
+      generatedAt: release.manifest.createdAt,
+      entryPoint: "index.html" as const,
+      files: fileManifest,
+      limitations: release.manifest.limitations,
+      inclusionDecisions: Object.freeze([...inclusionDecisions]),
+    };
+    const projectionDigest = this.digester.sha256(JSON.stringify(identity));
+    return Object.freeze({
+      files,
+      manifest: Object.freeze({
+        ...identity,
+        portfolioId: `portfolio-${projectionDigest.slice(0, 24)}`,
+        projectionDigest,
+      }),
+    });
   }
 }

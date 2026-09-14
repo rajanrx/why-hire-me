@@ -46,6 +46,7 @@ import { NodeCommandRunner } from "../../adapters/publication/node-command-runne
 import { FetchPublicUrlObserver } from "../../adapters/publication/fetch-public-url-observer.js";
 import { PublishCareerPortfolio } from "../../domains/publication/application/publish-career-portfolio.js";
 import type { CareerPortfolioManifest } from "../../domains/publication/domain/career-portfolio.js";
+import { resumeLengths, type ResumeLength } from "../../domains/publication/domain/career-portfolio.js";
 import type { PortfolioInclusionDecision } from "../../domains/publication/domain/career-portfolio-selection.js";
 import { LocalPublicationLedger } from "../../adapters/publication/local-publication-ledger.js";
 
@@ -152,8 +153,8 @@ export function usage(): string {
     "  why-hire-me knowledge create-view --profile <id> --purpose <text> --audience <private|restricted|public> --expires-at <RFC3339> --confirm [options]",
     "  why-hire-me release create --profile <id> --view <id> [--releases <path>]",
     "  why-hire-me release validate --path <release-directory>",
-    "  why-hire-me portfolio preview --release <directory> --inclusion-map <json-file>",
-    "  why-hire-me portfolio build --release <directory> --inclusion-map <json-file> --confirm [--portfolios <path>]",
+    "  why-hire-me portfolio preview --release <directory> --inclusion-map <json-file> [--resume-length <one-page|two-pages|three-pages|complete>]",
+    "  why-hire-me portfolio build --release <directory> --inclusion-map <json-file> --confirm [--resume-length <one-page|two-pages|three-pages|complete>] [--portfolios <path>]",
     "  why-hire-me portfolio publish-firebase --portfolio <directory> --project <id> --site <id> --mode <preview-channel|live> --confirm-public [options]",
     "",
     "Environment:",
@@ -345,13 +346,18 @@ export async function runCli(
     const inclusionPath = resolve(requiredOption(args, "--inclusion-map"));
     const inclusionDecisions = JSON.parse(await readFile(inclusionPath, "utf8")) as PortfolioInclusionDecision[];
     if (!Array.isArray(inclusionDecisions)) throw new Error("Portfolio inclusion map must be a JSON array.");
+    const requestedResumeLength = option(args, "--resume-length") ?? "complete";
+    if (!resumeLengths.includes(requestedResumeLength as ResumeLength)) {
+      throw new Error(`Portfolio resume length must be one of: ${resumeLengths.join(", ")}.`);
+    }
+    const resumeLength = requestedResumeLength as ResumeLength;
     const digester = new NodeReleaseDigester();
     const useCase = new BuildCareerPortfolio(new LocalKnowledgeReleaseReader(digester),
       new StaticHtmlCareerPortfolioRenderer(digester), new LocalCareerPortfolioRepository(portfolioRoot, digester),
       { now: () => new Date() });
     if (args[1] === "preview") return Object.freeze({ kind: "career-portfolio-preview",
-      preview: await useCase.preview({ releaseDirectory, inclusionDecisions }) });
-    const result = await useCase.execute({ releaseDirectory, inclusionDecisions, approvedByPerson: args.includes("--confirm") });
+      preview: await useCase.preview({ releaseDirectory, inclusionDecisions, resumeLength }) });
+    const result = await useCase.execute({ releaseDirectory, inclusionDecisions, resumeLength, approvedByPerson: args.includes("--confirm") });
     return Object.freeze({ kind: "career-portfolio-created", directory: result.directory,
       manifest: result.projection.manifest, reused: result.reused });
   }

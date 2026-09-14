@@ -46,7 +46,7 @@ observations:
   - text: string
     locator: string
 entityProposals:
-  - entityType: Person | Organisation | Engagement | Role | Work | Contribution | Artefact | Technology | TechnologyUse | Credential
+  - entityType: Person | Organisation | Engagement | Role | Work | Contribution | Artefact | Technology | TechnologyUse | TechnologyCategory | Credential
     proposedName: string
     evidenceLocators: []
     uncertainty:

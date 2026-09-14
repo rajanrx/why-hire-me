@@ -7,8 +7,8 @@ import {
   validatePredicateUse,
 } from "./predicate-registry.js";
 
-test("registry 0.1.0 exactly matches the governed predicate and type pairs", () => {
-  assert.equal(predicateRegistryVersion, "0.1.0");
+test("registry 0.2.0 exactly matches the governed predicate and type pairs", () => {
+  assert.equal(predicateRegistryVersion, "0.2.0");
   assert.deepEqual(
     predicateRegistry.map((entry) => [entry.id, entry.subjectTypes[0], entry.objectTypes[0]]),
     [
@@ -21,6 +21,7 @@ test("registry 0.1.0 exactly matches the governed predicate and type pairs", () 
       ["contribution.produced_artefact", "Contribution", "Artefact"],
       ["work.has_technology_use", "Work", "TechnologyUse"],
       ["technology_use.uses_technology", "TechnologyUse", "Technology"],
+      ["technology.belongs_to_category", "Technology", "TechnologyCategory"],
       ["credential.issued_by", "Credential", "Organisation"],
       ["credential.issued_to", "Credential", "Person"],
     ],
@@ -32,7 +33,7 @@ test("registry definitions and their entity type collections are immutable", () 
   assert.equal(Object.isFrozen(predicateRegistry), true);
   for (const entry of predicateRegistry) {
     assert.equal(entry.status, "active");
-    assert.equal(entry.introducedIn, predicateRegistryVersion);
+    assert.match(entry.introducedIn, /^0\.[12]\.0$/);
     assert.equal(Object.isFrozen(entry), true);
     assert.equal(Object.isFrozen(entry.subjectTypes), true);
     assert.equal(Object.isFrozen(entry.objectTypes), true);
@@ -41,6 +42,7 @@ test("registry definitions and their entity type collections are immutable", () 
 
 test("resolves exact IDs and validates direction and entity pairs", () => {
   assert.equal(getPredicate("engagement.with_organisation").objectTypes[0], "Organisation");
+  assert.equal(getPredicate("technology.belongs_to_category").introducedIn, "0.2.0");
   assert.equal(
     validatePredicateUse("credential.issued_to", "Credential", "Person").id,
     "credential.issued_to",
