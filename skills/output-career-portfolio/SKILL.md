@@ -65,6 +65,11 @@ featured, supporting, summarised, excluded, and deferred achievement plus its ra
 unresolved IDs. Ask the person to approve this exact local projection only after showing the map.
 Approval to generate locally is not approval to publish.
 
+Ask how long the printable résumé should target: `one-page`, `two-pages`, `three-pages`, or
+`complete`. Do not infer a one-page résumé from generic convention, especially for a long career.
+Show the choice in the preview and preserve all authorised records in the interactive portfolio even
+when the person chooses a shorter print projection.
+
 Use only content allowed by the release. Derived headings and navigation may reorganise it. New
 narrative or résumé language must be either present in the release, mechanically derived without
 changing meaning, or clearly labelled for person review before generation. Never add an unsupported
@@ -74,9 +79,9 @@ achievement, capability, title, date, outcome, testimonial, or credential state.
 
 Provide, when the release supports them:
 
-1. a warm, concise career overview;
-2. selected roles, organisations, work, contributions, technologies in context, and credentials;
-3. an explorable relationship graph;
+1. a warm, concise career overview and compact résumé-like Experience lens;
+2. an Expertise lens showing where and how technologies or domains were used;
+3. a focused, explorable relationship graph;
 4. an equivalent structured list for every graph relationship;
 5. a readable, printable evidence-backed résumé;
 6. safe evidence references and provenance;
@@ -84,16 +89,34 @@ Provide, when the release supports them:
 8. release identity, version, generation mode, renderer version, and integrity details.
 
 Treat the result as a professional, navigable replacement for a conventional résumé, not a marketing
-landing page. Default to a restrained light theme with strong editorial typography, quiet colour,
-generous spacing, and precise status language. Lead with distinct work and career context, then use
+landing page. Default to a compact, restrained light theme with editorial typography, quiet colour,
+dense readable spacing, and precise status language. Provide Experience, Expertise, Graph, and
+Evidence as alternate lenses over the same records. Lead with distinct work and career context, then use
 progressive disclosure for technical depth, evidence, and provenance. Avoid slogans, decorative
 system maps, generic card dashboards, recruiter surveillance, analytics, engagement tracking,
 scoring, and visitor fingerprinting.
 
+Follow [`assets/template-contract.json`](assets/template-contract.json) as the canonical visual and
+interaction contract. Use [`assets/sample-release.json`](assets/sample-release.json) only as
+fictional presentation test data, never as career evidence. Give records selected as `featured` a
+faint, restrained background treatment in every lens where they appear; do not infer importance from
+layout position, employer, or record type.
+
+Every displayed entity must expose a stable deep link and a clearly labelled explore control. The
+side navigator must show inbound and outbound relationships, support continued traversal with a Back
+path, and leave the originating lens visible. Do not make ordinary row or text selection unexpectedly
+open the navigator.
+
 The graph must use actual release relationships, make every visible node selectable by keyboard and
-pointer, open useful contextual detail, and never silently cap the node set. If relationships are
-absent, say so rather than drawing implied connections. Provide a searchable structured record
-explorer and a complete relationship list so technical exploration remains useful without the graph.
+pointer, and never silently cap the node set. A quick click focuses the node and its immediate
+relationships; an explicit explore control, keyboard activation, double-click, context-menu action,
+or long-press may open the wider side navigator. Explain these controls above the graph. If
+relationships are absent, say so rather than drawing implied connections. Provide a searchable
+structured record explorer and a complete relationship list as equivalent paths.
+
+When the release contains explicit `TechnologyCategory` entities and
+`technology.belongs_to_category` claims, group related technologies by the reviewed category while
+preserving their distinct identities and contextual uses. Do not invent categories in the renderer.
 
 ## Make offline and accessible behaviour explicit
 

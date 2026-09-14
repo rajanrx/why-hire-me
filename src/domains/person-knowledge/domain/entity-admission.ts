@@ -8,6 +8,7 @@ export const canonicalEntityTypes = [
   "Artefact",
   "Technology",
   "TechnologyUse",
+  "TechnologyCategory",
   "Credential",
 ] as const;
 

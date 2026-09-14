@@ -106,11 +106,13 @@ pnpm run cli release validate \
 ```sh
 pnpm run cli portfolio preview \
   --release "/home/ada/.why-hire-me/releases/generated-release-id" \
-  --inclusion-map "/home/ada/inclusion-map.json"
+  --inclusion-map "/home/ada/inclusion-map.json" \
+  --resume-length two-pages
 
 pnpm run cli portfolio build \
   --release "/home/ada/.why-hire-me/releases/generated-release-id" \
   --inclusion-map "/home/ada/inclusion-map.json" \
+  --resume-length two-pages \
   --confirm
 ```
 

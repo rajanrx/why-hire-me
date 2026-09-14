@@ -31,7 +31,7 @@ observations:
     attribution: confirmed | shared | ambiguous | unknown
     disclosure: summary-only | excerpt-approved
 entityProposals:
-  - entityType: Work | Contribution | Artefact | Technology | TechnologyUse | Organisation | Engagement | Role
+  - entityType: Work | Contribution | Artefact | Technology | TechnologyUse | TechnologyCategory | Organisation | Engagement | Role
     proposedName: string
     evidenceLocators: []
     uncertainty:

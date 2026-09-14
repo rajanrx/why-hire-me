@@ -7,11 +7,20 @@ export interface ValidatedKnowledgeRelease {
   readonly records: readonly ReleaseInputRecord[];
 }
 
+export const resumeLengths = ["one-page", "two-pages", "three-pages", "complete"] as const;
+export type ResumeLength = (typeof resumeLengths)[number];
+
+export interface CareerPortfolioOptions {
+  readonly resumeLength: ResumeLength;
+}
+
 export interface CareerPortfolioManifest {
-  readonly schema: "why-hire-me.portfolio/v0.2";
+  readonly schema: "why-hire-me.portfolio/v0.3";
   readonly portfolioId: string;
   readonly projectionDigest: string;
-  readonly rendererVersion: "0.2.0";
+  readonly rendererVersion: "0.3.0";
+  readonly buildMarker: "why-hire-me.build/v1";
+  readonly resumeLength: ResumeLength;
   readonly releaseId: string;
   readonly releaseDigest: string;
   readonly authorisationExpiresAt: string;

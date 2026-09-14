@@ -1,0 +1,363 @@
+{
+  "release": {
+    "directory": "/sample/release",
+    "manifest": {
+      "schema": "why-hire-me.release/v0.1",
+      "releaseId": "release-a11ce0000000000000000000",
+      "releaseDigest": "a11ce000000000000000000000000000000000000000000000000000000000",
+      "view": {
+        "id": "view-sample",
+        "version": 1,
+        "knowledgeSpaceId": "profile-sample",
+        "grantId": "grant-sample",
+        "expiresAt": "2035-01-01T00:00:00.000Z"
+      },
+      "subject": { "displayName": "Alex Morgan" },
+      "purpose": "demonstrate the canonical portfolio template",
+      "audience": "public",
+      "createdAt": "2026-09-15T00:00:00.000Z",
+      "files": [],
+      "counts": {
+        "entities.ndjson": 11,
+        "claims.ndjson": 10,
+        "evidence.ndjson": 1,
+        "activities.ndjson": 1,
+        "aliases.ndjson": 0
+      },
+      "limitations": [
+        "This is fictional sample data for presentation testing."
+      ],
+      "compatibility": { "minimumReader": "0.1.0" }
+    },
+    "records": [
+      {
+        "schemaVersion": "0.1",
+        "id": "activity-sample",
+        "recordType": "Activity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "activityType": "sample-fixture", "description": "Created fictional template data." }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "work-stream-platform",
+        "recordType": "Entity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": {
+          "entityType": "Work",
+          "attributes": {
+            "displayName": "Real-time order platform",
+            "summary": "Designed a reliable event-driven path for processing high-volume orders.",
+            "role": "Principal engineer"
+          }
+        }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "organisation-northstar",
+        "recordType": "Entity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "entityType": "Organisation", "attributes": { "displayName": "Northstar Systems" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "engagement-northstar",
+        "recordType": "Entity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": {
+          "entityType": "Engagement",
+          "attributes": {
+            "displayName": "Northstar platform engagement",
+            "summary": "Fictional engagement used to demonstrate résumé-like grouping.",
+            "period": "2022–2025"
+          }
+        }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "role-principal-engineer",
+        "recordType": "Entity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "entityType": "Role", "attributes": { "displayName": "Principal engineer" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "contribution-contracts",
+        "recordType": "Entity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": {
+          "entityType": "Contribution",
+          "attributes": {
+            "displayName": "Introduced versioned event contracts",
+            "summary": "Separated producer and consumer releases while preserving compatibility evidence."
+          }
+        }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "technology-go",
+        "recordType": "Entity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "entityType": "Technology", "attributes": { "displayName": "Go" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "technology-kafka",
+        "recordType": "Entity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "entityType": "Technology", "attributes": { "displayName": "Kafka" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "technology-use-go-services",
+        "recordType": "Entity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": {
+          "entityType": "TechnologyUse",
+          "attributes": {
+            "displayName": "Go service implementation",
+            "summary": "Used Go for bounded order-processing services."
+          }
+        }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "technology-use-kafka-events",
+        "recordType": "Entity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": {
+          "entityType": "TechnologyUse",
+          "attributes": {
+            "displayName": "Kafka event transport",
+            "summary": "Used Kafka to carry versioned order events."
+          }
+        }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "category-language",
+        "recordType": "Entity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "entityType": "TechnologyCategory", "attributes": { "displayName": "Languages" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "category-messaging",
+        "recordType": "Entity",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "entityType": "TechnologyCategory", "attributes": { "displayName": "Messaging & eventing" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "evidence-design-record",
+        "recordType": "Evidence",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": {
+          "attributes": {
+            "displayName": "Event contract design record",
+            "description": "A fictional design artefact used only to exercise evidence navigation."
+          }
+        }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "claim-engagement-organisation",
+        "recordType": "Claim",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "subject": { "ref": "engagement-northstar" }, "predicate": "engagement.with_organisation", "object": { "ref": "organisation-northstar" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "claim-engagement-role",
+        "recordType": "Claim",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "subject": { "ref": "engagement-northstar" }, "predicate": "engagement.has_role", "object": { "ref": "role-principal-engineer" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "claim-engagement-work",
+        "recordType": "Claim",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "subject": { "ref": "engagement-northstar" }, "predicate": "engagement.includes_work", "object": { "ref": "work-stream-platform" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "claim-contribution-work",
+        "recordType": "Claim",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "subject": { "ref": "contribution-contracts" }, "predicate": "contribution.to_work", "object": { "ref": "work-stream-platform" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "claim-work-go-use",
+        "recordType": "Claim",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "subject": { "ref": "work-stream-platform" }, "predicate": "work.has_technology_use", "object": { "ref": "technology-use-go-services" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "claim-work-kafka-use",
+        "recordType": "Claim",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "subject": { "ref": "work-stream-platform" }, "predicate": "work.has_technology_use", "object": { "ref": "technology-use-kafka-events" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "claim-go-use-technology",
+        "recordType": "Claim",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "subject": { "ref": "technology-use-go-services" }, "predicate": "technology_use.uses_technology", "object": { "ref": "technology-go" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "claim-kafka-use-technology",
+        "recordType": "Claim",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "subject": { "ref": "technology-use-kafka-events" }, "predicate": "technology_use.uses_technology", "object": { "ref": "technology-kafka" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "claim-go-category",
+        "recordType": "Claim",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "subject": { "ref": "technology-go" }, "predicate": "technology.belongs_to_category", "object": { "ref": "category-language" } }
+      },
+      {
+        "schemaVersion": "0.1",
+        "id": "claim-kafka-category",
+        "recordType": "Claim",
+        "knowledgeSpaceId": "profile-sample",
+        "status": "active",
+        "recordedAt": "2026-09-15T00:00:00.000Z",
+        "generatedBy": "activity-sample",
+        "policyLabels": ["shareable"],
+        "supersedes": null,
+        "data": { "subject": { "ref": "technology-kafka" }, "predicate": "technology.belongs_to_category", "object": { "ref": "category-messaging" } }
+      }
+    ]
+  },
+  "inclusionDecisions": [
+    {
+      "recordId": "work-stream-platform",
+      "status": "featured",
+      "rationale": "Primary work example for the sample audience.",
+      "summarisedUnderRecordId": null
+    },
+    {
+      "recordId": "contribution-contracts",
+      "status": "supporting",
+      "rationale": "Preserves a distinct technical contribution.",
+      "summarisedUnderRecordId": null
+    }
+  ],
+  "options": { "resumeLength": "two-pages" }
+}

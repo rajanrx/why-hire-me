@@ -8,8 +8,9 @@ achievement, generates a professional light-first career explorer, and stops bef
 ```text
 Use why-hire-me:output-career-portfolio with the attached authorised release.
 Create an inclusion decision for every Work, Contribution, and reported outcome. Show me the exact
-map before generation. Then build an offline portfolio with a searchable record explorer, clickable
-relationship graph, technical context, evidence, and a printable résumé. Do not use remote assets,
+map before generation. Then build an offline portfolio with Experience, Expertise, Graph, and
+Evidence views; explicit entity drill-down in a wide side navigator; and a printable résumé. Ask me
+whether its print target should be one, two, three, or complete pages. Do not use remote assets,
 analytics, or a dark theme by default.
 ```
 
@@ -26,7 +27,8 @@ release:
 preview:
   outputPath: ./career-portfolio/
   replacesExisting: false
-  sections: [career brief, achievement index, record explorer, knowledge graph, relationship index, printable resume, inclusion map]
+  resumeLength: complete
+  sections: [experience, expertise, focused knowledge graph, evidence, printable resume, inclusion map]
   inclusionMap:
     - recordId: work-analytics-foundation
       recordType: Work
@@ -60,8 +62,9 @@ preview:
 ```
 
 Approval comes after this map. A missing or deferred achievement blocks generation. The resulting
-graph draws only explicit release relationships; when relationship claims are absent, the portfolio
-says so and relies on its searchable record explorer instead of inventing connections.
+graph draws only explicit release relationships. Click focuses a node; the explore icon, keyboard,
+double-click, right-click, or long-press opens the wide side navigator. When relationship claims are
+absent, the portfolio says so instead of inventing connections.
 
 ## Development CLI
 
@@ -70,10 +73,12 @@ Save the approved map as a JSON array, preview it, then confirm the exact plan:
 ```sh
 pnpm run cli portfolio preview \
   --release "<release-directory>" \
-  --inclusion-map "./inclusion-map.json"
+  --inclusion-map "./inclusion-map.json" \
+  --resume-length complete
 
 pnpm run cli portfolio build \
   --release "<release-directory>" \
   --inclusion-map "./inclusion-map.json" \
+  --resume-length complete \
   --confirm
 ```

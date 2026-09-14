@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "A private, evidence-backed career profile for thoughtful asynchronous hiring.",
-  "license": "AGPL-3.0-or-later",
+  "license": "PolyForm-Strict-1.0.0",
   "packageManager": "pnpm@10.28.0",
   "engines": {
     "node": ">=22"
@@ -17,6 +17,8 @@
     "changeset": "changeset",
     "check": "pnpm run build && pnpm run test && pnpm run spec:validate",
     "cli": "tsx src/apps/cli/main.ts",
+    "license:scan-public": "node scripts/license/scan-public-usage.mjs",
+    "portfolio:sample": "pnpm run build && node scripts/portfolio/generate-sample.mjs",
     "release:bundle": "node scripts/release/build-bundle.mjs",
     "release:publish": "pnpm run build && changeset publish",
     "spec:validate": "openspec validate --all --strict --no-interactive && openspec validate --archived --strict --no-interactive && tsx scripts/spec/validate-intent-links.ts",

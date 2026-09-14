@@ -1,4 +1,5 @@
-export const predicateRegistryVersion = "0.1.0" as const;
+export const predicateRegistryVersion = "0.2.0" as const;
+type PredicateRegistryVersion = "0.1.0" | typeof predicateRegistryVersion;
 
 export type KnowledgeEntityType =
   | "Person"
@@ -10,6 +11,7 @@ export type KnowledgeEntityType =
   | "Artefact"
   | "Technology"
   | "TechnologyUse"
+  | "TechnologyCategory"
   | "Credential";
 
 export interface PredicateDefinition {
@@ -19,7 +21,7 @@ export interface PredicateDefinition {
   readonly subjectTypes: readonly KnowledgeEntityType[];
   readonly objectTypes: readonly KnowledgeEntityType[];
   readonly status: "active" | "deprecated";
-  readonly introducedIn: typeof predicateRegistryVersion;
+  readonly introducedIn: PredicateRegistryVersion;
 }
 
 function predicate(
@@ -28,6 +30,7 @@ function predicate(
   definition: string,
   subject: KnowledgeEntityType,
   object: KnowledgeEntityType,
+  introducedIn: PredicateRegistryVersion = "0.1.0",
 ): PredicateDefinition {
   return Object.freeze({
     id,
@@ -36,7 +39,7 @@ function predicate(
     subjectTypes: Object.freeze([subject]),
     objectTypes: Object.freeze([object]),
     status: "active",
-    introducedIn: predicateRegistryVersion,
+    introducedIn,
   });
 }
 
@@ -103,6 +106,14 @@ export const predicateRegistry: readonly PredicateDefinition[] = Object.freeze([
     "The contextual use applies to the technology.",
     "TechnologyUse",
     "Technology",
+  ),
+  predicate(
+    "technology.belongs_to_category",
+    "belongs to category",
+    "The technology is classified within a reviewed technology category for navigation and discovery.",
+    "Technology",
+    "TechnologyCategory",
+    "0.2.0",
   ),
   predicate(
     "credential.issued_by",

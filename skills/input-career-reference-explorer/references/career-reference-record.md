@@ -37,7 +37,7 @@ verificationEvents:
     outcome: confirmed | not-confirmed | inconclusive
     limitations: []
 entityProposals:
-  - entityType: Artefact | Credential | Organisation | Work | Contribution | Technology | TechnologyUse | Person | Engagement | Role
+  - entityType: Artefact | Credential | Organisation | Work | Contribution | Technology | TechnologyUse | TechnologyCategory | Person | Engagement | Role
     proposedName: string
     originalIdentifiers: []
     evidenceLocators: []

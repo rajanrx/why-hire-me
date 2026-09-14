@@ -19,6 +19,7 @@ release:
 preview:
   outputPath: string
   replacesExisting: true | false
+  resumeLength: one-page | two-pages | three-pages | complete
   sections: []
   inclusionMap:
     - recordId: string
@@ -38,12 +39,14 @@ preview:
   warnings: []
   approvedByPerson: true | false
 projection:
+  schema: why-hire-me.portfolio/v0.3 | null
   renderer: string
   rendererVersion: string
   label: production | prototype
   entryFile: string | null
   manifestFile: string | null
   digest: string | null
+  buildMarker: why-hire-me.build/v1 | null
   files: []
 verification:
   passed: []

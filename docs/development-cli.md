@@ -146,18 +146,33 @@ reported outcome. Preview the complete decision map before confirming generation
 ```sh
 pnpm run cli portfolio preview \
   --release "<release-directory>" \
-  --inclusion-map "./inclusion-map.json"
+  --inclusion-map "./inclusion-map.json" \
+  --resume-length two-pages
 
 pnpm run cli portfolio build \
   --release "<release-directory>" \
   --inclusion-map "./inclusion-map.json" \
+  --resume-length two-pages \
   --confirm
 ```
+
+Choose `one-page`, `two-pages`, `three-pages`, or `complete` during preview. Use the same value for
+the confirmed build; it participates in the projection identity. The CLI uses `complete` only when
+an older caller omits the option.
 
 Open the returned `index.html`. The renderer escapes career content and includes local styling, a
 Content Security Policy, searchable record navigation, an interactive graph with an equivalent
 relationship index, responsive layout, and print CSS. The light theme is the default. Rebuilding the same release with the same renderer reuses the same projection. New
 generation stops after the authorised view expires; an already generated local file is not deleted.
+
+To exercise the canonical interface with fictional data, without touching a real portfolio, run:
+
+```sh
+pnpm portfolio:sample -- /tmp/why-hire-me-sample
+```
+
+See the [template contract](../templates/career-portfolio/README.md) for the versioned presentation
+and interaction guarantees.
 
 ## Optional Firebase Hosting reference adapter
 

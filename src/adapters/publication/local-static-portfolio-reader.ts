@@ -26,8 +26,10 @@ export class LocalStaticPortfolioReader implements StaticPortfolioReader {
   public constructor(private readonly digester: ReleaseDigester, private readonly clock: { now(): Date }) {}
   public async validate(directory: string, expected: CareerPortfolioManifest) {
     const errors: string[] = [];
-    if (expected === null || typeof expected !== "object" || expected.schema !== "why-hire-me.portfolio/v0.2" ||
-      expected.entryPoint !== "index.html" || expected.rendererVersion !== "0.2.0" ||
+    if (expected === null || typeof expected !== "object" || expected.schema !== "why-hire-me.portfolio/v0.3" ||
+      expected.entryPoint !== "index.html" || expected.rendererVersion !== "0.3.0" ||
+      expected.buildMarker !== "why-hire-me.build/v1" ||
+      !["one-page", "two-pages", "three-pages", "complete"].includes(expected.resumeLength) ||
       !/^release-[a-f0-9]{24}$/.test(expected.releaseId ?? "") ||
       !/^[a-f0-9]{64}$/.test(expected.releaseDigest ?? "") ||
       typeof expected.authorisationExpiresAt !== "string" || !Number.isFinite(Date.parse(expected.authorisationExpiresAt)) ||
@@ -42,7 +44,8 @@ export class LocalStaticPortfolioReader implements StaticPortfolioReader {
       errors.push("Portfolio authorisation has expired.");
     }
     const projectionDigest = this.digester.sha256(JSON.stringify({ schema: expected.schema,
-      rendererVersion: expected.rendererVersion, releaseId: expected.releaseId,
+      rendererVersion: expected.rendererVersion, buildMarker: expected.buildMarker,
+      resumeLength: expected.resumeLength, releaseId: expected.releaseId,
       releaseDigest: expected.releaseDigest, authorisationExpiresAt: expected.authorisationExpiresAt,
       generatedAt: expected.generatedAt,
       entryPoint: expected.entryPoint, files: expected.files, limitations: expected.limitations,
