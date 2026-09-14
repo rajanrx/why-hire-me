@@ -1,5 +1,11 @@
 # why-hire-me
 
+## 0.8.1
+
+### Patch Changes
+
+- 9b70935: Describe the accountable, light-first career record experience accurately in the public README.
+
 ## 0.8.0
 
 ### Minor Changes
