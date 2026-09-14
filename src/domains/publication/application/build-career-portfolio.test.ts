@@ -63,7 +63,8 @@ test("renders deterministic, escaped, offline and accessible portfolio files", a
     assert.equal(new Set(ids).size, ids.length);
     assert.equal(first.projection.files["index.html"], renderer.render(release, inclusion, { resumeLength: "complete" }).files["index.html"]);
     assert.match(first.projection.files["styles.css"], /color-scheme:light/);
-    assert.match(first.projection.files["styles.css"], /width:min\(660px,62vw\)/);
+    assert.match(first.projection.files["styles.css"], /width:min\(720px,66vw\)/);
+    assert.doesNotMatch(first.projection.files["styles.css"], /#f7f8ec|#d9dfaa/);
     assert.match(first.projection.files["styles.css"], /@media print/);
     assert.doesNotMatch(first.projection.files["styles.css"], /prefers-color-scheme:dark/);
     await assert.rejects(() => useCase.execute({ releaseDirectory: "/release", inclusionDecisions: [], approvedByPerson: true }), /coverage is incomplete/);

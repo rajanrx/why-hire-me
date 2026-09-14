@@ -99,8 +99,8 @@ scoring, and visitor fingerprinting.
 Follow [`assets/template-contract.json`](assets/template-contract.json) as the canonical visual and
 interaction contract. Use [`assets/sample-release.json`](assets/sample-release.json) only as
 fictional presentation test data, never as career evidence. Give records selected as `featured` a
-faint, restrained background treatment in every lens where they appear; do not infer importance from
-layout position, employer, or record type.
+barely visible, near-white background treatment in every lens where they appear; do not infer
+importance from layout position, employer, or record type.
 
 Every displayed entity must expose a stable deep link and a clearly labelled explore control. The
 side navigator must show inbound and outbound relationships, support continued traversal with a Back
