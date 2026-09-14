@@ -4,7 +4,7 @@ Use this contract for preview and completion. `local-prototype` and `governed-re
 different even if both produce usable static files.
 
 ```yaml
-schemaVersion: "0.1"
+schemaVersion: "0.2"
 recordType: CareerPortfolioGeneration
 mode: governed-render | local-prototype | blocked
 status: preview | generated | verification-failed | blocked
@@ -20,7 +20,20 @@ preview:
   outputPath: string
   replacesExisting: true | false
   sections: []
-  excludedRecordIds: []
+  inclusionMap:
+    - recordId: string
+      recordType: Work | Contribution | reported-outcome
+      status: featured | supporting | summarised | excluded | deferred
+      summarisedUnderRecordId: string | null
+      rationale: string
+  inclusionCoverage:
+    total: integer
+    featured: integer
+    supporting: integer
+    summarised: integer
+    excluded: integer
+    deferred: integer
+    unresolvedRecordIds: []
   redactions: []
   warnings: []
   approvedByPerson: true | false
@@ -45,3 +58,7 @@ delivery:
 `generated` requires successful required verification. A prototype cannot claim deterministic
 production rendering. Local approval is not publication consent, and all delivery fields remain false
 except `local` in this skill.
+
+The inclusion map is total over every authorised Work, Contribution, and reported outcome. A missing,
+duplicate, invalid, or deferred decision prevents `generated`. `approvedByPerson` can become true only
+after the complete map and unresolved list have been shown in the exact preview.

@@ -140,14 +140,23 @@ record counts, NDJSON families, knowledge-space identity, and admission-activity
 
 ## Build the offline portfolio
 
+Create an inclusion-map JSON array with one decision for every authorised Work, Contribution, and
+reported outcome. Preview the complete decision map before confirming generation.
+
 ```sh
+pnpm run cli portfolio preview \
+  --release "<release-directory>" \
+  --inclusion-map "./inclusion-map.json"
+
 pnpm run cli portfolio build \
-  --release "<release-directory>"
+  --release "<release-directory>" \
+  --inclusion-map "./inclusion-map.json" \
+  --confirm
 ```
 
 Open the returned `index.html`. The renderer escapes career content and includes local styling, a
-Content Security Policy, keyboard navigation, an equivalent list for its graph, responsive layout,
-and print CSS. Rebuilding the same release with the same renderer reuses the same projection. New
+Content Security Policy, searchable record navigation, an interactive graph with an equivalent
+relationship index, responsive layout, and print CSS. The light theme is the default. Rebuilding the same release with the same renderer reuses the same projection. New
 generation stops after the authorised view expires; an already generated local file is not deleted.
 
 ## Optional Firebase Hosting reference adapter

@@ -26,8 +26,9 @@ export class LocalCareerPortfolioRepository implements CareerPortfolioRepository
     const temporary = join(this.root, `.${projection.manifest.portfolioId}-${randomUUID()}.tmp`);
     await mkdir(temporary, { mode: 0o700 });
     try {
-      await writeFile(join(temporary, "index.html"), projection.files["index.html"], { mode: 0o600, flag: "wx" });
-      await writeFile(join(temporary, "portfolio.json"), projection.files["portfolio.json"], { mode: 0o600, flag: "wx" });
+      for (const name of ["index.html", "styles.css", "app.js", "portfolio.json"] as const) {
+        await writeFile(join(temporary, name), projection.files[name], { mode: 0o600, flag: "wx" });
+      }
       await writeFile(join(temporary, "portfolio-manifest.json"), `${JSON.stringify(projection.manifest, null, 2)}\n`, { mode: 0o600, flag: "wx" });
       await rename(temporary, directory);
       return Object.freeze({ directory, projection, reused: false });
