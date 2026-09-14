@@ -31,7 +31,7 @@ knowledge and what can leave your computer.
 | `why-hire-me:output-career-knowledge-guide` | 📤 Output | Answer a person's or authorised visitor's questions with evidence from a bounded knowledge view | ✅ Available |
 | `why-hire-me:async-interview` | ⚖️ Evaluation | Prepare and run structured, role-relevant asynchronous interviews without replacing accountable human decisions | ✅ Available |
 | `why-hire-me:job-application-tailor` | 🧭 Workflow | Match an authorised job description to career evidence, evaluate gaps, and draft a truthful résumé and cover letter | ✅ Available |
-| `why-hire-me:output-career-portfolio` | 📤 Output | Generate an appealing offline HTML portfolio with an overview, evidence graph, and résumé | ✅ Available |
+| `why-hire-me:output-career-portfolio` | 📤 Output | Build a professional offline career record with accountable achievement selection, deep navigation, and a printable résumé | ✅ Available |
 | `why-hire-me:output-career-publisher` | 📤 Output | Preview a portable release and route it to one or more destination-specific publishing skills | ✅ Available |
 | `↳ why-hire-me:output-github-release` | 📤 Output | Publish an authorised, versioned knowledge release and assets through GitHub | ✅ Available |
 | `↳ why-hire-me:output-notebooklm-sync` | 📤 Output | Synchronise an authorised knowledge projection to a supported NotebookLM destination without changing sharing | ✅ Available |
@@ -82,16 +82,18 @@ explicit limitation rather than inferred content.
 
 ## 🌐 Your career portfolio, local first
 
-The `output-career-portfolio` skill guides an installed renderer to turn one authorised, versioned knowledge release
-into a polished static HTML portfolio containing:
+The `output-career-portfolio` skill guides an installed renderer to turn one authorised, versioned
+knowledge release into a professional static career record containing:
 
-- a clear career overview;
-- an explorable graph of roles, organisations, work, contributions, technologies, and credentials;
+- an explicit inclusion decision for every authorised achievement, shown before generation;
+- a complete achievement index that keeps distinct work within long engagements visible;
+- a searchable record explorer for roles, organisations, work, contributions, technologies, and credentials;
+- a clickable graph built only from real release relationships, with a complete text equivalent;
 - an evidence-backed résumé that is easy to read and print; and
-- visible sources, limitations, release version, and freshness information.
+- visible sources, limitations, release version, freshness, and editorial decisions.
 
-The bundled reference renderer produces a report that works locally without an account, analytics,
-remote fonts, or a network connection.
+The bundled reference renderer uses a restrained light theme by default and works locally without an
+account, analytics, remote fonts, or a network connection.
 It will remain an output projection—not a second source of truth—and will never add unreviewed
 claims.
 
