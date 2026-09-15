@@ -202,10 +202,12 @@ portfolio's disclosure authorisation has expired.
 
 ```sh
 pnpm run check
-pnpm run spec:validate
+pnpm run spec:validate:private
 ```
 
-Durable behaviour starts as an intent-linked OpenSpec change and receives one quick review. Add a
+Durable behaviour starts in the private sibling repository's intent-linked OpenSpec change and
+receives one quick review. The public `pnpm run check` prints a skip when that checkout is absent;
+do not treat the skip as design approval. Add a
 changeset for a releasable change:
 
 ```sh
@@ -213,6 +215,6 @@ pnpm changeset
 ```
 
 > [!important] Before opening a change
-> - [ ] Read the [architecture](../intent/specs/architecture.md) and [first-release RFC](../intent/specs/rfc/RFC-001-first-knowledge-release.md).
+> - [ ] With authorised private access, read `../why-hire-me-intent/intent/specs/architecture.md` and its first-release RFC.
 > - [ ] Keep domain ports inward-facing and adapters replaceable.
 > - [ ] Run the complete check and add a changeset when users will notice the change.

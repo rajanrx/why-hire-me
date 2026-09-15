@@ -142,12 +142,10 @@ Developers can follow the complete
 [local CLI guide](https://github.com/rajanrx/why-hire-me/blob/main/docs/development-cli.md).
 The [stability boundary](https://github.com/rajanrx/why-hire-me/blob/main/docs/stability.md) states
 exactly what the current runtime supports and what remains intentionally unsupported.
-The durable design lives in the [product requirements](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/prd.md),
-[architecture](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/architecture.md),
-[ontology](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/_ontology.md), and
-[first-release RFC](https://github.com/rajanrx/why-hire-me/blob/main/intent/specs/rfc/RFC-001-first-knowledge-release.md).
-Development intent, OpenSpec changes, source files, and tests stay in the repository rather than the
-end-user release archive.
+Durable product intent and OpenSpec changes live in a separate private design repository.
+This public repository contains the implementation, skills, source files, and tests; the private
+design records are not part of end-user release archives. Maintainers with access should use the
+two-repository workflow in [AGENTS.md](AGENTS.md) and run private design validation before a release.
 
 ## 📜 Licence and project identity
 

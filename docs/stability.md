@@ -43,7 +43,8 @@ not imply that vendor API adapters ship in the local runtime.
 A release is stable only when all of these pass on the tagged commit:
 
 - TypeScript compilation and the complete test suite;
-- architecture-boundary and strict OpenSpec validation;
+- architecture-boundary checks in public CI and strict private OpenSpec validation by an
+  authorised maintainer before tagging (a missing private checkout is an explicit skip, not a pass);
 - plugin validation and remote one-command skill discovery;
 - end-user archive boundary and checksum verification;
 - production dependency audit with no known vulnerabilities; and

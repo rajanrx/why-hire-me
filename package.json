@@ -21,7 +21,8 @@
     "portfolio:sample": "pnpm run build && node scripts/portfolio/generate-sample.mjs",
     "release:bundle": "node scripts/release/build-bundle.mjs",
     "release:publish": "pnpm run build && changeset publish",
-    "spec:validate": "openspec validate --all --strict --no-interactive && openspec validate --archived --strict --no-interactive && tsx scripts/spec/validate-intent-links.ts",
+    "spec:validate": "node scripts/spec/validate-private-design.mjs",
+    "spec:validate:private": "node scripts/spec/validate-private-design.mjs --required",
     "test": "tsx --test src/**/*.test.ts",
     "version-packages": "changeset version && node scripts/release/sync-plugin-version.mjs"
   },

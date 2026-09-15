@@ -1,12 +1,13 @@
 import { readFile, readdir, stat } from "node:fs/promises";
-import { dirname, join, relative, resolve, sep } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, relative, resolve, sep } from "node:path";
 
 import { parse } from "yaml";
 
-const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const intentRoot = join(repositoryRoot, "intent", "specs");
-const changesRoot = join(repositoryRoot, "openspec", "changes");
+const selectedRoot = process.env.WHY_HIRE_ME_PRIVATE_DESIGN_ROOT;
+if (!selectedRoot) throw new Error("WHY_HIRE_ME_PRIVATE_DESIGN_ROOT must name the private design checkout.");
+const designRoot = resolve(selectedRoot);
+const intentRoot = join(designRoot, "intent", "specs");
+const changesRoot = join(designRoot, "openspec", "changes");
 const allowedTypes = new Set(["goal", "domain", "port", "adr", "rfc", "standard"]);
 
 interface IntentReference {
@@ -106,7 +107,7 @@ async function validateChange(change: ChangeLocation): Promise<string[]> {
       continue;
     }
 
-    const target = resolve(repositoryRoot, reference.path);
+    const target = resolve(designRoot, reference.path);
     const relativeTarget = relative(intentRoot, target);
     if (relativeTarget.startsWith(`..${sep}`) || relativeTarget === ".." || relativeTarget === "") {
       errors.push(`${prefix}.path must resolve to a file below intent/specs`);
