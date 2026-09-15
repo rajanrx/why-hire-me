@@ -30,7 +30,7 @@ priorProjection:
   baselineStatus: inventoried | absent | unresolved
 templateConformance:
   contractSchema: why-hire-me.portfolio-template/v0.2
-  source: canonical-renderer | existing-approved-shell | approved-template-revision
+  source: canonical-renderer | existing-approved-shell | canonical-template-prototype-candidate | approved-template-revision
   baselineRendererVersion: string | null
   baselineShellDirectory: absolute-path | null
   changedVisualOrInteractionAssets:
@@ -39,6 +39,13 @@ templateConformance:
       personApproved: true | false
   structuralChanges: []
   personApprovedRevision: true | false
+candidatePreview:
+  directory: absolute-path | null
+  mainPortfolioUnchanged: true
+  mappedFromReviewedPrototype: true | false
+  replacementApproved: true | false
+  pendingTemplateAssetPaths: []
+  unresolvedCarryForwardIds: []
 preview:
   outputPath: absolute-path
   replacesExisting: true | false
@@ -159,3 +166,13 @@ technology-use, and reference-link maps with no unresolved or deferred IDs. An u
 requires a complete prior-projection carry-forward map, with every exclusion or supersession
 explicitly reviewed. A change in layout does not justify an unresolved
 baseline item. The old projection is a comparison baseline, not a source of newly verified facts.
+
+A person-requested side-by-side template preview may contain candidate files while the generation
+record remains `status: preview`, `mode: local-prototype`, and `approvedByPerson: false`. Populate
+`candidatePreview` and `templateConformance.source: canonical-template-prototype-candidate`;
+the candidate does not replace the main portfolio. Its reviewed packet may be mapped to a prototype
+display model, never to a forged `ValidatedKnowledgeRelease`. A missing PDF, link, privacy choice,
+or approved baseline fact remains an unresolved carry-forward item rather than disappearing from
+the candidate. Show the rendered candidate and complete maps before asking for approval of the
+template revision and replacement. After approval and complete verification, record the applied
+template as `approved-template-revision` and change status to `generated`.

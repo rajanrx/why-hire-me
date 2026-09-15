@@ -39,8 +39,11 @@ task name. Show the absolute target and whether it exists before generation. If 
 resolve a material location choice, ask one concise question.
 
 Record the canonical renderer version or the exact existing approved HTML/CSS/interaction shell.
-A local prototype update inherits that shell. If a new prototype has neither the renderer nor an
-approved reusable shell available, return `blocked`; do not let another design skill invent one.
+A local prototype update inherits that shell unless the person asks to preview the canonical
+template. That request authorises a **non-replacing, local candidate preview** based on the
+canonical template; it does not authorise applying the revision to the main portfolio. If a new
+prototype has neither the renderer's reusable template nor an approved shell available, return
+`blocked`; do not let another design skill invent one.
 
 Default to omitting personal contact and identity fields from generated files. Email, phone,
 home address, date of birth, citizenship, professional-profile URL, or similar information requires
@@ -65,7 +68,7 @@ Use one mode:
   and returns a versioned deterministic projection with a manifest and digest;
 - `local-prototype`: the host can read a validated or partially validated supplied release, or the
   reviewed bounded evidence packet above, and create local static files, but the production builder
-  is unavailable; or
+  is unavailable. A canonical-template adaptation of a reviewed packet stays in this mode; or
 - `blocked`: input authority, validation, readable content, or safe local output is missing.
 
 When the bundled reference CLI is available, use `portfolio preview --release <release-directory>
@@ -77,6 +80,19 @@ availability does not bypass the exact preview and local-generation approval req
 A local prototype must be labelled `prototype`, record generator and limitations, and never claim
 byte determinism, production validation, or Publication-port persistence. Do not use an unvalidated
 release for factual output without the person's explicit review of the extracted content.
+
+The production renderer's `render` method accepts `ValidatedKnowledgeRelease` and emits a
+release-labelled four-file bundle. Do not forge that type or a release manifest to make a prototype
+fit it. For a person-requested template preview, use the renderer and bundled contract as the
+presentation specification, map the reviewed packet into a **prototype** display model, and keep
+prototype provenance separate from governed release metadata. If the host cannot safely map a
+record, link, or privacy choice, report that specific gap; absence of a validated release alone is
+not a reason to stop a local candidate preview.
+Resolve the renderer, contract, sample, and checker relative to the installed skill or package,
+not a developer's machine or repository path. Use the available host tools and filesystem; do not
+require a particular agent, browser, operating system, or portfolio directory name. If a bundled
+checker cannot run in that host, perform its shell/asset comparison by equivalent read-only means,
+report the missing automated check, and still require the same approval before replacement.
 
 ## Reconcile the existing portfolio before updating it
 
@@ -94,6 +110,14 @@ person review and, where possible, input/curation before replacement. Block an i
 an item is missing, unresolved, or excluded without the person's explicit decision. Build a
 side-by-side local preview first; preserve a recoverable copy of the old bundle when applying an
 approved replacement.
+
+For a requested side-by-side preview, write only to a new, explicitly identified candidate
+directory. Carry the complete baseline and reviewed-input inventories into that candidate,
+including authorised links and printable résumé content. The production renderer's standard
+four files are a template starting point, not permission to omit an existing PDF, link, or other
+approved asset. Regenerate a résumé PDF when copying the old one would reintroduce a redacted
+personal field. Mark unsupported items `unresolved` and leave the main bundle unchanged; do not
+silently drop them to make the candidate look complete.
 
 ## Account for every achievement
 
@@ -146,7 +170,15 @@ not make playback private. If embedding is blocked or unsuitable, keep the ordin
 
 ## Prepare the exact preview
 
-Before writing files, show the selected release or reviewed prototype packet, mode, absolute output
+Distinguish **candidate preparation** from **approved replacement**. When the person asks to
+preview a template-based update, that request permits local, non-replacing candidate files after
+the authority, privacy, and preservation inventories are established. Show the absolute candidate
+path and the provisional maps before building it, then show the actual side-by-side result and
+complete maps for approval. Do not ask for a validated release if a reviewed bounded prototype
+packet already satisfies the local-prototype input rule. Do not treat permission to prepare a
+candidate as approval to replace the main portfolio or publish it.
+
+Before final generation or replacement, show the selected release or reviewed prototype packet, mode, absolute output
 location, included sections, redactions, warnings, whether an existing path would be replaced, and
 the complete inclusion map with every featured, supporting, summarised, excluded, and deferred
 achievement plus its rationale. Show the technology-use and reference-link maps and list unresolved
@@ -162,7 +194,10 @@ Show the initiative-context map linking each Work to its contributions, outcomes
 contextual technologies, and evidence references or explicit gaps. A broad employer summary may
 introduce a group, but it cannot be the detail text for every initiative in that group.
 Show each proposed personal-contact disclosure or omission separately in the exact preview.
-Ask the person to approve this exact local projection only after showing the maps.
+Ask the person to approve this exact local projection only after showing the maps and, for a
+template revision, the rendered candidate. An approved template revision is required before
+applying a candidate with changed visual or interaction assets to the main portfolio, not before
+preparing a side-by-side candidate.
 Approval to generate locally is not approval to publish.
 
 Ask how long the printable résumé should target: `one-page`, `two-pages`, `three-pages`, or
@@ -224,7 +259,8 @@ scoring, and visitor fingerprinting.
 Use [`assets/template-contract.json`](assets/template-contract.json) as the canonical visual,
 interaction, and evidence-presentation contract. Governed output uses the production renderer.
 A local update reuses the existing approved shell, changing career data and copy within its four
-lenses. External frontend, writing, or PDF skills may refine and verify within this contract;
+lenses, or prepares a person-requested canonical-template candidate without replacing that shell.
+External frontend, writing, or PDF skills may refine and verify within this contract;
 they do not choose a fresh visual direction or replace the shell. An explicit redesign request
 requires a template revision: preview structural and asset changes, update the contract and
 renderer or approved shell together, and seek separate approval.
@@ -318,11 +354,15 @@ For an update, verify preservation against the old projection as well as the new
 every approved baseline item and authorised technology use has its promised new locator or an
 approved disposition. Check scoped dates, separate measurement definitions, link targets, print
 content, and the manifest after any refactor. A digest check alone cannot detect a missing fact.
-For a local update, run `node scripts/check-template.mjs --baseline <old-directory>
---candidate <preview-directory>`. It compares the four-lens shell and visual/interaction assets.
+For a local candidate, run `node scripts/check-template.mjs --baseline <old-directory>
+--candidate <preview-directory> --preview`. It compares the four-lens shell and reports visual or
+interaction asset changes as requiring separate approval, without treating that pending approval
+as a candidate-generation failure. For an approved replacement, run the same check without
+`--preview`.
 Pass `--revision <approved-template-revision.json>` only for separately approved template changes.
-Fail the preview on an unapproved asset change; content and data files may change through the
-carry-forward checks above. Verify that at least one organisation, work, technology, and outcome
+Fail an in-place replacement on an unapproved asset change; content and data files may change
+through the carry-forward checks above. A candidate still fails for unsafe assets, missing shell
+elements, or unaccounted content. Verify that at least one organisation, work, technology, and outcome
 has a distinct readout. Test the default full graph, multi-focus search/add/remove/clear, zoom/pan,
 full-screen entry and exit, keyboard node selection, the retained selected-node box, and the mobile
 bottom drawer at a narrow viewport.

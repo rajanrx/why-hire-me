@@ -10,11 +10,13 @@ function argument(name) {
 const baseline = argument("--baseline");
 const candidate = argument("--candidate");
 const revisionPath = argument("--revision");
+const previewMode = process.argv.includes("--preview");
 const failed = [];
 const passed = [];
+const warnings = [];
 
 if (!baseline || !candidate) {
-  process.stderr.write("Usage: node check-template.mjs --baseline <directory> --candidate <directory> [--revision <approved-json>]\n");
+  process.stderr.write("Usage: node check-template.mjs --baseline <directory> --candidate <directory> [--preview | --revision <approved-json>]\n");
   process.exit(2);
 }
 
@@ -93,12 +95,17 @@ try {
 
   let revision = null;
   if (revisionPath) revision = JSON.parse(await readFile(resolve(revisionPath), "utf8"));
+  if (previewMode && revisionPath)
+    failed.push("Use --preview for a candidate awaiting approval, or --revision for an approved replacement, not both");
   if (changed.length) {
     const approved = revision?.schema === "why-hire-me.template-revision/v1" &&
       revision?.approvedByPerson === true && Array.isArray(revision.changedAssets);
     const declared = approved ? revision.changedAssets : [];
     const declaredNames = new Set(declared.map((item) => item.path));
-    if (!approved || declaredNames.size !== changed.length ||
+    if (previewMode && !revisionPath) {
+      warnings.push(`Template revision approval required before replacement: ${changed.join(", ")}`);
+      passed.push("Candidate asset changes inventoried for the exact side-by-side preview");
+    } else if (!approved || declaredNames.size !== changed.length ||
         changed.some((name) => !declaredNames.has(name)) ||
         declared.some((item) => !changed.includes(item.path) || !item.rationale?.trim() || item.personApproved !== true)) {
       failed.push(`Unapproved template asset changes: ${changed.join(", ")}`);
@@ -117,9 +124,11 @@ try {
     [...oldAssets].sort().join("\n"), "utf8",
   ).digest("hex");
   process.stdout.write(JSON.stringify({ status: failed.length ? "failed" : "passed", baselineAssetDigest,
-    changedAssets: changed.sort(), passed, failed }, null, 2) + "\n");
+    previewMode, pendingApproval: previewMode && changed.length > 0,
+    changedAssets: changed.sort(), passed, warnings, failed }, null, 2) + "\n");
   if (failed.length) process.exitCode = 1;
 } catch (error) {
-  process.stdout.write(JSON.stringify({ status: "failed", passed, failed: [...failed, String(error.message || error)] }, null, 2) + "\n");
+  process.stdout.write(JSON.stringify({ status: "failed", previewMode, passed, warnings,
+    failed: [...failed, String(error.message || error)] }, null, 2) + "\n");
   process.exitCode = 1;
 }

@@ -17,8 +17,12 @@
   "templateIdentity": {
     "family": "evidence-led-editorial-record",
     "sourceOfTruth": "canonical-renderer-or-existing-approved-shell",
-    "localPrototypeNewWithoutTemplate": "blocked",
+    "localPrototypeNewWithoutTemplate": "blocked-only-when-neither-bundled-template-nor-approved-shell-is-available",
     "localPrototypeUpdate": "reuse-existing-approved-shell",
+    "localPrototypeCandidate": "prepare-non-replacing-canonical-candidate-on-person-request",
+    "prototypeCandidate": "reviewed-packet-mapped-to-prototype-display-model-never-forged-validated-release",
+    "candidateApproval": "requested-preview-may-be-created-locally-template-revision-approved-before-main-replacement",
+    "portableResolution": "installed-skill-or-package-relative-no-agent-or-machine-specific-paths",
     "externalDesignSkills": "refine-within-contract-only",
     "templateRevision": "separate-exact-preview-and-person-approval"
   },
@@ -36,7 +40,9 @@
     "initialVisibleLimit": 3,
     "whenNoFeaturedVisibleLimit": 2,
     "remainingRecords": "native-disclosure-with-complete-approved-content-and-print-equivalent",
-    "summaries": "short-entity-specific-copy-when-available"
+    "summaries": "short-entity-specific-copy-when-available",
+    "groupByExplicitEngagement": true,
+    "preserveUngroupedAchievements": true
   },
   "brandingAndNavigation": {
     "generatorAttribution": "visible-why-hire-me-name-and-official-github-link",
@@ -83,10 +89,6 @@
     "focus": "enter-bottom-drawer-and-return-to-selected-record",
     "scroll": "drawer-content-internal-with-background-contained",
     "reducedMotion": true
-  },
-  "experience": {
-    "groupByExplicitEngagement": true,
-    "preserveUngroupedAchievements": true
   },
   "entityExploration": {
     "ordinaryRowsOpenNavigator": false,
