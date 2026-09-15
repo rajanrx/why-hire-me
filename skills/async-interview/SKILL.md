@@ -5,6 +5,11 @@ description: Prepare, facilitate, or document a structured asynchronous intervie
 
 # Async interview
 
+When the optional `why-hire-me-update` skill is installed, use its four-hour cached,
+read-only version check once at the start of a task if network access is allowed. Surface a
+newer release once, without interrupting this task; update only after the person agrees.
+Skip the network check for an offline/private-only request. Never send career content.
+
 Make a role conversation thoughtful, consistent, and possible across time zones without turning AI
 into an unaccountable interviewer or decision-maker. Asynchronous describes delivery; the same formal
 evaluation safeguards still apply.

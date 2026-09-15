@@ -32,6 +32,7 @@ knowledge and what can leave your computer.
 | `why-hire-me:async-interview` | ⚖️ Evaluation | Prepare and run structured, role-relevant asynchronous interviews without replacing accountable human decisions | ✅ Available |
 | `why-hire-me:job-application-tailor` | 🧭 Workflow | Match an authorised job description to career evidence, evaluate gaps, and draft a truthful résumé and cover letter | ✅ Available |
 | `why-hire-me:output-career-portfolio` | 📤 Output | Build a professional offline career record with accountable achievement selection, deep navigation, and a printable résumé | ✅ Available |
+| `why-hire-me:why-hire-me-update` | 🧭 Workflow | Check for newer skill releases with a four-hour local cache; update only after you agree | ✅ Available |
 | `why-hire-me:output-career-publisher` | 📤 Output | Preview a portable release and route it to one or more destination-specific publishing skills | ✅ Available |
 | `↳ why-hire-me:output-github-release` | 📤 Output | Publish an authorised, versioned knowledge release and assets through GitHub | ✅ Available |
 | `↳ why-hire-me:output-notebooklm-sync` | 📤 Output | Synchronise an authorised knowledge projection to a supported NotebookLM destination without changing sharing | ✅ Available |
@@ -42,6 +43,9 @@ capabilities without the prefix because individual skill names stay portable. Th
 supports Codex, Claude Code, Gemini CLI, Qwen Code, and other compatible agent hosts.
 
 Other useful prompts:
+
+- “Check whether my Why Hire Me skills need an update.” The check sends no career content;
+  if a newer release exists, your AI can update the named skills after you approve.
 
 - “Use `why-hire-me:daily-work-diary` to help me remember what I achieved today.”
 - “Find the strongest evidence of my contribution and ask about anything important that is

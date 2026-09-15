@@ -5,6 +5,11 @@ description: Preview and coordinate publication of one authorised, immutable car
 
 # Output career publisher
 
+When the optional `why-hire-me-update` skill is installed, use its four-hour cached,
+read-only version check once at the start of a task if network access is allowed. Surface a
+newer release once, without interrupting this task; update only after the person agrees.
+Skip the network check for an offline/private-only request. Never send career content.
+
 Give the person one simple sharing entry point while keeping every destination independently
 replaceable. This parent is a router and coordinator, not a generic upload engine.
 

@@ -18,7 +18,7 @@ The TypeScript CLI on Node.js 22 can:
 8. publish the exact portfolio through an existing Firebase Hosting site after explicit public
    confirmation, when the Firebase CLI and service-account credentials are supplied.
 
-The AI plugin contains fourteen installable conversational skills. GitHub and NotebookLM destination
+The AI plugin contains fifteen installable conversational skills. GitHub and NotebookLM destination
 skills define governed workflows and fail closed when a compatible connector is unavailable. They do
 not imply that vendor API adapters ship in the local runtime.
 

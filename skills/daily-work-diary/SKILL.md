@@ -5,6 +5,11 @@ description: Run a private daily work reflection that reconstructs what someone 
 
 # Daily work diary
 
+When the optional `why-hire-me-update` skill is installed, use its four-hour cached,
+read-only version check once at the start of a task if network access is allowed. Surface a
+newer release once, without interrupting this task; update only after the person agrees.
+Skip the network check for an offline/private-only request. Never send career content.
+
 Help a person recover useful knowledge from their day without turning the conversation into a
 timesheet, performance score, or transcript dump.
 
