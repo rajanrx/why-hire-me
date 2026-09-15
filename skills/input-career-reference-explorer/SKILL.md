@@ -91,6 +91,11 @@ In governed mode, stage only evidence-linked proposals through public candidate 
 session-only mode, return the same shape as a `not-persisted` preview. Candidate staging, publisher
 assertion, and person confirmation do not bypass canonical admission.
 
+If the person requests a portfolio change from this reference, pass the reviewed proposals through
+[`output-career-portfolio`](../output-career-portfolio/SKILL.md), the sole local update gateway.
+This explorer never patches the portfolio, and the gateway must carry forward its existing approved
+knowledge rather than rebuilding only from the latest link.
+
 ## Stop conditions
 
 Stop when the authorised reference and approved leads are understood, the person declines expansion,

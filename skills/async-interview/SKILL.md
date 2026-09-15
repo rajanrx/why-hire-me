@@ -67,6 +67,11 @@ Do not browse private sources, inspect a person's device, or expand the evidence
 interview. New material submitted for this evaluation stays in its evaluation context unless the
 person separately authorises knowledge enrichment.
 
+During review, note meaningful new career details that the frozen view lacked—distinct work,
+decisions, leadership, technology use, constraints, outcomes, and corrections—without treating an
+answer as admitted knowledge. Present these as a private coverage-gap summary to the participant
+only when the approved policy permits it. Do not change the evaluation criteria or view mid-session.
+
 ## Review evidence without collapsing states
 
 Preserve the response artefact. Record literal observations before interpretation. Link each finding
@@ -94,3 +99,8 @@ Stop when readiness is incomplete, notice or required acknowledgement is missing
 changes, identity or authority is uncertain, an accommodation cannot be provided, a technical failure
 threatens comparability, the participant withdraws, or a prohibited inference is requested. Preserve
 work already authorised and report a neutral next step.
+
+After the evaluation, a participant may separately authorise career enrichment. Route any selected
+answer-derived proposals through the relevant input and `knowledge-curator` review, then through
+[`output-career-portfolio`](../output-career-portfolio/SKILL.md) if a portfolio update is requested.
+This interview skill never edits the main portfolio or sends evaluation findings to a publisher.

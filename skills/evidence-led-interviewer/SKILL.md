@@ -17,6 +17,13 @@ Use when the person is developing their own knowledge base. Questions may adapt 
 and answers. Do not score, rank, recommend, or create evaluation findings. Submit new information as
 candidate knowledge through the admission boundary.
 
+Reconcile the discovery map as the conversation progresses. Distinct achievements, contextual
+technology use, leadership decisions, outcomes, and corrections should have an explicit proposed,
+deferred, or excluded disposition; a polished broad summary must not erase a meaningful episode.
+If the person asks to reflect reviewed discoveries in a portfolio, route them through
+[`output-career-portfolio`](../output-career-portfolio/SKILL.md), never by editing portfolio files
+from this interviewer.
+
 ### Formal evaluation
 
 Use when findings may influence hiring. Require an identified opportunity, job-relevant criteria,

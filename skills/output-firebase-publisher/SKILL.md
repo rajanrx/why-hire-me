@@ -15,9 +15,17 @@ projection IDs, authority, expiry, file paths, media types, sizes, SHA-256 diges
 internal links, and policy. Reject symlinks that escape the root, secret files, source maps, local data,
 credentials, development files, remote scripts, analytics, or undeclared network dependencies.
 
+Require the portfolio gateway's approved field-level personal-disclosure decisions. Do not deploy
+email, phone, address, citizenship, or profile links merely because they occur in a source résumé
+or an older local bundle; absent approval for the public audience, stop before upload.
+
 Never read canonical knowledge, rebuild the portfolio, inject Firebase SDK code, or add claims. Read
 [`references/firebase-publication-record.md`](references/firebase-publication-record.md) and
 [`references/platform-constraints.md`](references/platform-constraints.md).
+
+If a content, design, or technology correction is requested, return to
+[`output-career-portfolio`](../output-career-portfolio/SKILL.md) for a new approved local projection.
+This leaf may not silently edit CSS, HTML, data, filenames, or the main portfolio to prepare a deploy.
 
 ## State the visibility boundary first
 
@@ -36,6 +44,13 @@ Require an explicit Firebase project ID, existing Hosting site ID, channel mode,
 credential-source name, and connector capability version. Verify project access, selected site,
 current live or channel release, quotas, configuration, and exact public root. Resolve credentials
 through the connector only at action time; never display or persist values.
+
+Inspect the site's response headers and asset URL strategy. A new CDN response can match the
+manifest while an existing browser still uses cached CSS or JavaScript. For assets whose content
+changed under a stable path, require a cache-safe plan approved as part of the exact projection:
+content-addressed or versioned references, or site-isolated Hosting cache headers that the connector
+can preview and verify. Do not introduce a cache-buster or config change after confirmation; route
+such a change back through the portfolio gateway and replan the exact payload.
 
 Do not create projects or sites, enable products, change billing, configure custom domains, deploy
 Functions, modify databases or security rules, add analytics, or alter unrelated Hosting sites.
@@ -66,6 +81,13 @@ After acceptance, retrieve the release/version state and safe Hosting URL. When 
 entry point and declared assets through their public URLs and compare bytes or digests. Report
 `accepted`, `deployed`, `partially-verified`, and `observed-public` separately. A successful CLI exit or
 returned URL alone is not proof that every expected file is reachable.
+
+Also load the live entry point in a normal browser session and a fresh or cache-bypassed session.
+Compare rendered critical content and styling with the approved local preview, including dates,
+technology entries, highlights, and layout widths. Record stale-browser-cache behaviour separately
+from a remote-byte mismatch. Do not call visible-equivalence verified merely because direct asset
+fetches match; if old browser caches still present a materially different page, report that warning
+and the fresh-session result.
 
 Return project, site, channel, version or release ID, safe URL, expiry, verification results, warnings,
 and rollback/retraction instructions. Rollback creates another release; it cannot recall downloaded or

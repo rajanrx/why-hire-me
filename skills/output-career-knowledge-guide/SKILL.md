@@ -79,6 +79,11 @@ The guide is read-only. It cannot add missing knowledge, admit a correction, wid
 release, publish content, or contact another party. If the owner identifies an error, propose a
 separate curation workflow and keep this answer tied to the original view version.
 
+If the owner wants corrected or newly surfaced knowledge reflected in a portfolio, route its
+reviewed update through [`output-career-portfolio`](../output-career-portfolio/SKILL.md). This guide
+must not patch the projection or reuse its answer as a verified new source; the gateway preserves
+existing approved portfolio content while reconciling the correction.
+
 ## Stop conditions
 
 Stop when the answer is supported and cited, the question is outside the view, validation fails,

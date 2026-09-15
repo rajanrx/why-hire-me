@@ -96,3 +96,9 @@ review queue. Do not expose private evidence beyond the authorised audience.
 Stop when the queue is exhausted, reviewer authority is missing, candidate state changed, or a safe
 decision needs more evidence. Curation does not publish knowledge, erase audit history, or create an
 opportunity-specific evaluation.
+
+Admission updates canonical knowledge, not an existing portfolio projection. When the person asks
+to reflect admitted or reviewed session-only knowledge in a portfolio, hand its IDs, attribution,
+policy, and review decisions to [`output-career-portfolio`](../output-career-portfolio/SKILL.md).
+That skill alone reconciles and updates the local portfolio; this curator must not edit its files or
+trigger publication.

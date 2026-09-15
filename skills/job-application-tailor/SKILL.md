@@ -55,6 +55,10 @@ reason for the classification. Years, titles, employer prestige, tool-name match
 claim are not substitutes for evidence. Do not compute a universal fit percentage or hiring
 recommendation.
 
+Match technologies only through reviewed contextual `TechnologyUse`, including frontend, mobile,
+identity, cloud infrastructure, and deployment work. Preserve the work context and attribution;
+do not turn a tool merely present in a shared repository into the person's experience.
+
 ## Ask only questions that can change the application
 
 Prioritise a short gap-resolution queue: ambiguous job meaning, missing context around strong
@@ -113,3 +117,8 @@ Review gaps, sensitive content, contact details, filenames, and final wording wi
 skill may create requested local drafts through available artefact tools, but it does not publish,
 email, upload, contact the employer, answer legal eligibility questions autonomously, or submit an
 application. Those actions require a separate explicit workflow and destination confirmation.
+
+An opportunity-specific résumé or cover letter is not a main portfolio update. If the person wants
+newly surfaced experience reflected in the portfolio, route the reviewed knowledge through
+[`output-career-portfolio`](../output-career-portfolio/SKILL.md). Do not patch portfolio files,
+overwrite its manifest, or let tailoring drop existing approved knowledge.
