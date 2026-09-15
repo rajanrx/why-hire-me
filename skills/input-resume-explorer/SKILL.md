@@ -36,8 +36,24 @@ host; do not guess from partial extraction.
 
 Complete extraction before prioritising, summarising, or selecting career stories. Create one source
 unit for every substantive employment bullet, project, contribution, reported outcome, artefact,
-credential, publication, and technology-use statement. Give every unit a stable ID, the strongest
+credential, publication, technology-use statement, and embedded product, documentation,
+demonstration, credential, publication, or professional-profile link. Give every unit a stable ID,
+the strongest
 available source locator, a faithful meaning, and its Role or Engagement context.
+
+Inventory each embedded URL without opening it. Preserve its displayed label, normalised target,
+source locator, linked achievement, credential, or person, and relationship (documentation,
+product, demonstration, verification lead, professional profile, or other). A URL in résumé text is
+person-supplied evidence of a
+reference, not independent verification of the page or personal contribution. Flag broken-looking,
+private, access-controlled, or unsafe targets for review; do not silently drop them during text
+extraction or story selection.
+
+Keep contact and other personal identifiers separate from career achievements. An email address,
+phone number, home address, date of birth, citizenship, or professional-profile URL may be retained
+as private source context only when relevant; it is not a public portfolio inclusion decision.
+Never pass such a field to a portfolio or publisher without the person's explicit consent for that
+field and audience. Default to omission, and preserve an approved redaction across later updates.
 
 Split a compound unit when it describes materially different products, decisions, contributions,
 outcomes, audiences, or evidence links. Keep the original unit as a `split` disposition, create
@@ -105,6 +121,12 @@ the person must accept, reject, or defer each proposal through the normal admiss
 
 In `session-only` mode, return the same proposal shape as a preview marked `not-persisted`. Offer a
 machine-readable copy if useful, but do not write files unless the person asks.
+
+If the person also asks to create or update a portfolio, hand the reconciled ledger and reviewed
+proposal packet to [`output-career-portfolio`](../output-career-portfolio/SKILL.md), the sole local
+portfolio-update gateway. This explorer must not choose the output directory, select print length,
+edit the main portfolio, or invoke a publisher. The gateway compares these proposals with existing
+approved portfolio content so new résumé extraction does not erase earlier knowledge.
 
 ## Stop conditions
 

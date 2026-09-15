@@ -9,7 +9,9 @@ prominent stories.
 Use why-hire-me:input-resume-explorer on the résumé I attached. Keep it private.
 Inventory every substantive source unit before selecting stories. Preserve distinct achievements
 within long roles, split compound bullets where their products or outcomes differ, reconcile the
-coverage ledger, and then ask about the highest-value evidence gaps.
+coverage ledger—including every product, documentation, demonstration, credential, and publication
+link—and then ask about the highest-value evidence gaps. Keep contact details private unless I
+approve specific fields for a specific audience.
 ```
 
 ## Expected coverage excerpt
@@ -18,7 +20,7 @@ This fictional role deliberately contains several achievements, including late b
 does not assume they are equally important; it guarantees that prioritisation cannot erase them.
 
 ```yaml
-schemaVersion: "0.2"
+schemaVersion: "0.3"
 mode: session-only
 status: not-persisted
 source:
@@ -86,11 +88,32 @@ sourceUnits:
     disposition:
       kind: proposed-entity
       proposalIds: [work-recommendation-service]
+  - id: northstar-link-live-docs
+    locator: experience/northstar/bullet/2#link/1
+    kind: reference-link
+    faithfulMeaning: Supplied product documentation for the live reporting product.
+    engagementId: engagement-northstar
+    roleId: role-platform-lead
+    parentSourceUnitId: northstar-bullet-2
+    disposition:
+      kind: proposed-claim
+      proposalIds: [link-live-docs]
+referenceLinks:
+  - id: link-live-docs
+    sourceUnitId: northstar-link-live-docs
+    locator: experience/northstar/bullet/2#link/1
+    displayedLabel: Live reporting documentation
+    targetUrl: https://example.com/live-reporting
+    relationship: documentation
+    linkedProposalId: work-live-reporting-product
+    access: public-looking
+    verification: resume-supplied-unvisited
+    disposition: proposed-for-portfolio
 coverage:
   status: reconciled
   counts:
-    total: 10
-    captured: 9
+    total: 11
+    captured: 10
     merged: 0
     excluded: 0
     ambiguous: 0

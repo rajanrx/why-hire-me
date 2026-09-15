@@ -12,6 +12,10 @@ Validate these constraints with the connector and current official documentation
   must instead receive an explicit site ID or construct and validate the required mapping.
 - Local emulation is the only non-public preview supported by this leaf.
 - Firebase Hosting rollback and release management cannot recall copies already downloaded or cached.
+- Hosting invalidates its CDN cache on redeploy, but browser cache headers can still make an open
+  page use older CSS or JavaScript. Inspect headers and verify a fresh browser session separately.
+  Site-isolated `headers` rules can set `Cache-Control`; they belong in the exact preview and
+  confirmation plan, not in a post-deploy repair.
 
 Primary references:
 

@@ -2,6 +2,8 @@
 
 Use this skill with one authorised, versioned career knowledge release. It accounts for every
 achievement, generates a professional light-first career explorer, and stops before hosted delivery.
+It is also the only skill that creates or updates the main local portfolio. Reviewed input-skill
+findings reach it as a handoff; publisher skills receive only its completed bytes.
 
 ## Prompt
 
@@ -16,8 +18,25 @@ analytics, or a dark theme by default.
 
 ## Expected preview
 
+For an existing portfolio, use a more explicit update request:
+
+```text
+Use why-hire-me:output-career-portfolio to preview an update to this existing portfolio:
+<absolute portfolio directory>. Use these reviewed new evidence proposals: <bounded packet or
+release>. Compare every existing approved record, claim, scoped date, technology use, relationship,
+and evidence reference with the proposed result. Show additions, rewording, relocations,
+supersessions, exclusions, and unresolved provenance gaps before replacing files. Keep the old
+bundle recoverable. Reconcile product and documentation links as well as technology use. Do not
+publish; I will review the local preview first.
+```
+
+The gateway keeps source provenance in the evidence view; the main work narrative describes the
+career contribution rather than saying it was found by scanning a résumé or repository. A
+person-stated outcome from internal reporting remains attributed without exposing confidential
+sales material.
+
 ```yaml
-schemaVersion: "0.2"
+schemaVersion: "0.3"
 mode: governed-render
 status: preview
 release:
@@ -25,7 +44,7 @@ release:
   version: "1.2.0"
   validation: validated
 preview:
-  outputPath: ./career-portfolio/
+  outputPath: /absolute/path/career-portfolio/
   replacesExisting: false
   resumeLength: complete
   sections: [experience, expertise, focused knowledge graph, evidence, printable resume, inclusion map]
@@ -58,6 +77,18 @@ preview:
     excluded: 1
     deferred: 0
     unresolvedRecordIds: []
+  technologyUseCoverage:
+    total: 0
+    unresolvedTechnologyUseIds: []
+  referenceLinkCoverage:
+    total: 0
+    unresolvedLinkIds: []
+  personalDisclosure:
+    - fieldId: contact-email
+      fieldType: email
+      status: omitted
+      audience: public
+      consentReference: null
   approvedByPerson: false
 ```
 

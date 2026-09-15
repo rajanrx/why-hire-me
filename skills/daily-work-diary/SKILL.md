@@ -95,6 +95,10 @@ Produce a concise proposed diary entry containing:
 - unresolved questions; and
 - optional next intentions.
 
+Capture consequential technology use, architecture, coordination, and reported user or business
+signals as separate episode details when they matter; visible code is not the only evidence of work.
+Do not demand that private internal reports be made public to preserve a person-stated observation.
+
 Read [`references/diary-record.md`](references/diary-record.md) before persisting. Ask the person to
 correct the summary and choose which extracted items, if any, should be submitted as candidate
 knowledge. Silence is not approval.
@@ -107,3 +111,6 @@ knowledge. Silence is not approval.
 - Do not infer effort, productivity, capability, or wellbeing from activity traces.
 - Do not reuse diary content for formal evaluation without a new explicit grant.
 - Preserve corrections; do not silently rewrite an earlier confirmed entry.
+- A diary correction or candidate does not directly revise an existing portfolio. After review and,
+  in governed mode, curation, route any requested portfolio change through
+  [`output-career-portfolio`](../output-career-portfolio/SKILL.md), the sole local update gateway.

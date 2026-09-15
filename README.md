@@ -80,10 +80,19 @@ portable release, and render it as offline HTML. Only accepted proposals enter a
 runtime releases entities and admission activities; claim, evidence, and alias admission remains an
 explicit limitation rather than inferred content.
 
+When an input skill, diary, or interview discovers something new, it proposes evidence rather than
+editing the portfolio. After human review (and governed curation where available),
+`output-career-portfolio` is the single gateway for local creation or updates. It compares the
+current approved portfolio with the new authorised knowledge, accounts for every achievement and
+contextual technology use, previews additions and carry-forward decisions, and blocks an in-place
+replacement if existing knowledge would disappear without review. `output-career-publisher` only
+shares the completed, separately approved bytes; destination skills never rewrite the portfolio.
+
 ## 🌐 Your career portfolio, local first
 
 The `output-career-portfolio` skill guides an installed renderer to turn one authorised, versioned
-knowledge release into a professional static career record containing:
+knowledge release—or a clearly labelled, person-reviewed local prototype packet when a release is
+not available—into a professional static career record containing:
 
 - an explicit inclusion decision for every authorised achievement, shown before generation;
 - a complete achievement index that keeps distinct work within long engagements visible;

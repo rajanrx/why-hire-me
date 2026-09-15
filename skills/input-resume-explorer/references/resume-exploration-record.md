@@ -4,7 +4,7 @@ Use this contract for the final review. Omit empty optional fields rather than f
 guesses.
 
 ```yaml
-schemaVersion: "0.2"
+schemaVersion: "0.3"
 recordType: ResumeExploration
 mode: governed-import | session-only
 status: staged | not-persisted | blocked
@@ -19,7 +19,7 @@ source:
 sourceUnits:
   - id: stable-source-unit-id
     locator: string
-    kind: employment-bullet | project | contribution | reported-outcome | artefact | credential | publication | technology-use
+    kind: employment-bullet | project | contribution | reported-outcome | artefact | credential | publication | technology-use | reference-link
     faithfulMeaning: string
     engagementId: string | null
     roleId: string | null
@@ -42,6 +42,18 @@ coverage:
     split: integer
     unresolved: integer
   unresolvedSourceUnitIds: []
+referenceLinks:
+  - id: stable-link-id
+    sourceUnitId: stable-source-unit-id
+    locator: string
+    displayedLabel: string
+    targetUrl: string
+    relationship: product | documentation | demonstration | credential-record | publication | professional-profile | other
+    linkedProposalId: string | null
+    access: public-looking | private-or-access-controlled | unknown
+    verification: resume-supplied-unvisited | separately-authorised-visited
+    disposition: proposed-for-portfolio | excluded | needs-review
+    rationale: string | null
 observations:
   - text: string
     locator: string
@@ -81,3 +93,8 @@ predicate inside the record.
 `coverage.status: reconciled` requires exactly one valid disposition for every source unit. Split
 parents and all of their children are separate ledger entries. Merging or excluding a unit requires
 a rationale; a missing, duplicate, or structurally invalid disposition keeps the record unresolved.
+
+An embedded link is a separate source unit even when its surrounding bullet is also inventoried.
+`coverage.status: reconciled` requires a disposition for every link unit and a corresponding
+`referenceLinks` entry. Do not conflate link preservation with external verification or silently
+remove links because a work bullet was summarised.

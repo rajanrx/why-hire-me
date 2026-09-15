@@ -41,6 +41,13 @@
   "offline": {
     "remoteAssetsAllowed": false,
     "analyticsAllowed": false,
-    "networkRequestsAllowed": false
+    "networkRequestsAllowed": false,
+    "networkRequestsScope": "initial-and-unprompted-rendering",
+    "unsolicitedNetworkRequestsAllowed": false,
+    "optionalUserInitiatedVideo": {
+      "allowedAfterExplicitPlay": true,
+      "requiresOfflineLinkFallback": true,
+      "requiresProviderDisclosure": true
+    }
   }
 }
