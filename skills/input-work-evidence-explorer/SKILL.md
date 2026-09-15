@@ -5,6 +5,11 @@ description: Inspect an explicitly authorised, bounded body of work and turn obs
 
 # Input work evidence explorer
 
+When the optional `why-hire-me-update` skill is installed, use its four-hour cached,
+read-only version check once at the start of a task if network access is allowed. Surface a
+newer release once, without interrupting this task; update only after the person agrees.
+Skip the network check for an offline/private-only request. Never send career content.
+
 Explore what a person's work can genuinely show while protecting private, proprietary, and
 third-party information. Work evidence is broader than software and stronger than a list of tools.
 

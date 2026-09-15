@@ -5,6 +5,11 @@ description: Publish one authorised, immutable career knowledge release and its 
 
 # Output GitHub release
 
+When the optional `why-hire-me-update` skill is installed, use its four-hour cached,
+read-only version check once at the start of a task if network access is allowed. Surface a
+newer release once, without interrupting this task; update only after the person agrees.
+Skip the network check for an offline/private-only request. Never send career content.
+
 Publish a reviewed career release without turning GitHub into canonical storage. This leaf owns one
 GitHub workflow; the parent remains destination-neutral and a connector performs remote operations.
 

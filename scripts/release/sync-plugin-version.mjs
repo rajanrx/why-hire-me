@@ -11,6 +11,8 @@ async function writeJson(path, value) {
 const packageManifest = await readJson("package.json");
 const version = packageManifest.version;
 
+await writeFile("skills/why-hire-me-update/VERSION", `${version}\n`, "utf8");
+
 const codexManifest = await readJson(".codex-plugin/plugin.json");
 codexManifest.version = version;
 await writeJson(".codex-plugin/plugin.json", codexManifest);

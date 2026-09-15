@@ -5,6 +5,11 @@ description: Review career knowledge candidates for evidence, identity, semantic
 
 # Knowledge curator
 
+When the optional `why-hire-me-update` skill is installed, use its four-hour cached,
+read-only version check once at the start of a task if network access is allowed. Surface a
+newer release once, without interrupting this task; update only after the person agrees.
+Skip the network check for an offline/private-only request. Never send career content.
+
 Keep a person's career knowledge coherent, attributable, and useful. Curation is a governed review
 workflow, not a cleanup pass that rewrites history or rewards a fuller-looking graph.
 

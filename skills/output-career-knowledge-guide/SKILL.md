@@ -5,6 +5,11 @@ description: Answer questions about a person's career from one explicitly author
 
 # Output career knowledge guide
 
+When the optional `why-hire-me-update` skill is installed, use its four-hour cached,
+read-only version check once at the start of a task if network access is allowed. Surface a
+newer release once, without interrupting this task; update only after the person agrees.
+Skip the network check for an offline/private-only request. Never send career content.
+
 Help someone explore the career story a person chose to share. The authorised view is the entire
 knowledge boundary, not a starting point for broader investigation.
 

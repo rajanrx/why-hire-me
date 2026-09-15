@@ -49,6 +49,8 @@ test("release bundle contains end-user files and excludes development material",
     `${root}/skills/output-github-release/SKILL.md`,
     `${root}/skills/output-notebooklm-sync/SKILL.md`,
     `${root}/skills/output-firebase-publisher/SKILL.md`,
+    `${root}/skills/why-hire-me-update/SKILL.md`,
+    `${root}/skills/why-hire-me-update/scripts/check-version.mjs`,
     `${root}/scripts/license/scan-public-usage.mjs`,
     `${root}/scripts/portfolio/generate-sample.mjs`,
     `${root}/templates/career-portfolio/README.md`,
@@ -93,6 +95,7 @@ test("plugin namespace qualifies portable skill names", async () => {
     "output-github-release",
     "output-notebooklm-sync",
     "output-firebase-publisher",
+    "why-hire-me-update",
   ]) {
     const skill = await readFile(`skills/${skillName}/SKILL.md`, "utf8");
     assert.match(skill, new RegExp(`^---\\nname: ${skillName}\\n`));

@@ -5,6 +5,11 @@ description: Be the single gateway for creating or updating a local-first career
 
 # Output career portfolio
 
+When the optional `why-hire-me-update` skill is installed, use its four-hour cached,
+read-only version check once at the start of a task if network access is allowed. Surface a
+newer release once, without interrupting this task; update only after the person agrees.
+Skip the network check for an offline/private-only request. Never send career content.
+
 Turn deliberately authorised career knowledge into a local portfolio that remains useful without an
 account or network connection. This skill is the sole gateway for local portfolio creation and
 updates. Input, diary, interview, application, and curation skills may supply reviewed proposals;

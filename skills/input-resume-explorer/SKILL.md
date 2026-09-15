@@ -5,6 +5,11 @@ description: Explore a person's authorised résumé or CV, map it into evidence-
 
 # Input résumé explorer
 
+When the optional `why-hire-me-update` skill is installed, use its four-hour cached,
+read-only version check once at the start of a task if network access is allowed. Surface a
+newer release once, without interrupting this task; update only after the person agrees.
+Skip the network check for an offline/private-only request. Never send career content.
+
 Turn a résumé into a reviewable map of career evidence. A résumé is a starting source, not proof of
 every claim and not a complete account of a person.
 

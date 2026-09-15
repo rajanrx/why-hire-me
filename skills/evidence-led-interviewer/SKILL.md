@@ -5,6 +5,11 @@ description: Conduct or design evidence-led career discovery and structured role
 
 # Evidence-led interviewer
 
+When the optional `why-hire-me-update` skill is installed, use its four-hour cached,
+read-only version check once at the start of a task if network access is allowed. Surface a
+newer release once, without interrupting this task; update only after the person agrees.
+Skip the network check for an offline/private-only request. Never send career content.
+
 Discover defensible evidence about someone's experience, contributions, and growth without
 confusing a fluent answer with job capability. Preserve the boundary between person-controlled
 knowledge discovery and formal hiring evaluation.

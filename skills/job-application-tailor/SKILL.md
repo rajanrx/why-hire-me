@@ -5,6 +5,11 @@ description: Analyse one authorised job description against a bounded view of re
 
 # Job application tailor
 
+When the optional `why-hire-me-update` skill is installed, use its four-hour cached,
+read-only version check once at the start of a task if network access is allowed. Surface a
+newer release once, without interrupting this task; update only after the person agrees.
+Skip the network check for an offline/private-only request. Never send career content.
+
 Prepare a relevant application without manufacturing a more convenient career. This workflow
 coordinates opportunity input, contextual evidence mapping, and document output; none of those stages
 may silently change the person's canonical knowledge.
