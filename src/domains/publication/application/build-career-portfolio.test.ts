@@ -50,14 +50,15 @@ test("renders deterministic, escaped, offline and accessible portfolio files", a
     assert.match(html, /Content-Security-Policy/);
     assert.match(html, /why-hire-me\.build\/v1/);
     assert.match(html, /Skip to career record/);
-    assert.match(html, /role="img"/);
+    assert.match(html, /role="group" aria-labelledby="graph-title graph-desc"/);
     assert.match(html, /Experience/);
     assert.match(html, /Expertise/);
     assert.match(html, /Career graph/);
     assert.match(html, /class="entity-drill"/);
     assert.match(html, /No explicit claim relationships are present/);
     assert.doesNotMatch(html, /<img src=x/);
-    assert.doesNotMatch(html, /https?:\/\//);
+    assert.match(html, /Made with <a href="https:\/\/github\.com\/rajanrx\/why-hire-me">Why Hire Me<\/a>/);
+    assert.doesNotMatch(html.replace("https://github.com/rajanrx/why-hire-me", ""), /https?:\/\//);
     assert.match(html, /&lt;script&gt;/);
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
     assert.equal(new Set(ids).size, ids.length);
@@ -66,6 +67,8 @@ test("renders deterministic, escaped, offline and accessible portfolio files", a
     assert.match(first.projection.files["styles.css"], /width:min\(720px,66vw\)/);
     assert.doesNotMatch(first.projection.files["styles.css"], /#f7f8ec|#d9dfaa/);
     assert.match(first.projection.files["styles.css"], /@media print/);
+    assert.match(first.projection.files["styles.css"], /#graph-inspector\.is-mobile-open/);
+    assert.match(first.projection.files["app.js"], /mobile-detail-close/);
     assert.doesNotMatch(first.projection.files["styles.css"], /prefers-color-scheme:dark/);
     await assert.rejects(() => useCase.execute({ releaseDirectory: "/release", inclusionDecisions: [], approvedByPerson: true }), /coverage is incomplete/);
     await assert.rejects(() => useCase.execute({ releaseDirectory: "/release", inclusionDecisions: inclusion, approvedByPerson: false }), /requires person approval/);
@@ -98,6 +101,47 @@ test("keeps large record sets navigable and renders only explicit relationships"
   assert.doesNotMatch(projection.files["index.html"], /No explicit claim relationships are present/);
 });
 
+test("prioritises role achievements without dropping supporting or summarised records", async () => {
+  const fixture = JSON.parse(await readFile(join(process.cwd(),
+    "skills/output-career-portfolio/assets/sample-release.json"), "utf8")) as {
+      release: ValidatedKnowledgeRelease;
+      inclusionDecisions: readonly PortfolioInclusionDecision[];
+    };
+  const work = fixture.release.records.find((record) => record.id === "work-stream-platform")!;
+  const link = fixture.release.records.find((record) => record.id === "claim-engagement-work")!;
+  const additions = Array.from({ length: 7 }, (_, index) => ({
+    ...work, id: `work-extra-${index}`, data: { entityType: "Work", attributes: {
+      displayName: `Additional initiative ${index}`, summary: `Specific context for initiative ${index}.`,
+    } },
+  }));
+  const links = additions.map((record, index) => ({ ...link, id: `claim-extra-${index}`,
+    data: { subject: { ref: "engagement-northstar" }, predicate: "engagement.includes_work",
+      object: { ref: record.id } },
+  }));
+  const decisions: readonly PortfolioInclusionDecision[] = [...fixture.inclusionDecisions,
+    ...additions.map((record, index) => ({ recordId: record.id,
+      status: index < 3 ? "featured" as const : index < 6 ? "supporting" as const : "summarised" as const,
+      rationale: "Keep the approved initiative visible in its role context.",
+      summarisedUnderRecordId: index === 6 ? "work-stream-platform" : null,
+    }))];
+  const richRelease: ValidatedKnowledgeRelease = { ...fixture.release,
+    records: [...fixture.release.records, ...additions, ...links] };
+  const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
+    .render(richRelease, decisions, { resumeLength: "complete" });
+  const html = projection.files["index.html"]!;
+  const experience = html.split('<section class="view" data-view="experience">')[1]!
+    .split('<section class="view" data-view="expertise"')[0]!;
+  assert.match(experience, /Show 6 more records from this work/);
+  const disclosure = experience.indexOf('<details class="career-more">');
+  assert.ok(disclosure > 0);
+  assert.ok(experience.indexOf("Additional initiative 0") < disclosure);
+  assert.ok(experience.indexOf("Additional initiative 2") < disclosure);
+  assert.ok(experience.indexOf("Additional initiative 3") > disclosure);
+  for (let index = 0; index < 7; index++) assert.match(experience, new RegExp(`Additional initiative ${index}`));
+  assert.match(experience, /Specific context for initiative 0/);
+  assert.match(projection.files["styles.css"]!, /career-more>div\{display:block!important\}/);
+});
+
 test("resume length participates in deterministic projection identity", () => {
   const renderer = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester());
   const complete = renderer.render(release, inclusion, { resumeLength: "complete" });
@@ -117,14 +161,36 @@ test("canonical template keeps featured evidence subtle and semantic navigation 
     };
   const contract = JSON.parse(await readFile(join(process.cwd(),
     "skills/output-career-portfolio/assets/template-contract.json"), "utf8")) as {
+      schema: string;
       rendererVersion: string;
       theme: { default: string; density: string; featuredBackground: string; darkDefaultAllowed: boolean };
       lenses: string[];
+      templateIdentity: { localPrototypeUpdate: string };
+      mobileSelectedRecordDetail: { presentation: string; existingEntityExplorer: string };
+      brandingAndNavigation: { githubUrl: string };
+      graph: { defaultView: string; focusPicker: string; selectionReadout: string; nodeSizing: string };
     };
   const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
     .render(fixture.release, fixture.inclusionDecisions, fixture.options);
 
   assert.equal(contract.rendererVersion, projection.manifest.rendererVersion);
+  assert.equal(contract.schema, "why-hire-me.portfolio-template/v0.2");
+  assert.equal(contract.templateIdentity.localPrototypeUpdate, "reuse-existing-approved-shell");
+  assert.equal(contract.mobileSelectedRecordDetail.presentation, "bottom-drawer");
+  assert.equal(contract.mobileSelectedRecordDetail.existingEntityExplorer, "preserve-separate-side-drawer");
+  assert.equal(contract.graph.defaultView, "complete-authorised-relationship-graph-without-a-focus");
+  assert.equal(contract.graph.focusPicker, "searchable-multiselect-with-removable-selection-chips");
+  assert.match(contract.graph.nodeSizing, /capped-at-1\.65x/);
+  assert.match(projection.files["index.html"], /aria-multiselectable="true"/);
+  assert.match(projection.files["index.html"], /id="graph-fullscreen"/);
+  assert.match(projection.files["index.html"], /All authorised records are shown/);
+  assert.match(projection.files["styles.css"], /\.graph-shell\.is-fullscreen/);
+  assert.match(projection.files["app.js"], /graphItems=\[\.\.\.items\.values\(\)\]/);
+  assert.match(projection.files["app.js"], /focusIds=new Set\(\)/);
+  assert.match(projection.files["app.js"], /Math\.log1p\(degree\)/);
+  assert.match(projection.files["app.js"], /1\+\.65\*Math\.min\(1/);
+  assert.match(projection.files["app.js"], /graph-selection-change/);
+  assert.match(projection.files["index.html"], new RegExp(contract.brandingAndNavigation.githubUrl));
   assert.deepEqual(contract.lenses, ["experience", "expertise", "graph", "evidence"]);
   assert.equal(contract.theme.default, "light");
   assert.equal(contract.theme.density, "compact");

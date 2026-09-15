@@ -18,7 +18,7 @@ export interface CareerPortfolioManifest {
   readonly schema: "why-hire-me.portfolio/v0.3";
   readonly portfolioId: string;
   readonly projectionDigest: string;
-  readonly rendererVersion: "0.3.1";
+  readonly rendererVersion: "0.3.1" | "0.3.2" | "0.3.3";
   readonly buildMarker: "why-hire-me.build/v1";
   readonly resumeLength: ResumeLength;
   readonly releaseId: string;

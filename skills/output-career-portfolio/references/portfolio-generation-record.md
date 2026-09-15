@@ -28,6 +28,17 @@ priorProjection:
   manifestDigest: string | null
   projectionId: string | null
   baselineStatus: inventoried | absent | unresolved
+templateConformance:
+  contractSchema: why-hire-me.portfolio-template/v0.2
+  source: canonical-renderer | existing-approved-shell | approved-template-revision
+  baselineRendererVersion: string | null
+  baselineShellDirectory: absolute-path | null
+  changedVisualOrInteractionAssets:
+    - path: relative-path
+      rationale: string
+      personApproved: true | false
+  structuralChanges: []
+  personApprovedRevision: true | false
 preview:
   outputPath: absolute-path
   replacesExisting: true | false
@@ -79,6 +90,30 @@ preview:
   carryForwardCoverage:
     total: integer
     unresolvedBaselineItemIds: []
+  entityReadoutMap:
+    - entityId: string
+      entityType: Organisation | Role | Work | Contribution | Technology | reported-outcome | other
+      summaryStatus: specific | related-records-only | deferred
+      selectedEntitySummary: string | null
+      contextRecordIds: []
+      attributionStatus: reviewed | person-stated | unverified | not-applicable
+      duplicateOfParentSummary: true | false
+  initiativeContextMap:
+    - workId: string
+      situationAndAudience: string | null
+      personRoleAndDecisionIds: []
+      technologyUseIds: []
+      reportedOutcomeIds: []
+      supportingEvidenceIds: []
+      evidenceGap: string | null
+      measurementScope: string | null
+      linkedEngagementId: string | null
+  entityReadoutCoverage:
+    totalEntities: integer
+    specificReadoutCount: integer
+    missingContextEntityIds: []
+    sampledTypes: [organisation, role, work, contribution, technology, outcome]
+    mobileSelectedRecordBottomDrawer: planned | not-applicable
   changes: []
   personalDisclosure:
     - fieldId: string

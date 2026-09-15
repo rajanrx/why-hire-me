@@ -1,7 +1,7 @@
 {
-  "schema": "why-hire-me.portfolio-template/v0.1",
+  "schema": "why-hire-me.portfolio-template/v0.2",
   "portfolioSchema": "why-hire-me.portfolio/v0.3",
-  "rendererVersion": "0.3.1",
+  "rendererVersion": "0.3.3",
   "theme": {
     "default": "light",
     "density": "compact",
@@ -14,6 +14,76 @@
     "graph",
     "evidence"
   ],
+  "templateIdentity": {
+    "family": "evidence-led-editorial-record",
+    "sourceOfTruth": "canonical-renderer-or-existing-approved-shell",
+    "localPrototypeNewWithoutTemplate": "blocked",
+    "localPrototypeUpdate": "reuse-existing-approved-shell",
+    "externalDesignSkills": "refine-within-contract-only",
+    "templateRevision": "separate-exact-preview-and-person-approval"
+  },
+  "visualSystem": {
+    "composition": "compact-four-lens-editorial",
+    "contentPriority": "distinct-career-work-before-decoration",
+    "type": "system-sans-with-clear-hierarchy",
+    "colour": "near-white-paper-dark-ink-one-restrained-accent",
+    "surface": "quiet-lines-and-faint-featured-treatment",
+    "motion": "functional-only-with-reduced-motion-equivalent",
+    "forbidden": ["marketing-hero", "generic-card-dashboard", "decorative-system-map", "unsupported-impact-chart", "new-visual-direction-per-agent"]
+  },
+  "experience": {
+    "priorityOrder": ["featured", "supporting", "summarised"],
+    "initialVisibleLimit": 3,
+    "whenNoFeaturedVisibleLimit": 2,
+    "remainingRecords": "native-disclosure-with-complete-approved-content-and-print-equivalent",
+    "summaries": "short-entity-specific-copy-when-available"
+  },
+  "brandingAndNavigation": {
+    "generatorAttribution": "visible-why-hire-me-name-and-official-github-link",
+    "githubUrl": "https://github.com/rajanrx/why-hire-me",
+    "contactNavigation": "only-when-approved-contact-target-is-present-and-working",
+    "linkedin": "optional-local-icon-with-accessible-name-after-profile-url-consent",
+    "remoteIconAssets": false
+  },
+  "evidencePresentation": {
+    "achievementUnit": "one-distinct-work-contribution-or-outcome",
+    "careerStatementOrder": ["context", "person-contribution-or-led-decision", "reported-result", "qualified-evidence-access"],
+    "measurementScopeRequired": ["subject", "quantity-or-range", "unit", "before-and-after-when-claimed", "timeframe-when-known", "attribution-status"],
+    "separateMeasures": ["data-freshness", "database-query-latency", "user-visible-latency", "business-outcome"],
+    "uncertainty": "show-plain-qualifier-near-claim-and-source-detail-in-evidence-lens",
+    "graph": "relationships-only-never-an-implied-causal-diagram"
+  },
+  "entityReadout": {
+    "selectedEntityOwnsTheSummary": true,
+    "fallback": "identify-missing-specific-context-do-not-repeat-parent-summary",
+    "organisation": ["what-the-organisation-or-product-is", "person-tenure-and-roles", "named-initiatives-with-their-own-context", "approved-organisation-context"],
+    "role": ["mandate-and-scope", "period", "decisions-and-led-work", "linked-engagement"],
+    "work": ["initiative-or-scenario", "product-or-problem", "person-contribution", "technical-approach", "reported-result", "supporting-evidence-and-contextual-technology"],
+    "contribution": ["decision-or-action", "work-context", "result-or-limit"],
+    "technology": ["specific-use", "work-context", "relationship-to-other-technologies"],
+    "outcome": ["measured-subject", "result-and-units", "timeframe-and-attribution"],
+    "interaction": "opening-a-linked-entity-recomputes-its-own-readout"
+  },
+  "initiativeBinding": {
+    "unit": "distinct-work-or-scenario-not-employer-summary",
+    "requiredRelationships": ["engagement", "role-or-person-contribution", "contextual-technology-use", "supporting-evidence-or-explicit-gap", "reported-outcome-or-explicit-gap"],
+    "readoutOrder": ["situation-and-audience", "person-role-and-decisions", "technical-approach-and-technologies", "result-and-measurement-scope", "evidence-and-limits"],
+    "organisationReadout": "group-named-initiatives-with-short-distinct-context",
+    "technologyReadout": "show-where-and-how-used-per-initiative",
+    "noGenericParentCopyInChildReadout": true
+  },
+  "mobileSelectedRecordDetail": {
+    "presentation": "bottom-drawer",
+    "desktopPresentation": "side-panel",
+    "existingEntityExplorer": "preserve-separate-side-drawer",
+    "trigger": "selected-record-or-graph-focus",
+    "notInlineAfterMainContent": true,
+    "minimumVisibleContent": "selected-entity-title-and-summary",
+    "dismissal": ["visible-close", "Escape", "backdrop-or-swipe-when-accessible"],
+    "focus": "enter-bottom-drawer-and-return-to-selected-record",
+    "scroll": "drawer-content-internal-with-background-contained",
+    "reducedMotion": true
+  },
   "experience": {
     "groupByExplicitEngagement": true,
     "preserveUngroupedAchievements": true
@@ -26,11 +96,20 @@
     "graphFocusControlInNavigator": true
   },
   "graph": {
-    "click": "focus",
+    "defaultView": "complete-authorised-relationship-graph-without-a-focus",
+    "focusPicker": "searchable-multiselect-with-removable-selection-chips",
+    "multipleFocusEffect": "highlight-union-of-selected-neighbourhoods-dim-but-do-not-hide-other-records",
+    "nodeSelectionKeepsFocus": true,
+    "navigation": ["pan", "zoom", "fit-or-reset", "full-screen-with-exit"],
+    "selectionReadout": "single-selected-node-specific-context-remains-visible-in-graph-shell",
+    "mobileReadout": "selected-node-bottom-drawer",
+    "largeGraphReadability": "progressive-labels-and-neighbour-emphasis-with-every-node-still-available",
+    "nodeSizing": "connection-count-relative-to-typical-degree-log-scaled-and-capped-at-1.65x-within-each-node-type",
+    "click": "read-selected-node",
     "doubleClick": "explore",
     "contextMenu": "explore",
     "longPress": "explore",
-    "keyboardActivation": "explore",
+    "keyboardActivation": "Enter-to-read-Shift-Enter-to-explore",
     "requiresEquivalentRelationshipList": true
   },
   "semanticPresentation": {

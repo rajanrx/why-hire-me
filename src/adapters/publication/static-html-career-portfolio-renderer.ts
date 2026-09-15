@@ -7,6 +7,7 @@ import type { PortfolioInclusionDecision } from "../../domains/publication/domai
 import type { ReleaseInputRecord } from "../../domains/publication/domain/knowledge-release.js";
 import type { CareerPortfolioRenderer } from "../../domains/publication/ports/career-portfolio-ports.js";
 import type { ReleaseDigester } from "../../domains/publication/ports/knowledge-release-ports.js";
+import { fullCareerGraphApp, fullCareerGraphStyles, mobileCareerGraphDetailApp } from "./full-career-graph-template.js";
 
 const esc = (value: string) =>
   value
@@ -129,6 +130,8 @@ const refinedStyles = enhancedStyles
   .replace("#f8f9ef", "#fefefc")
   .replace("#a7ad73", "#dde0cf");
 
+const mobileSelectedDetailStyles = `.mobile-detail-close,.mobile-detail-scrim{display:none}@media(max-width:820px){.graph-layout #graph-inspector{position:fixed;z-index:28;inset:auto 0 0;width:100%;height:min(78svh,680px);min-height:280px;overflow:auto;overscroll-behavior:contain;border:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -18px 45px rgba(24,32,42,.14);transform:translateY(105%);visibility:hidden;transition:transform .18s ease,visibility .18s ease}.graph-layout #graph-inspector.is-mobile-open{transform:none;visibility:visible}.mobile-detail-close{display:block;float:right;border:1px solid var(--line);border-radius:5px;padding:7px 10px;background:var(--surface);cursor:pointer}.mobile-detail-scrim:not([hidden]){display:block;position:fixed;z-index:27;inset:0;border:0;background:rgba(24,32,42,.2)}body.mobile-detail-open{overflow:hidden}}@media(max-width:820px) and (prefers-reduced-motion:reduce){.graph-layout #graph-inspector{transition:none}}@media print{.mobile-detail-scrim,.mobile-detail-close{display:none!important}}`;
+
 const enhancedApp = app
   .replace("entity=(id,label,klass=\"\")=>'<a class=\"entity-link '+klass+'\" href=\"'+href(id)+'\" data-entity=\"'+esc(id)+'\">'+esc(label)+'</a>'", "entity=(id,label,klass=\"\")=>'<span class=\"entity-pair '+klass+'\"><span>'+esc(label)+'</span><a class=\"entity-drill\" href=\"'+href(id)+'\" data-entity=\"'+esc(id)+'\" aria-label=\"Explore '+esc(label)+'\">↗</a></span>'")
   .replace("const tech=model.items.filter(i=>i.type.toLowerCase()===\"technology\"),expertiseList", "const tech=model.items.filter(i=>i.type.toLowerCase()===\"technology\"),categoryFor=t=>{const relation=relations.find(r=>r.predicate===\"technology.belongs_to_category\"&&r.subject===t.id);return relation?items.get(relation.object):null},expertiseList")
@@ -141,6 +144,21 @@ const enhancedApp = app
   .replace('g.setAttribute("class","graph-node generated")', 'g.setAttribute("class","graph-node generated"+(n.inclusion?.status==="featured"?" featured":""))')
   .replace('document.querySelectorAll(".graph-node").forEach(n=>n.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open(n.dataset.node)}}))', 'graph.addEventListener("keydown",e=>{const n=e.target.closest(".graph-node");if(n&&(e.key==="Enter"||e.key===" ")){e.preventDefault();open(n.dataset.node)}})')
   .replace("const hash=location.hash;", "document.addEventListener('click',e=>{const control=e.target.closest('[data-focus-graph]');if(!control)return;const id=control.dataset.focusGraph;close();setView('graph-view');focus.value=id;draw(id);history.replaceState(null,'','#graph-view')});let graphPress=null;const cancelPress=()=>{if(graphPress){clearTimeout(graphPress.timer);graphPress=null}};graph.addEventListener('click',e=>{const n=e.target.closest('.graph-node');if(n){focus.value=n.dataset.node;draw(n.dataset.node)}});graph.addEventListener('dblclick',e=>{const n=e.target.closest('.graph-node');if(n){e.preventDefault();open(n.dataset.node)}});graph.addEventListener('contextmenu',e=>{const n=e.target.closest('.graph-node');if(n){e.preventDefault();open(n.dataset.node)}});graph.addEventListener('pointerdown',e=>{const n=e.target.closest('.graph-node');if(n)graphPress={x:e.clientX,y:e.clientY,timer:setTimeout(()=>{open(n.dataset.node);graphPress=null},500)}});graph.addEventListener('pointermove',e=>{if(graphPress&&(Math.abs(e.clientX-graphPress.x)>7||Math.abs(e.clientY-graphPress.y)>7))cancelPress()});graph.addEventListener('pointerup',cancelPress);graph.addEventListener('pointercancel',cancelPress);const hash=location.hash;");
+
+const mobileSelectedDetailApp = `${enhancedApp}\n(()=>{const panel=document.querySelector("#graph-inspector"),focus=document.querySelector("#graph-focus"),graph=document.querySelector("#graph"),tabs=document.querySelector(".tabs");if(!panel||!focus||!graph)return;const model=JSON.parse(document.querySelector("#portfolio-data").dataset.model),items=new Map(model.items.map(item=>[item.id,item])),small=window.matchMedia("(max-width: 820px)");let returnFocus=null;const closeButton=document.createElement("button");closeButton.type="button";closeButton.className="mobile-detail-close";closeButton.textContent="Close details";panel.prepend(closeButton);const scrim=document.createElement("button");scrim.type="button";scrim.className="mobile-detail-scrim";scrim.setAttribute("aria-label","Close selected record details");scrim.hidden=true;document.body.append(scrim);function describe(){const item=items.get(focus.value),heading=panel.querySelector("h3");if(!item||!heading)return;let summary=panel.querySelector(".focused-summary");if(!summary){summary=document.createElement("p");summary.className="focused-summary";heading.after(summary)}summary.textContent=item.summary||"No entity-specific narrative is present; explore the linked records for context."}function close(returnToTrigger=true){panel.classList.remove("is-mobile-open");scrim.hidden=true;document.body.classList.remove("mobile-detail-open");if(returnToTrigger&&returnFocus?.isConnected)returnFocus.focus();returnFocus=null}function open(trigger){describe();if(!small.matches)return;returnFocus=trigger instanceof HTMLElement?trigger:document.activeElement;panel.classList.add("is-mobile-open");scrim.hidden=false;document.body.classList.add("mobile-detail-open");const heading=panel.querySelector("h3");if(heading){heading.tabIndex=-1;heading.focus()}}describe();focus.addEventListener("change",e=>open(e.target));graph.addEventListener("click",e=>{const node=e.target.closest(".graph-node");if(node){focus.value=node.dataset.node;open(node)}});closeButton.addEventListener("click",()=>close());scrim.addEventListener("click",()=>close());tabs?.addEventListener("click",()=>close(false));document.addEventListener("keydown",e=>{if(e.key==="Escape"&&panel.classList.contains("is-mobile-open"))close()});small.addEventListener("change",()=>close(false));document.addEventListener("click",e=>{if(e.target.closest("[data-entity]")&&panel.classList.contains("is-mobile-open"))close(false)})})();`;
+
+const legacyMobileStart = mobileSelectedDetailApp.lastIndexOf("\n(()=>{const panel=");
+const completeGraphStart = mobileSelectedDetailApp.indexOf('const graph=document.querySelector("#graph"),focus=document.querySelector("#graph-focus");');
+const completeGraphEnd = mobileSelectedDetailApp.indexOf("const hash=location.hash;", completeGraphStart);
+if (legacyMobileStart < 0 || completeGraphStart < 0 || completeGraphEnd < 0 || completeGraphEnd >= legacyMobileStart) {
+  throw new Error("Canonical graph template assembly could not locate the previous graph module.");
+}
+const existingAppWithoutLegacyMobile = mobileSelectedDetailApp.slice(0, legacyMobileStart);
+const completeGraphApp = existingAppWithoutLegacyMobile.slice(0, completeGraphStart)
+  + fullCareerGraphApp
+  + existingAppWithoutLegacyMobile.slice(completeGraphEnd)
+  + "\n" + mobileCareerGraphDetailApp;
+const progressiveExperienceStyles = `.career-entry{display:flex;min-width:0;flex-direction:column;gap:3px}.career-entry strong{line-height:1.35}.career-summary{display:-webkit-box;max-width:58ch;overflow:hidden;color:var(--muted);font-size:12px;line-height:1.45;-webkit-line-clamp:2;-webkit-box-orient:vertical}.career-more{padding:8px 0 0;border-bottom:1px solid var(--line)}.career-more>summary{display:flex;align-items:center;gap:8px;padding:8px 10px;color:var(--blue);font-size:12px;font-weight:650;cursor:pointer;list-style:none}.career-more>summary::-webkit-details-marker{display:none}.career-more>summary:before{content:"+";display:grid;width:18px;height:18px;place-items:center;border:1px solid #b7cbdc;border-radius:3px;background:#fff}.career-more[open]>summary:before{content:"−"}.career-more>summary:hover{background:var(--blue-soft)}.career-more .career-row:last-child{border-bottom:0}@media print{.career-more>summary{display:none}.career-more>div{display:block!important}.career-summary{-webkit-line-clamp:unset;display:block}}`;
 
 for (const requiredTemplateToken of [
   "entity-drill",
@@ -205,8 +223,24 @@ export class StaticHtmlCareerPortfolioRenderer
       .flatMap((relation) => relation.subject === id ? [relation.object] : relation.object === id ? [relation.subject] : [])
       .map((target) => items.find((item) => item.id === target))
       .find((item) => item?.type.toLowerCase() === type.toLowerCase());
-    const renderAchievement = (item: PortfolioItem) =>
-      `<div class="career-row${item.inclusion!.status === "featured" ? " featured" : ""}"><span class="kind">${esc(item.type)}</span><strong>${esc(item.name)}</strong><small>${esc(item.inclusion!.status)}</small>${drill(item)}</div>`;
+    const achievementPriority = (item: PortfolioItem) =>
+      item.inclusion!.status === "featured" ? 0 : item.inclusion!.status === "supporting" ? 1 :
+      item.inclusion!.status === "summarised" ? 2 : 3;
+    const orderedAchievements = (records: readonly PortfolioItem[]) => [...records].sort((a, b) =>
+      achievementPriority(a) - achievementPriority(b) ||
+      ({ Work: 0, Contribution: 1, "Reported outcome": 2 }[a.type] ?? 3) -
+      ({ Work: 0, Contribution: 1, "Reported outcome": 2 }[b.type] ?? 3) ||
+      a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
+    const renderAchievement = (item: PortfolioItem, preview = false) =>
+      `<div class="career-row${item.inclusion!.status === "featured" ? " featured" : ""}"><span class="kind">${esc(item.type)}</span><span class="career-entry"><strong>${esc(item.name)}</strong>${preview && item.summary ? `<span class="career-summary">${esc(item.summary)}</span>` : ""}</span><small>${esc(item.inclusion!.status)}</small>${drill(item)}</div>`;
+    const renderAchievementGroup = (records: readonly PortfolioItem[]) => {
+      const ordered = orderedAchievements(records);
+      const featured = ordered.filter((item) => item.inclusion!.status === "featured");
+      const primary = (featured.length ? featured : ordered).slice(0, featured.length ? 3 : 2);
+      const primaryIds = new Set(primary.map((item) => item.id));
+      const remaining = ordered.filter((item) => !primaryIds.has(item.id));
+      return `<div class="achievement-list">${primary.map((item) => renderAchievement(item, true)).join("")}${remaining.length ? `<details class="career-more"><summary>Show ${remaining.length} more ${remaining.length === 1 ? "record" : "records"} from this work</summary><div>${remaining.map((item) => renderAchievement(item)).join("")}</div></details>` : ""}</div>`;
+    };
     const groupedAchievementIds = new Set<string>();
     const engagementRows = items
       .filter((item) => item.type.toLowerCase() === "engagement")
@@ -224,12 +258,12 @@ export class StaticHtmlCareerPortfolioRenderer
         const organisation = connected(engagement.id, "Organisation");
         const role = connected(engagement.id, "Role");
         const dates = engagement.details.find((detail) => /date|period|timeline/i.test(detail.label))?.value ?? "";
-        return `<article class="role"><div class="role-meta"><strong>${esc(organisation?.name ?? engagement.name)} ${drill(organisation ?? engagement)}</strong>${dates ? `<span>${esc(dates)}</span>` : ""}</div><div class="role-content"><h3>${esc(role?.name ?? engagement.name)} ${drill(role ?? engagement)}</h3>${engagement.summary ? `<p class="role-summary">${esc(engagement.summary)}</p>` : ""}<div class="achievement-list">${grouped.map(renderAchievement).join("")}</div></div></article>`;
+        return `<article class="role"><div class="role-meta"><strong>${esc(organisation?.name ?? engagement.name)} ${drill(organisation ?? engagement)}</strong>${dates ? `<span>${esc(dates)}</span>` : ""}</div><div class="role-content"><h3>${esc(role?.name ?? engagement.name)} ${drill(role ?? engagement)}</h3>${engagement.summary ? `<p class="role-summary">${esc(engagement.summary)}</p>` : ""}${renderAchievementGroup(grouped)}</div></article>`;
       })
       .join("");
     const ungrouped = achievements.filter((achievement) => !groupedAchievementIds.has(achievement.id));
     const careerRows = engagementRows + (ungrouped.length
-      ? `<section class="ungrouped-career" aria-label="Other career evidence">${engagementRows ? '<p class="overline">Other career evidence</p>' : ""}${ungrouped.map(renderAchievement).join("")}</section>`
+      ? `<section class="ungrouped-career" aria-label="Other career evidence">${engagementRows ? '<p class="overline">Other career evidence</p>' : ""}${renderAchievementGroup(ungrouped)}</section>`
       : "") || "<p>No authorised career achievements are present.</p>";
     const evidenceRows = items
       .map(
@@ -247,12 +281,22 @@ export class StaticHtmlCareerPortfolioRenderer
       "<p>No explicit claim relationships are present; the renderer has not invented any.</p>";
     const title = esc(release.manifest.subject.displayName);
     const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'"><title>${title} · Career profile</title><link rel="stylesheet" href="styles.css"><script src="app.js" defer></script></head><body class="resume-${esc(options.resumeLength)}"><a class="skip" href="#content">Skip to career record</a><header class="topbar"><a class="wordmark" href="#experience">${title}</a><nav class="tabs" role="tablist" aria-label="Career profile views"><button data-tab="experience" role="tab" aria-selected="true">Experience</button><button data-tab="expertise" role="tab" aria-selected="false">Expertise</button><button data-tab="graph-view" role="tab" aria-selected="false">Graph</button><button data-tab="evidence" role="tab" aria-selected="false">Evidence</button></nav><span class="release-id">${esc(release.manifest.releaseId)}</span></header><main id="content" class="shell"><section class="profile"><div><p class="overline">Evidence-linked career profile</p><h1>${title}</h1><p class="lead">A compact, navigable view prepared for ${esc(release.manifest.purpose)}. Use the explore icon beside an entity to open its connected career context.</p></div><dl class="facts"><div><dt>Audience</dt><dd>${esc(release.manifest.audience)}</dd></div><div><dt>Career records</dt><dd>${achievements.length}</dd></div><div><dt>Relationships</dt><dd>${relations.length}</dd></div><div><dt>Résumé</dt><dd>${esc(options.resumeLength)}</dd></div></dl></section><section class="view" data-view="experience"><div class="heading"><div><p class="overline">Career</p><h2>Experience</h2></div><p>Use the explore icon beside a record to open its context and relationships.</p></div><div class="experience-layout"><div class="career-list">${careerRows}</div><aside class="inspector"><p class="overline">Career record</p><h3>Explore the evidence</h3><p>The explore icon opens a stable deep link in the side navigator without making every row disruptive.</p></aside></div></section><section class="view" data-view="expertise" hidden><div class="heading"><div><p class="overline">Explore by capability</p><h2>Expertise</h2></div><p>Technology views are derived only from explicit release relationships.</p></div><div class="explore-layout"><aside class="tools"><label for="expertise-search">Find expertise</label><input id="expertise-search" type="search"><div id="expertise-list" class="expertise-list"></div></aside><div id="expertise-results"></div></div></section><section class="view" data-view="graph-view" hidden><div class="heading"><div><p class="overline">Relationships</p><h2>Career graph</h2></div><p>Choose a focus, then inspect or drill into connected nodes.</p></div><p class="graph-instruction"><strong>Click</strong> to focus · <strong>double-click, right-click, or long-press</strong> to open the side navigator · <strong>Enter</strong> opens a focused node from the keyboard</p><div class="graph-toolbar"><label for="graph-focus">Focus</label><select id="graph-focus"></select></div><div class="graph-layout"><div class="graph-wrap"><svg id="graph" class="graph" viewBox="0 0 800 500" role="img" aria-labelledby="graph-title graph-desc"><title id="graph-title">Interactive career graph</title><desc id="graph-desc">A focused view of explicit career relationships.</desc></svg></div><aside id="graph-inspector" class="inspector"></aside></div><div id="graph-list" class="relationship-list">${relationIndex}</div></section><section class="view" data-view="evidence" hidden><div class="heading"><div><p class="overline">Traceability</p><h2>Evidence</h2></div><p>All displayed records remain available outside the graph.</p></div><div class="tools"><label for="evidence-search">Search records</label><input id="evidence-search" type="search"></div><div class="table-wrap"><table><thead><tr><th>Record</th><th>Name</th><th>Type</th><th>Use</th></tr></thead><tbody id="evidence-body">${evidenceRows}</tbody></table></div><div class="notice"><p>${evidence.length} evidence records · ${release.manifest.limitations.map(esc).join(" · ")}</p><p>Résumé projection: ${esc(options.resumeLength)}. Public copies may remain after the release authority expires.</p></div></section></main><aside id="drawer" class="drawer" aria-label="Entity explorer" aria-hidden="true"><header><button id="drawer-back" disabled>← Back</button><p id="drawer-path"></p><button id="drawer-close">Close</button></header><div id="drawer-body" class="drawer-body"></div></aside><button id="scrim" class="scrim" hidden aria-label="Close entity explorer"></button><div id="portfolio-data" hidden data-model="${model}"></div><footer>Renderer 0.3.1 · Offline by default · No analytics or network resources</footer></body></html>\n`;
-    const markedHtml = html.replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\"><meta name=\"generator\" content=\"why-hire-me.build/v1\">");
+    const graphHeadStart = html.indexOf('<p class="graph-instruction">');
+    const graphHeadEnd = html.indexOf('<div id="graph-list"', graphHeadStart);
+    if (graphHeadStart < 0 || graphHeadEnd < 0) {
+      throw new Error("Canonical graph markup could not be upgraded to the complete graph.");
+    }
+    const completeGraphMarkup = '<p class="graph-instruction"><strong>See every relationship</strong> by default · type to add several focus records · drag the background to pan · scroll to zoom · click a node to read it · Shift+Enter, double-click, right-click, or long-press to explore.</p><div id="graph-shell" class="graph-shell"><div class="graph-toolbar"><div class="graph-focus-picker"><label for="graph-focus">Focus records</label><input id="graph-focus" type="search" autocomplete="off" role="combobox" aria-controls="graph-focus-options" aria-expanded="false" placeholder="Type a name, technology, or work item"><div id="graph-focus-options" class="graph-focus-options" role="listbox" aria-multiselectable="true" hidden></div><div id="graph-focus-chips" class="graph-focus-chips" aria-live="polite"></div></div><div class="graph-actions"><button id="graph-focus-clear" type="button">Clear focus</button><button id="graph-fit" type="button">Fit / reset</button><button id="graph-fullscreen" type="button" aria-pressed="false">Full screen</button></div></div><div class="graph-layout"><div class="graph-wrap"><svg id="graph" class="graph" viewBox="0 0 1200 800" role="group" aria-labelledby="graph-title graph-desc"><title id="graph-title">Complete interactive career graph</title><desc id="graph-desc">All authorised career records and their explicit relationships. The equivalent relationship list follows.</desc></svg></div><aside id="graph-inspector" class="inspector" aria-label="Selected node context"></aside></div></div>';
+    const markedHtml = (html.slice(0, graphHeadStart) + completeGraphMarkup + html.slice(graphHeadEnd))
+      .replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\"><meta name=\"generator\" content=\"why-hire-me.build/v1\">")
+      .replace("Choose a focus, then inspect or drill into connected nodes.", "All authorised records are shown. Add focus records to trace several contexts at once.")
+      .replace("Renderer 0.3.1 · Offline by default · No analytics or network resources",
+        'Made with <a href="https://github.com/rajanrx/why-hire-me">Why Hire Me</a> · Renderer 0.3.3 · Offline by default · No analytics or network resources');
     const portfolioJson = `${JSON.stringify({ schema: "why-hire-me.portfolio-data/v0.3", buildMarker: "why-hire-me.build/v1", release: release.manifest, options, inclusionDecisions, records: release.records }, null, 2)}\n`;
     const files = Object.freeze({
       "index.html": markedHtml,
-      "styles.css": refinedStyles,
-      "app.js": enhancedApp,
+      "styles.css": refinedStyles + progressiveExperienceStyles + fullCareerGraphStyles + mobileSelectedDetailStyles,
+      "app.js": completeGraphApp,
       "portfolio.json": portfolioJson,
     });
     const paths = [
@@ -270,7 +314,7 @@ export class StaticHtmlCareerPortfolioRenderer
     );
     const identity = {
       schema: "why-hire-me.portfolio/v0.3" as const,
-      rendererVersion: "0.3.1" as const,
+      rendererVersion: "0.3.3" as const,
       buildMarker: "why-hire-me.build/v1" as const,
       resumeLength: options.resumeLength,
       releaseId: release.manifest.releaseId,
