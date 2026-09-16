@@ -1,5 +1,18 @@
 # why-hire-me
 
+## 0.10.1
+
+### Patch Changes
+
+- 9bcf47f: Harden reviewed prototype disclosure scanning, carry-forward target resolution, governed portable data, and local-preview QR privacy.
+- 9bcf47f: Add a disclosure-safe AI handoff with an offline QR link to the canonical portfolio JSON. Make
+  multi-record graph focus display and frame the union of every selected record's reviewed
+  relationships, and keep the graph canvas contained within the shared portfolio shell.
+- 9bcf47f: Harden reviewed prototype privacy, mapping, relationship, and carry-forward validation. Improve the
+  canonical Cytoscape graph with true circular nodes, entity-specific colours, logarithmic hub sizing,
+  explicit category hubs, automatic selected-neighbour framing, a readable reset overview, and a
+  wider responsive workspace.
+
 ## 0.10.0
 
 ### Minor Changes
