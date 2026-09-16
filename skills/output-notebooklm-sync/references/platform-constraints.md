@@ -11,6 +11,11 @@ Validate the current product and connector at execution time:
   must not be inferred for a consumer account.
 - Source synchronisation and notebook sharing are separate actions. This skill does not make notebooks
   public or grant collaborators access.
+- A completed Why Hire Me portfolio exposes its complete disclosure-safe display projection as
+  `portfolio.json`. HTML, a website scrape, and the printable résumé are presentation subsets and are
+  not equivalent source material for grounded career exploration.
+- When a connector rejects `application/json`, a `.txt` file may carry the exact same bytes. Record the
+  shared digest so the extension change cannot be mistaken for a transformed or summarised source.
 
 Primary references:
 
