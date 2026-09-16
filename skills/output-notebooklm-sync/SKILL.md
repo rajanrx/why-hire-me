@@ -33,6 +33,19 @@ notebook and purpose. Verify manifest, paths, source names, media types, sizes, 
 authority, expiry, and policy. Never read canonical storage, private evidence outside the projection,
 or generated NotebookLM material as input.
 
+For a career portfolio, make the completed projection's `portfolio.json` the primary NotebookLM
+source. It is the complete disclosure-safe display model: reviewed entities, explicit relationships,
+technology context, approved links, and public provenance. Do not substitute the printable résumé,
+`index.html`, a rendered-site scrape, or an agent-written summary; those are necessarily incomplete
+views. A résumé may be offered only as a clearly optional supplement after the complete JSON source.
+
+Run [`scripts/prepare-handoff.mjs`](scripts/prepare-handoff.mjs) when preparing files from a completed
+portfolio. It preserves the JSON bytes, creates a byte-identical `.txt` fallback for connectors that
+reject JSON media types, and derives an approved-reference index only from `displayModel.links`. The
+fallback is an alternative representation of the same primary source, not a second source to upload.
+Do not copy the portfolio manifest, source release records, private evidence, or local paths into the
+NotebookLM source package. Verify the generated handoff manifest before any connector action.
+
 Do not include personal-contact fields merely because they occur in a private source or earlier
 projection. Require explicit disclosure consent for this notebook and its observed sharing
 audience before synchronising email, phone, address, or profile details.
@@ -49,6 +62,9 @@ Resolve OAuth credentials through the connector at action time; never log or ret
 
 Do not create or share a notebook by default. `manual-handoff` returns files, digests, destination
 instructions, and limitations, then stops with `handoff-ready`; it is not `uploaded` or `synchronised`.
+For consumer NotebookLM, UI automation belongs to a separately installed, currently supported
+consumer-product capability; this skill still prepares and verifies the governed inputs and never
+mislabels a manual handoff as a completed sync.
 
 ## Plan duplicate-safe synchronisation
 
@@ -71,6 +87,11 @@ ends. Compare source resource, title, status, and digest/equivalence evidence su
 connector. Record `accepted`, `processing`, `synchronised`, `partial`, or `equivalence-unverified`
 truthfully. Preserve notebook sharing as `observed-private`, `observed-restricted`, `observed-public`,
 or `visibility-unknown`; do not change it.
+
+Treat approved web references independently. A reference index successfully imported as copied text
+does not prove that every linked page was imported. Record rejected, inaccessible, or unsupported
+URLs as failed or omitted, remove failed placeholders when safe, and never call the overall result
+complete merely because the primary source exists.
 
 ## Keep external output derived
 
