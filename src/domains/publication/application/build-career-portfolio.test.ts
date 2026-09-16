@@ -59,7 +59,7 @@ test("renders deterministic, escaped, offline and accessible portfolio files", a
     assert.match(html, /No explicit claim relationships are present/);
     assert.doesNotMatch(html, /<img src=x/);
     assert.match(html, /Made with <a href="https:\/\/github\.com\/rajanrx\/why-hire-me">Why Hire Me<\/a>/);
-    assert.doesNotMatch(html.replace("https://github.com/rajanrx/why-hire-me", ""), /https?:\/\//);
+    assert.doesNotMatch(html.replaceAll("https://github.com/rajanrx/why-hire-me", ""), /https?:\/\//);
     assert.match(html, /&lt;script&gt;/);
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
     assert.equal(new Set(ids).size, ids.length);
@@ -169,9 +169,10 @@ test("canonical template uses featured evidence for visibility and keeps semanti
       templateIdentity: { localPrototypeUpdate: string };
       mobileSelectedRecordDetail: { presentation: string; existingEntityExplorer: string };
       brandingAndNavigation: { githubUrl: string };
-      graph: { defaultView: string; focusPicker: string; selectionReadout: string; nodeSizing: string };
+      graph: { defaultView: string; focusPicker: string; selectionReadout: string; nodeSizing: string; workspace: string };
       experience: { initialVisibleLimit: number };
       semanticPresentation: { featuredItemsUseFaintBackground: boolean };
+      aiHandoff: { knowledgeFile: string; qrTarget: string; qrRenderer: string; installation: string };
     };
   const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
     .render(fixture.release, fixture.inclusionDecisions, fixture.options);
@@ -183,15 +184,21 @@ test("canonical template uses featured evidence for visibility and keeps semanti
   assert.equal(contract.mobileSelectedRecordDetail.existingEntityExplorer, "preserve-separate-side-drawer");
   assert.equal(contract.graph.defaultView, "complete-authorised-relationship-graph-without-a-focus");
   assert.equal(contract.graph.focusPicker, "searchable-multiselect-with-removable-selection-chips");
+  assert.match(contract.graph.workspace, /contained-non-fullscreen/);
   assert.equal(contract.experience.initialVisibleLimit, 8);
   assert.equal(contract.semanticPresentation.featuredItemsUseFaintBackground, false);
   assert.equal(contract.theme.featuredBackground, "transparent");
+  assert.equal(contract.aiHandoff.knowledgeFile, "portfolio.json");
+  assert.match(contract.aiHandoff.qrTarget, /current-site-address/);
+  assert.match(contract.aiHandoff.qrRenderer, /offline/);
+  assert.match(contract.aiHandoff.installation, /ask-person/);
   assert.match(contract.graph.nodeSizing, /log-scaled/);
   assert.match(projection.files["index.html"], /aria-multiselectable="true"/);
   assert.doesNotMatch(projection.files["index.html"], /id="graph-fullscreen"/);
   assert.match(projection.files["index.html"], /All authorised records are shown/);
   assert.doesNotMatch(projection.files["styles.css"], /\.graph-shell\.is-fullscreen/);
   assert.match(projection.files["styles.css"], /width:min\(100%,1480px\)/);
+  assert.match(projection.files["styles.css"], /height:clamp\(440px,58svh,620px\)/);
   assert.match(projection.files["app.js"], /graphItems=\[\.\.\.items\.values\(\)\]/);
   assert.match(projection.files["app.js"], /focusIds=new Set\(\)/);
   assert.match(projection.files["app.js"], /Math\.log1p\(maxDegree\)/);
@@ -212,5 +219,18 @@ test("canonical template uses featured evidence for visibility and keeps semanti
   assert.match(projection.files["app.js"], /expertise-category/);
   assert.match(projection.files["app.js"], /data-focus-graph/);
   assert.match(projection.files["app.js"], /keyboardRead\.addEventListener/);
+  assert.match(projection.files["app.js"], /QR Code Generator for JavaScript/);
+  assert.match(projection.files["app.js"], /new URL\("portfolio\.json",document\.baseURI\)/);
+  assert.match(projection.files["app.js"], /function activeRoots\(\)/);
+  assert.match(projection.files["app.js"], /roots\.has\(source\)\|\|roots\.has\(target\)/);
+  assert.match(projection.files["app.js"], /focusIds\.size>1\?activeNeighbours\(\)/);
+  assert.match(projection.files["index.html"], /id="ai-share-title"/);
+  assert.match(projection.files["index.html"], /Career knowledge JSON/);
+  assert.match(projection.files["index.html"], /ask me before installing them/);
+  assert.ok(
+    projection.files["index.html"].indexOf('id="ai-share-title"') <
+      projection.files["index.html"].indexOf('id="evidence-search"'),
+    "AI handoff must remain prominent above the full evidence table",
+  );
   assert.doesNotMatch(projection.files["app.js"], /g\.dataset\.entity=n\.id/);
 });

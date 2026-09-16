@@ -246,9 +246,19 @@ Provide, when the authorised input supports them:
 4. an equivalent structured list for every graph relationship;
 5. a readable, printable evidence-backed résumé;
 6. safe evidence references and provenance;
-7. limitations, unresolved conflicts, freshness, and excluded-content notes; and
+7. limitations, unresolved conflicts, freshness, and excluded-content notes;
 8. release identity when governed, or prototype packet identity, generation mode, renderer version,
-   and integrity details.
+   and integrity details; and
+9. an AI handoff section linking the disclosure-safe machine-readable portfolio JSON, relationship
+   graph, printable résumé when present, and the official Why Hire Me installation source.
+
+The AI handoff QR resolves `portfolio.json` against the site's current address so the same candidate
+works locally and after a separately approved publication. Label local-preview reachability clearly.
+The handoff may suggest `output-career-knowledge-guide` and link to the official skill repository, but
+must tell an assistant to obtain the person's approval before installing software. Never encode raw
+source directories, private evidence, omitted contact fields, credentials, or unpublished secrets in
+the QR, prompt, HTML, or machine-readable file. Treat `portfolio.json` as the complete disclosure-safe
+knowledge dump for this projection; do not create a second, drifting data model for AI use.
 
 Keep Experience readable as knowledge grows. Within each role, sort achievements by approved
 priority (`featured`, then `supporting`, then `summarised`) with stable tie-breaking. Show up to
@@ -334,8 +344,9 @@ engagement, role, work, contribution, technology, technology use, technology cat
 evidence—and show a compact legend.
 
 Use one wider, centred portfolio shell across Experience, Expertise, Graph, and Evidence, with
-comfortable responsive side padding. Let the graph use the available shell width and a taller canvas
-on desktop while keeping its readout alongside it; collapse cleanly to one column on narrow screens.
+comfortable responsive side padding. Let the graph use the available shell width in a contained
+canvas that does not mimic fullscreen, while keeping its readout alongside it; collapse cleanly to
+one column on narrow screens.
 Keep pointer pan and zoom and Reset overview with a readable minimum zoom. Do not require a focus before showing
 relationships. Every node must remain accessible through the complete native keyboard browser with
 separate Read connections and Open details actions; pointer click reads, while double-click,
@@ -371,6 +382,11 @@ responsive layout, keyboard navigation, reduced motion, representative assistive
 order, print output, content escaping, CSP, visible provenance, and absence of unsolicited remote
 requests. If a video modal is included, verify keyboard focus, close/focus return, provider failure
 fallback, and that the network request happens only after explicit Play.
+
+When the AI handoff is present, verify its JSON, graph, résumé, and official-skill links, scan the QR
+in a real browser, confirm it resolves to the current site's `portfolio.json`, and confirm the QR
+renderer is bundled locally without a remote image or tracking request. A local-preview QR may remain
+computer-local, but must say so.
 
 Report generated and failed checks separately. Do not call the portfolio complete or ready if
 required verification fails or has not run. File hashes, manifest counts, and DOM assertions are

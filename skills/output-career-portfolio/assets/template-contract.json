@@ -109,7 +109,7 @@
     "largeGraphReadability": "organic-force-layout-with-labelled-category-hubs-and-anchor-labels-at-rest-and-all-direct-neighbour-labels-on-selection",
     "nodeSizing": "equal-diameter-circles-log-scaled-with-log1p-connection-count-and-type-aware-readable-caps",
     "categoryHubs": "TechnologyCategory nodes are labelled navigation hubs connected only by explicit reviewed relationships",
-    "workspace": "shared-wide-centred-padded-portfolio-shell-with-taller-graph-canvas-and-responsive-single-column-mobile-readout",
+    "workspace": "shared-wide-centred-padded-portfolio-shell-with-contained-non-fullscreen-graph-canvas-and-responsive-single-column-mobile-readout",
     "expansion": "selection-automatically-fits-the-direct-neighbourhood-and-reset-returns-to-a-readable-hub-overview-with-minimum-zoom",
     "click": "read-selected-node",
     "doubleClick": "explore",
@@ -122,6 +122,16 @@
     "featuredItemsUseFaintBackground": false,
     "technologyCategoriesRequireExplicitClaims": true,
     "categoryPredicate": "technology.belongs_to_category"
+  },
+  "aiHandoff": {
+    "location": "evidence-lens",
+    "knowledgeFile": "portfolio.json",
+    "knowledgeModel": "same-disclosure-safe-display-model-as-the-rendered-portfolio",
+    "resources": ["portfolio-json", "relationship-graph", "resume-pdf-when-present", "official-why-hire-me-skills"],
+    "qrTarget": "portfolio-json-resolved-against-current-site-address",
+    "qrRenderer": "packaged-offline-no-remote-request",
+    "installation": "assistant-must-ask-person-before-installing-official-skills",
+    "forbidden": ["private-source-paths", "omitted-contact-fields", "credentials", "remote-qr-service", "silent-software-installation"]
   },
   "offline": {
     "remoteAssetsAllowed": false,
