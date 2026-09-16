@@ -132,7 +132,7 @@ test("prioritises role achievements without dropping supporting or summarised re
   const html = projection.files["index.html"]!;
   const experience = html.split('<section class="view" data-view="experience">')[1]!
     .split('<section class="view" data-view="expertise"')[0]!;
-  assert.match(experience, /Show 6 more records from this work/);
+  assert.match(experience, /Show 5 more records from this work/);
   const disclosure = experience.indexOf('<details class="career-more">');
   assert.ok(disclosure > 0);
   assert.ok(experience.indexOf("Additional initiative 0") < disclosure);
@@ -153,7 +153,7 @@ test("resume length participates in deterministic projection identity", () => {
   assert.match(twoPages.files["index.html"], /resume-two-pages/);
 });
 
-test("canonical template keeps featured evidence subtle and semantic navigation explicit", async () => {
+test("canonical template uses featured evidence for visibility and keeps semantic navigation explicit", async () => {
   const fixture = JSON.parse(await readFile(join(process.cwd(),
     "skills/output-career-portfolio/assets/sample-release.json"), "utf8")) as {
       release: ValidatedKnowledgeRelease;
@@ -170,6 +170,8 @@ test("canonical template keeps featured evidence subtle and semantic navigation 
       mobileSelectedRecordDetail: { presentation: string; existingEntityExplorer: string };
       brandingAndNavigation: { githubUrl: string };
       graph: { defaultView: string; focusPicker: string; selectionReadout: string; nodeSizing: string };
+      experience: { initialVisibleLimit: number };
+      semanticPresentation: { featuredItemsUseFaintBackground: boolean };
     };
   const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
     .render(fixture.release, fixture.inclusionDecisions, fixture.options);
@@ -181,11 +183,15 @@ test("canonical template keeps featured evidence subtle and semantic navigation 
   assert.equal(contract.mobileSelectedRecordDetail.existingEntityExplorer, "preserve-separate-side-drawer");
   assert.equal(contract.graph.defaultView, "complete-authorised-relationship-graph-without-a-focus");
   assert.equal(contract.graph.focusPicker, "searchable-multiselect-with-removable-selection-chips");
+  assert.equal(contract.experience.initialVisibleLimit, 8);
+  assert.equal(contract.semanticPresentation.featuredItemsUseFaintBackground, false);
+  assert.equal(contract.theme.featuredBackground, "transparent");
   assert.match(contract.graph.nodeSizing, /log-scaled/);
   assert.match(projection.files["index.html"], /aria-multiselectable="true"/);
-  assert.match(projection.files["index.html"], /id="graph-fullscreen"/);
+  assert.doesNotMatch(projection.files["index.html"], /id="graph-fullscreen"/);
   assert.match(projection.files["index.html"], /All authorised records are shown/);
-  assert.match(projection.files["styles.css"], /\.graph-shell\.is-fullscreen/);
+  assert.doesNotMatch(projection.files["styles.css"], /\.graph-shell\.is-fullscreen/);
+  assert.match(projection.files["styles.css"], /width:min\(100%,1480px\)/);
   assert.match(projection.files["app.js"], /graphItems=\[\.\.\.items\.values\(\)\]/);
   assert.match(projection.files["app.js"], /focusIds=new Set\(\)/);
   assert.match(projection.files["app.js"], /Math\.log1p\(maxDegree\)/);

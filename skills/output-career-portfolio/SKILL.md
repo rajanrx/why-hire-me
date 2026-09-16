@@ -251,8 +251,8 @@ Provide, when the authorised input supports them:
    and integrity details.
 
 Keep Experience readable as knowledge grows. Within each role, sort achievements by approved
-priority (`featured`, then `supporting`, then `summarised`) with stable tie-breaking. Show no more
-than three featured records up front (or two highest-priority records if none are featured), with
+priority (`featured`, then `supporting`, then `summarised`) with stable tie-breaking. Show up to
+eight featured records up front (or two highest-priority records if none are featured), with
 short specific summaries when available. Place every remaining approved record in a clearly
 labelled native disclosure. This is presentation only: the collapsed records, IDs, relationships,
 and approved knowledge must remain present and inspectable, and print output must include them.
@@ -285,8 +285,8 @@ Keep data freshness, query time, phone-visible time, and business outcome as dis
 Never turn internal reports into fabricated public citations or imply causality from correlation.
 Use [`assets/sample-release.json`](assets/sample-release.json) only as fictional presentation
 test data, never as career evidence. Dense graph regression fixtures must also be explicitly
-fictional and must never be mixed into a person's packet. Give records selected as `featured` a
-barely visible, near-white background treatment in every lens where they appear; do not infer
+fictional and must never be mixed into a person's packet. Use `featured` to control default
+visibility and ordering, not decorative backgrounds, borders, or graph colours. Do not infer
 importance from layout position, employer, or record type.
 
 Every displayed entity must expose a stable deep link and a clearly labelled explore control. The
@@ -333,10 +333,10 @@ recognisable without dominating. Use a stable, distinct colour for each entity t
 engagement, role, work, contribution, technology, technology use, technology category, and
 evidence—and show a compact legend.
 
-Let the Graph lens use near-full viewport width and a taller canvas on desktop while keeping its
-readout alongside it; collapse cleanly to one column on narrow screens. Keep pointer pan and zoom,
-Reset overview with a readable minimum zoom, and full-screen expansion with an obvious exit and safe
-fallback when native full screen is unavailable. Do not require a focus before showing
+Use one wider, centred portfolio shell across Experience, Expertise, Graph, and Evidence, with
+comfortable responsive side padding. Let the graph use the available shell width and a taller canvas
+on desktop while keeping its readout alongside it; collapse cleanly to one column on narrow screens.
+Keep pointer pan and zoom and Reset overview with a readable minimum zoom. Do not require a focus before showing
 relationships. Every node must remain accessible through the complete native keyboard browser with
 separate Read connections and Open details actions; pointer click reads, while double-click,
 context-menu, or long-press opens the wider side navigator. Explain controls concisely. If
@@ -393,7 +393,7 @@ elements, or unaccounted content. Verify that at least one organisation, work, t
 outcome has a distinct readout. In a real browser, visually inspect desktop and a narrow mobile
 viewport. Test the default full graph, label restraint, hover, a selected node with every direct
 neighbour label, Expand neighbours and Return to overview, multi-focus search/add/remove/clear,
-zoom/pan, full-screen entry and exit, keyboard Read/Open, the retained selected-node box, drilling
+zoom/pan, Reset overview, keyboard Read/Open, the retained selected-node box, drilling
 into the side navigator, and the mobile bottom drawer. Before releasing a renderer change, also
 generate the packaged fictional fixture of roughly 200 nodes and 400 explicit edges and perform
 those same visual checks; an automated count or snapshot alone is insufficient.
