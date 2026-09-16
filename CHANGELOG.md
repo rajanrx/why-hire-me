@@ -1,5 +1,11 @@
 # why-hire-me
 
+## 0.10.2
+
+### Patch Changes
+
+- f123737: Reserve the public portfolio header for approved LinkedIn and résumé actions, and move release or prototype provenance identity into the Evidence lens.
+
 ## 0.10.1
 
 ### Patch Changes
