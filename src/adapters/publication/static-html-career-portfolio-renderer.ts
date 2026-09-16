@@ -131,6 +131,7 @@ const refinedStyles = enhancedStyles
 const neutralFeaturedStyles = `.career-row.featured,.career-row.featured:hover,.usage.featured,.usage.featured:hover,tr.featured td,tr.featured:hover td{background:transparent}.career-row.featured{box-shadow:none}.drawer-body[data-featured=true]{background:var(--surface)}.graph-node.featured circle{fill:#fff;stroke:#8e9aaa}`;
 
 const aiShareStyles = `.ai-share{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:32px;margin-top:30px;padding-top:24px;border-top:1px solid var(--line)}.ai-share h3{margin:0 0 7px;font-size:20px}.ai-share-copy>p{max-width:760px;margin:0 0 14px;color:#354253}.ai-share-files{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 16px;padding:0;list-style:none}.ai-share-files a{font-weight:650}.ai-share-prompt{margin:0;padding:12px 14px;border-left:2px solid var(--green);background:#f4f8f6;color:#34453e;font-size:12px;white-space:pre-wrap}.ai-share-qr{align-self:start;text-align:center}.ai-share-qr[hidden]{display:none}.ai-share-qr svg{display:block;width:176px;height:176px;margin:0 auto 8px;background:#fff}.ai-share-qr a{display:block;overflow-wrap:anywhere;font-size:10px}.ai-share-qr p{margin:6px 0 0;color:var(--muted);font-size:10px}@media(max-width:700px){.ai-share{grid-template-columns:1fr}.ai-share-qr{text-align:left}.ai-share-qr svg{margin-left:0}}@media print{.ai-share-qr{display:none}.ai-share{grid-template-columns:1fr}.ai-share-prompt{border:0;padding:0;background:transparent}}`;
+const headerActionStyles = `.header-actions{justify-self:end;display:flex;align-items:center;gap:8px}.header-action{display:inline-flex;min-height:34px;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);border-radius:6px;background:#fff;padding:6px 10px;color:var(--ink);font-size:12px;font-weight:650;text-decoration:none}.header-action:hover{border-color:#a9bed0;color:var(--blue)}.header-action svg{width:16px;height:16px;fill:currentColor}.header-action-icon{width:34px;padding:6px}.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;clip-path:inset(50%)!important}.source-identity{overflow-wrap:anywhere}@media(max-width:820px){.header-actions{grid-column:2}.header-action{min-height:32px}.header-action-resume span{display:none}.header-action-resume{width:34px;padding:6px}}`;
 
 const mobileSelectedDetailStyles = `.mobile-detail-close,.mobile-detail-scrim{display:none}@media(max-width:820px){.graph-layout #graph-inspector{position:fixed;z-index:28;inset:auto 0 0;width:100%;height:min(78svh,680px);min-height:280px;overflow:auto;overscroll-behavior:contain;border:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -18px 45px rgba(24,32,42,.14);transform:translateY(105%);visibility:hidden;transition:transform .18s ease,visibility .18s ease}.graph-layout #graph-inspector.is-mobile-open{transform:none;visibility:visible}.mobile-detail-close{display:block;float:right;border:1px solid var(--line);border-radius:5px;padding:7px 10px;background:var(--surface);cursor:pointer}.mobile-detail-scrim:not([hidden]){display:block;position:fixed;z-index:27;inset:0;border:0;background:rgba(24,32,42,.2)}body.mobile-detail-open{overflow:hidden}}@media(max-width:820px) and (prefers-reduced-motion:reduce){.graph-layout #graph-inspector{transition:none}}@media print{.mobile-detail-scrim,.mobile-detail-close{display:none!important}}`;
 
@@ -313,7 +314,17 @@ export class StaticHtmlCareerPortfolioRenderer
         `<li><a href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)}</a>${link.targetRecordId ? ` · ${esc(items.find(item => item.id === link.targetRecordId)?.name ?? link.targetRecordId)}` : ""} · ${esc(link.sourceStatus)}</li>`).join("")}</ul></section>`
       : "";
     const resumeAsset = display.assets.find(asset => asset.kind === "resume-pdf");
-    const resumeLink = resumeAsset ? `<a class="resume-download" href="${esc(resumeAsset.outputPath)}" download>Download reviewed résumé PDF</a>` : "";
+    const linkedIn = display.links.find(link => link.targetRecordId === null &&
+      link.label.trim().toLowerCase() === "linkedin");
+    const linkedInAction = linkedIn
+      ? `<a class="header-action header-action-icon" href="${esc(linkedIn.url)}" target="_blank" rel="noopener noreferrer" aria-label="Open LinkedIn profile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.3 3.8A2.3 2.3 0 1 1 5.3 8.4 2.3 2.3 0 0 1 5.3 3.8ZM3.4 10h3.8v10.6H3.4V10Zm6.2 0h3.6v1.5h.1c.5-.9 1.8-1.9 3.7-1.9 3.9 0 4.6 2.5 4.6 5.9v5.1h-3.8v-4.5c0-1.1 0-3-1.9-3-1.9 0-2.2 1.4-2.2 2.9v4.6H9.6V10Z"/></svg><span class="visually-hidden">LinkedIn</span></a>`
+      : "";
+    const resumeAction = resumeAsset
+      ? `<a class="header-action header-action-resume" href="${esc(resumeAsset.outputPath)}" download aria-label="Download reviewed résumé PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v10.2l3.1-3.1 1.4 1.4-5.5 5.5-5.5-5.5 1.4-1.4 3.1 3.1V3ZM5 19h14v2H5v-2Z"/></svg><span>Résumé PDF</span></a>`
+      : "";
+    const headerActions = linkedInAction || resumeAction
+      ? `<nav class="header-actions" aria-label="Profile links">${linkedInAction}${resumeAction}</nav>`
+      : "";
     const aiResourceLinks = [
       '<li><a href="portfolio.json" download>Career knowledge JSON</a> · entities, reviewed relationships, technology context, links, and provenance</li>',
       '<li><a href="#graph-view">Interactive relationship graph</a> · visual exploration of the same reviewed records</li>',
@@ -335,6 +346,7 @@ export class StaticHtmlCareerPortfolioRenderer
     const completeGraphMarkup = '<p class="graph-instruction"><strong>All reviewed relationships</strong> are present · drag to pan · scroll or pinch to zoom · hover for a name · click a node to show and frame every directly connected name · expand or explore for detail.</p><div id="graph-shell" class="graph-shell"><div class="graph-toolbar"><div class="graph-focus-picker"><label for="graph-focus">Focus records</label><input id="graph-focus" type="search" autocomplete="off" role="combobox" aria-controls="graph-focus-options" aria-expanded="false" placeholder="Type a name, technology, category, or work item"><div id="graph-focus-options" class="graph-focus-options" role="listbox" aria-multiselectable="true" hidden></div><div id="graph-focus-chips" class="graph-focus-chips" aria-live="polite"></div></div><div class="graph-actions"><button id="graph-focus-clear" type="button">Clear focus</button><button id="graph-expand" type="button">Expand neighbours</button><button id="graph-fit" type="button">Reset overview</button></div></div><div class="graph-layout"><div class="graph-wrap"><div id="graph" class="graph" role="img" aria-label="Complete interactive career graph. Use the keyboard browser after the graph for non-pointer access."></div></div><aside id="graph-inspector" class="inspector" aria-label="Selected node context"></aside></div><details class="graph-keyboard"><summary>Browse every graph node by keyboard</summary><div class="tools"><label for="graph-keyboard-node">Record</label><select id="graph-keyboard-node"></select><button id="graph-keyboard-read" type="button">Read connections</button><button id="graph-keyboard-explore" type="button">Open details</button></div></details></div>';
     const markedHtml = (html.slice(0, graphHeadStart) + completeGraphMarkup + html.slice(graphHeadEnd))
       .replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\"><meta name=\"generator\" content=\"why-hire-me.build/v1\">")
+      .replace(`<span class="release-id">${esc(release.manifest.releaseId)}</span>`, headerActions)
       .replace("Choose a focus, then inspect or drill into connected nodes.", "All authorised records are shown. Add focus records to trace several contexts at once.")
       .replace("explicit release relationships", "explicit reviewed relationships")
       .replace("No reviewed narrative is present in this release.", "No reviewed entity-specific narrative is present.")
@@ -344,14 +356,15 @@ export class StaticHtmlCareerPortfolioRenderer
           : "Local prototype · session-only · not governed · partially validated. This packet is not a validated release.")
       .replace('<div class="tools"><label for="evidence-search">', `${aiShareMarkup}<div class="tools"><label for="evidence-search">`)
       .replace('<div class="notice"><p>', `${linkIndex}<div class="notice"><p>`)
-      .replace('<h1>'+title+'</h1>', `<h1>${title}</h1>${resumeLink}`)
+      .replace(`<p>Résumé projection: ${esc(options.resumeLength)}.`,
+        `<p class="source-identity">Source identity: ${esc(sourceLabel)}.</p><p>Résumé projection: ${esc(options.resumeLength)}.`)
       .replace("Renderer 0.3.1 · Offline by default · No analytics or network resources",
-        'Made with <a href="https://github.com/rajanrx/why-hire-me">Why Hire Me</a> · Renderer 0.4.2 · Offline by default · No analytics or network resources');
+        'Made with <a href="https://github.com/rajanrx/why-hire-me">Why Hire Me</a> · Renderer 0.4.3 · Offline by default · No analytics or network resources');
     const portfolioJson = `${JSON.stringify({ schema: "why-hire-me.portfolio-data/v0.4",
       buildMarker: "why-hire-me.build/v1", displayModel: display }, null, 2)}\n`;
     const files = Object.freeze({
       "index.html": markedHtml,
-      "styles.css": refinedStyles + neutralFeaturedStyles + aiShareStyles + progressiveExperienceStyles + cytoscapeCareerGraphStyles +
+      "styles.css": refinedStyles + neutralFeaturedStyles + aiShareStyles + headerActionStyles + progressiveExperienceStyles + cytoscapeCareerGraphStyles +
         cytoscapeCareerGraphLegendStyles + mobileSelectedDetailStyles,
       "app.js": qrcodeBrowserSource + "\n" + cytoscapeBrowserSource + "\n" + completeGraphApp + `\n(()=>{const host=document.querySelector("#ai-share-qr"),target=document.querySelector("#ai-share-target");if(!host||!target||typeof qrcode!=="function")return;const panel=host.closest(".ai-share-qr");if(!["http:","https:"].includes(location.protocol)){if(panel)panel.hidden=true;return}const url=new URL("portfolio.json",document.baseURI).href;target.href=url;target.textContent=url;const code=qrcode(0,"M");code.addData(url);code.make();host.innerHTML=code.createSvgTag({cellSize:4,margin:4,scalable:true,title:"Career knowledge JSON",alt:"QR code for the machine-readable career knowledge JSON"})})();`,
       "portfolio.json": portfolioJson,
@@ -371,7 +384,7 @@ export class StaticHtmlCareerPortfolioRenderer
     );
     const identity = {
       schema: "why-hire-me.portfolio/v0.3" as const,
-      rendererVersion: "0.4.2" as const,
+      rendererVersion: "0.4.3" as const,
       buildMarker: "why-hire-me.build/v1" as const,
       resumeLength: options.resumeLength,
       releaseId: display.provenance.mode === "governed-render" ? display.provenance.releaseId : null,

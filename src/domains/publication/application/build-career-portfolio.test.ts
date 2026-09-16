@@ -172,7 +172,7 @@ test("canonical template uses featured evidence for visibility and keeps semanti
       lenses: string[];
       templateIdentity: { localPrototypeUpdate: string };
       mobileSelectedRecordDetail: { presentation: string; existingEntityExplorer: string };
-      brandingAndNavigation: { githubUrl: string };
+      brandingAndNavigation: { githubUrl: string; headerActions: string; provenanceIdentity: string };
       graph: { defaultView: string; focusPicker: string; selectionReadout: string; nodeSizing: string; workspace: string };
       experience: { initialVisibleLimit: number };
       semanticPresentation: { featuredItemsUseFaintBackground: boolean };
@@ -216,6 +216,8 @@ test("canonical template uses featured evidence for visibility and keeps semanti
   assert.match(projection.files["app.js"], /graphAdj\.get\(selectedNode\)/);
   assert.match(projection.files["app.js"], /graph-selection-change/);
   assert.match(projection.files["index.html"], new RegExp(contract.brandingAndNavigation.githubUrl));
+  assert.match(contract.brandingAndNavigation.headerActions, /profile.*resume/);
+  assert.match(contract.brandingAndNavigation.provenanceIdentity, /evidence-lens/);
   assert.deepEqual(contract.lenses, ["experience", "expertise", "graph", "evidence"]);
   assert.equal(contract.theme.default, "light");
   assert.equal(contract.theme.density, "compact");
