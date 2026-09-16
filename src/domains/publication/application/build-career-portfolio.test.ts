@@ -70,6 +70,10 @@ test("renders deterministic, escaped, offline and accessible portfolio files", a
     assert.match(first.projection.files["styles.css"], /@media print/);
     assert.match(first.projection.files["styles.css"], /#graph-inspector\.is-mobile-open/);
     assert.match(first.projection.files["app.js"], /mobile-detail-close/);
+    const portable = JSON.parse(first.projection.files["portfolio.json"]!) as Record<string, unknown>;
+    assert.deepEqual(Object.keys(portable).sort(), ["buildMarker", "displayModel", "schema"]);
+    assert.equal(portable.schema, "why-hire-me.portfolio-data/v0.4");
+    assert.doesNotMatch(first.projection.files["portfolio.json"]!, /knowledgeSpaceId|generatedBy|policyLabels|\"release\"|\"records\"/);
     assert.doesNotMatch(first.projection.files["styles.css"], /prefers-color-scheme:dark/);
     await assert.rejects(() => useCase.execute({ releaseDirectory: "/release", inclusionDecisions: [], approvedByPerson: true }), /coverage is incomplete/);
     await assert.rejects(() => useCase.execute({ releaseDirectory: "/release", inclusionDecisions: inclusion, approvedByPerson: false }), /requires person approval/);
@@ -172,7 +176,9 @@ test("canonical template uses featured evidence for visibility and keeps semanti
       graph: { defaultView: string; focusPicker: string; selectionReadout: string; nodeSizing: string; workspace: string };
       experience: { initialVisibleLimit: number };
       semanticPresentation: { featuredItemsUseFaintBackground: boolean };
-      aiHandoff: { knowledgeFile: string; qrTarget: string; qrRenderer: string; installation: string };
+      aiHandoff: { knowledgeFile: string; qrTarget: string; qrVisibility: string; qrRenderer: string; installation: string };
+      productApproval: { requiredBeforeMergeOrPortfolioReplacement: boolean;
+        pendingDecisions: string[]; automatedChecksDoNotConstituteApproval: boolean };
     };
   const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
     .render(fixture.release, fixture.inclusionDecisions, fixture.options);
@@ -190,8 +196,12 @@ test("canonical template uses featured evidence for visibility and keeps semanti
   assert.equal(contract.theme.featuredBackground, "transparent");
   assert.equal(contract.aiHandoff.knowledgeFile, "portfolio.json");
   assert.match(contract.aiHandoff.qrTarget, /current-site-address/);
+  assert.equal(contract.aiHandoff.qrVisibility, "http-and-https-only-hidden-for-file-previews");
   assert.match(contract.aiHandoff.qrRenderer, /offline/);
   assert.match(contract.aiHandoff.installation, /ask-person/);
+  assert.equal(contract.productApproval.requiredBeforeMergeOrPortfolioReplacement, true);
+  assert.equal(contract.productApproval.pendingDecisions.length, 3);
+  assert.equal(contract.productApproval.automatedChecksDoNotConstituteApproval, true);
   assert.match(contract.graph.nodeSizing, /log-scaled/);
   assert.match(projection.files["index.html"], /aria-multiselectable="true"/);
   assert.doesNotMatch(projection.files["index.html"], /id="graph-fullscreen"/);
@@ -220,7 +230,9 @@ test("canonical template uses featured evidence for visibility and keeps semanti
   assert.match(projection.files["app.js"], /data-focus-graph/);
   assert.match(projection.files["app.js"], /keyboardRead\.addEventListener/);
   assert.match(projection.files["app.js"], /QR Code Generator for JavaScript/);
-  assert.match(projection.files["app.js"], /new URL\("portfolio\.json",document\.baseURI\)/);
+  assert.match(projection.files["app.js"], /\["http:","https:"\]\.includes\(location\.protocol\)/);
+  assert.ok(projection.files["app.js"]!.indexOf("location.protocol") <
+    projection.files["app.js"]!.indexOf('new URL("portfolio.json",document.baseURI)'));
   assert.match(projection.files["app.js"], /function activeRoots\(\)/);
   assert.match(projection.files["app.js"], /roots\.has\(source\)\|\|roots\.has\(target\)/);
   assert.match(projection.files["app.js"], /focusIds\.size>1\?activeNeighbours\(\)/);

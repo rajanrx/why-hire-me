@@ -130,7 +130,7 @@ const refinedStyles = enhancedStyles
 
 const neutralFeaturedStyles = `.career-row.featured,.career-row.featured:hover,.usage.featured,.usage.featured:hover,tr.featured td,tr.featured:hover td{background:transparent}.career-row.featured{box-shadow:none}.drawer-body[data-featured=true]{background:var(--surface)}.graph-node.featured circle{fill:#fff;stroke:#8e9aaa}`;
 
-const aiShareStyles = `.ai-share{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:32px;margin-top:30px;padding-top:24px;border-top:1px solid var(--line)}.ai-share h3{margin:0 0 7px;font-size:20px}.ai-share-copy>p{max-width:760px;margin:0 0 14px;color:#354253}.ai-share-files{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 16px;padding:0;list-style:none}.ai-share-files a{font-weight:650}.ai-share-prompt{margin:0;padding:12px 14px;border-left:2px solid var(--green);background:#f4f8f6;color:#34453e;font-size:12px;white-space:pre-wrap}.ai-share-qr{align-self:start;text-align:center}.ai-share-qr svg{display:block;width:176px;height:176px;margin:0 auto 8px;background:#fff}.ai-share-qr a{display:block;overflow-wrap:anywhere;font-size:10px}.ai-share-qr p{margin:6px 0 0;color:var(--muted);font-size:10px}@media(max-width:700px){.ai-share{grid-template-columns:1fr}.ai-share-qr{text-align:left}.ai-share-qr svg{margin-left:0}}@media print{.ai-share-qr{display:none}.ai-share{grid-template-columns:1fr}.ai-share-prompt{border:0;padding:0;background:transparent}}`;
+const aiShareStyles = `.ai-share{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:32px;margin-top:30px;padding-top:24px;border-top:1px solid var(--line)}.ai-share h3{margin:0 0 7px;font-size:20px}.ai-share-copy>p{max-width:760px;margin:0 0 14px;color:#354253}.ai-share-files{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 16px;padding:0;list-style:none}.ai-share-files a{font-weight:650}.ai-share-prompt{margin:0;padding:12px 14px;border-left:2px solid var(--green);background:#f4f8f6;color:#34453e;font-size:12px;white-space:pre-wrap}.ai-share-qr{align-self:start;text-align:center}.ai-share-qr[hidden]{display:none}.ai-share-qr svg{display:block;width:176px;height:176px;margin:0 auto 8px;background:#fff}.ai-share-qr a{display:block;overflow-wrap:anywhere;font-size:10px}.ai-share-qr p{margin:6px 0 0;color:var(--muted);font-size:10px}@media(max-width:700px){.ai-share{grid-template-columns:1fr}.ai-share-qr{text-align:left}.ai-share-qr svg{margin-left:0}}@media print{.ai-share-qr{display:none}.ai-share{grid-template-columns:1fr}.ai-share-prompt{border:0;padding:0;background:transparent}}`;
 
 const mobileSelectedDetailStyles = `.mobile-detail-close,.mobile-detail-scrim{display:none}@media(max-width:820px){.graph-layout #graph-inspector{position:fixed;z-index:28;inset:auto 0 0;width:100%;height:min(78svh,680px);min-height:280px;overflow:auto;overscroll-behavior:contain;border:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -18px 45px rgba(24,32,42,.14);transform:translateY(105%);visibility:hidden;transition:transform .18s ease,visibility .18s ease}.graph-layout #graph-inspector.is-mobile-open{transform:none;visibility:visible}.mobile-detail-close{display:block;float:right;border:1px solid var(--line);border-radius:5px;padding:7px 10px;background:var(--surface);cursor:pointer}.mobile-detail-scrim:not([hidden]){display:block;position:fixed;z-index:27;inset:0;border:0;background:rgba(24,32,42,.2)}body.mobile-detail-open{overflow:hidden}}@media(max-width:820px) and (prefers-reduced-motion:reduce){.graph-layout #graph-inspector{transition:none}}@media print{.mobile-detail-scrim,.mobile-detail-close{display:none!important}}`;
 
@@ -233,15 +233,13 @@ export class StaticHtmlCareerPortfolioRenderer
       provenance: { mode: "governed-render", releaseId: release.manifest.releaseId,
         releaseDigest: release.manifest.releaseDigest, createdAt: release.manifest.createdAt,
         authorisationExpiresAt: release.manifest.view.expiresAt },
-    }, inclusionDecisions, release.records, release.manifest);
+    }, inclusionDecisions);
   }
 
   /** Both validated releases and reviewed prototype packets use this exact shell and graph runtime. */
   public renderDisplayModel(
     display: CareerPortfolioDisplayModel,
     inclusionDecisions: readonly PortfolioInclusionDecision[],
-    sourceRecords: readonly ReleaseInputRecord[] = [],
-    sourceManifest?: ValidatedKnowledgeRelease["manifest"],
   ): CareerPortfolioProjection {
     const items = [...display.items];
     const relations = [...display.relations];
@@ -322,7 +320,7 @@ export class StaticHtmlCareerPortfolioRenderer
       ...(resumeAsset ? [`<li><a href="${esc(resumeAsset.outputPath)}" download>Résumé PDF</a> · printable career summary</li>`] : []),
       '<li><a href="https://github.com/rajanrx/why-hire-me" target="_blank" rel="noopener noreferrer">Official Why Hire Me skills</a> · installation source and usage guidance</li>',
     ].join("");
-    const aiShareMarkup = `<section class="ai-share" aria-labelledby="ai-share-title"><div class="ai-share-copy"><p class="overline">Portable career knowledge</p><h3 id="ai-share-title">Use this profile with an AI assistant</h3><p>The JSON is the disclosure-safe portfolio knowledge dump behind this site: entities, explicit graph relationships, contextual technology uses, approved links, and provenance. It does not expose the private source archive.</p><ul class="ai-share-files">${aiResourceLinks}</ul><p class="ai-share-prompt"><strong>Suggested prompt</strong>\nOpen the career knowledge JSON from this profile. If the official Why Hire Me skills are unavailable, ask me before installing them from the linked repository. Then use output-career-knowledge-guide to answer questions about the candidate from this reviewed portfolio projection, preserving its evidence limits and privacy choices.</p></div><div class="ai-share-qr"><div id="ai-share-qr" aria-live="polite"></div><a id="ai-share-target" href="portfolio.json">Career knowledge JSON</a><p>Scan to open the JSON at this site's current address. A local-preview QR is reachable only from this computer until separately published.</p></div></section>`;
+    const aiShareMarkup = `<section class="ai-share" aria-labelledby="ai-share-title"><div class="ai-share-copy"><p class="overline">Portable career knowledge</p><h3 id="ai-share-title">Use this profile with an AI assistant</h3><p>The JSON is the disclosure-safe portfolio knowledge dump behind this site: entities, explicit graph relationships, contextual technology uses, approved links, and provenance. It does not expose the private source archive.</p><ul class="ai-share-files">${aiResourceLinks}</ul><p class="ai-share-prompt"><strong>Suggested prompt</strong>\nOpen the career knowledge JSON from this profile. If the official Why Hire Me skills are unavailable, ask me before installing them from the linked repository. Then use output-career-knowledge-guide to answer questions about the candidate from this reviewed portfolio projection, preserving its evidence limits and privacy choices.</p></div><div class="ai-share-qr"><div id="ai-share-qr" aria-live="polite"></div><a id="ai-share-target" href="portfolio.json">Career knowledge JSON</a><p>Scan to open the JSON at this site's current HTTP(S) address.</p></div></section>`;
     const title = esc(display.subjectDisplayName);
     const sourceLabel = display.provenance.mode === "governed-render"
       ? display.provenance.releaseId : `Prototype packet ${display.provenance.packetId}`;
@@ -348,16 +346,14 @@ export class StaticHtmlCareerPortfolioRenderer
       .replace('<div class="notice"><p>', `${linkIndex}<div class="notice"><p>`)
       .replace('<h1>'+title+'</h1>', `<h1>${title}</h1>${resumeLink}`)
       .replace("Renderer 0.3.1 · Offline by default · No analytics or network resources",
-        'Made with <a href="https://github.com/rajanrx/why-hire-me">Why Hire Me</a> · Renderer 0.4.1 · Offline by default · No analytics or network resources');
-    const portfolioJson = `${JSON.stringify({ schema: "why-hire-me.portfolio-data/v0.3",
-      buildMarker: "why-hire-me.build/v1", provenance: display.provenance,
-      ...(sourceManifest ? { release: sourceManifest, records: sourceRecords } : { displayModel: display }),
-      options, inclusionDecisions }, null, 2)}\n`;
+        'Made with <a href="https://github.com/rajanrx/why-hire-me">Why Hire Me</a> · Renderer 0.4.2 · Offline by default · No analytics or network resources');
+    const portfolioJson = `${JSON.stringify({ schema: "why-hire-me.portfolio-data/v0.4",
+      buildMarker: "why-hire-me.build/v1", displayModel: display }, null, 2)}\n`;
     const files = Object.freeze({
       "index.html": markedHtml,
       "styles.css": refinedStyles + neutralFeaturedStyles + aiShareStyles + progressiveExperienceStyles + cytoscapeCareerGraphStyles +
         cytoscapeCareerGraphLegendStyles + mobileSelectedDetailStyles,
-      "app.js": qrcodeBrowserSource + "\n" + cytoscapeBrowserSource + "\n" + completeGraphApp + `\n(()=>{const host=document.querySelector("#ai-share-qr"),target=document.querySelector("#ai-share-target");if(!host||!target||typeof qrcode!=="function")return;const url=new URL("portfolio.json",document.baseURI).href;target.href=url;target.textContent=url;const code=qrcode(0,"M");code.addData(url);code.make();host.innerHTML=code.createSvgTag({cellSize:4,margin:4,scalable:true,title:"Career knowledge JSON",alt:"QR code for the machine-readable career knowledge JSON"})})();`,
+      "app.js": qrcodeBrowserSource + "\n" + cytoscapeBrowserSource + "\n" + completeGraphApp + `\n(()=>{const host=document.querySelector("#ai-share-qr"),target=document.querySelector("#ai-share-target");if(!host||!target||typeof qrcode!=="function")return;const panel=host.closest(".ai-share-qr");if(!["http:","https:"].includes(location.protocol)){if(panel)panel.hidden=true;return}const url=new URL("portfolio.json",document.baseURI).href;target.href=url;target.textContent=url;const code=qrcode(0,"M");code.addData(url);code.make();host.innerHTML=code.createSvgTag({cellSize:4,margin:4,scalable:true,title:"Career knowledge JSON",alt:"QR code for the machine-readable career knowledge JSON"})})();`,
       "portfolio.json": portfolioJson,
     });
     const paths = [
@@ -375,7 +371,7 @@ export class StaticHtmlCareerPortfolioRenderer
     );
     const identity = {
       schema: "why-hire-me.portfolio/v0.3" as const,
-      rendererVersion: "0.4.1" as const,
+      rendererVersion: "0.4.2" as const,
       buildMarker: "why-hire-me.build/v1" as const,
       resumeLength: options.resumeLength,
       releaseId: display.provenance.mode === "governed-render" ? display.provenance.releaseId : null,

@@ -5,6 +5,20 @@ import { CareerPortfolioValidationError, resumeLengths } from "../../domains/pub
 function fail(message: string): never { throw new CareerPortfolioValidationError(`Reviewed prototype packet: ${message}`); }
 function nonempty(value: unknown): value is string { return typeof value === "string" && value.trim().length > 0; }
 const emailPattern = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
+const phonePattern = /\+\s?\d{1,3}(?:[\s().-]*\d){7,12}\b|\b0[2-478](?:[\s.-]*\d){8}\b|\b(?:phone|mobile|telephone|tel|contact)\s*[:.-]?\s*\+?[\d ()-]{7,}/i;
+const citizenshipPattern = /\b(?:citizenship|nationality|passport|citizen\s+of|(?:australian|new zealand|british|american|canadian|indian)\s+citizen)\b/i;
+const addressPattern = /\b(?:home|postal|residential|street)?\s*address\s*:|\bP\.?O\.?\s+Box\s+\d+|\b\d{1,6}\s+[A-Z][\w.'-]*(?:\s+[A-Z][\w.'-]*){0,3}\s+(?:Street|St|Road|Rd|Avenue|Ave|Lane|Ln|Drive|Dr|Boulevard|Blvd|Court|Ct|Place|Pl|Crescent|Cres)\b/i;
+const birthPattern = /\b(?:date\s+of\s+birth|d\.?o\.?b\.?|born\s+on)\b/i;
+
+const normaliseDisclosureField = (field: string) => field.trim().toLowerCase().replaceAll(/[_-]+/g, " ");
+const disclosureDetector = (field: string): RegExp | null => {
+  if (["email", "email address", "e mail"].includes(field)) return emailPattern;
+  if (["phone", "phone number", "mobile", "mobile number", "telephone", "contact number"].includes(field)) return phonePattern;
+  if (["citizenship", "nationality", "passport", "immigration status"].includes(field)) return citizenshipPattern;
+  if (["address", "home address", "postal address", "residential address"].includes(field)) return addressPattern;
+  if (["date of birth", "dob", "birth date"].includes(field)) return birthPattern;
+  return null;
+};
 
 /** A bounded, person-reviewed packet becomes display data, never a forged release. */
 export function adaptReviewedPrototype(packet: ReviewedLocalPrototypePacket): CareerPortfolioDisplayModel {
@@ -20,8 +34,12 @@ export function adaptReviewedPrototype(packet: ReviewedLocalPrototypePacket): Ca
     !Array.isArray(packet.limitations))
     fail("schema, authority, review, or required inventory is missing.");
 
-  const omitted = new Set(packet.review.disclosureChoices
-    .filter(choice => choice.status === "omitted").map(choice => choice.field.toLowerCase()));
+  if (!packet.review.disclosureChoices.every(choice => nonempty(choice.field) &&
+    ["approved-for-audience", "omitted"].includes(choice.status) &&
+    (choice.matchValues === undefined || (Array.isArray(choice.matchValues) && choice.matchValues.every(nonempty)))))
+    fail("invalid disclosure choice.");
+  const omittedChoices = packet.review.disclosureChoices.filter(choice => choice.status === "omitted");
+  const omitted = new Set(omittedChoices.map(choice => normaliseDisclosureField(choice.field)));
   const ids = new Set<string>();
   for (const item of packet.items) {
     if (!nonempty(item.id) || ids.has(item.id) || !nonempty(item.type) || !nonempty(item.name) ||
@@ -29,19 +47,25 @@ export function adaptReviewedPrototype(packet: ReviewedLocalPrototypePacket): Ca
       !Array.isArray(item.details) || item.details.some((detail: { label: unknown; value: unknown }) =>
         !nonempty(detail.label) || typeof detail.value !== "string"))
       fail(`invalid or duplicate display item ${String(item?.id)}.`);
-    for (const detail of item.details) if (omitted.has(detail.label.toLowerCase()))
+    for (const detail of item.details) if (omitted.has(normaliseDisclosureField(detail.label)))
       fail(`omitted disclosure field ${detail.label} remains in ${item.id}.`);
     ids.add(item.id);
   }
-  if (!packet.review.disclosureChoices.every(choice => nonempty(choice.field) &&
-    ["approved-for-audience", "omitted"].includes(choice.status))) fail("invalid disclosure choice.");
-  if (omitted.has("email")) {
-    const renderedText = [packet.subjectDisplayName, packet.purpose, ...packet.limitations,
-      ...packet.items.flatMap(item => [item.name, item.summary ?? "",
-        ...item.details.flatMap((detail: { label: string; value: string }) => [detail.label, detail.value])]),
-      ...packet.links.flatMap(link => [link.label, link.url])];
-    if (renderedText.some(value => emailPattern.test(value)))
-      fail("omitted disclosure field Email remains in rendered content.");
+  const renderedText = [packet.subjectDisplayName, packet.purpose, ...packet.limitations,
+    packet.review.reviewedBy, packet.review.reviewReference,
+    ...packet.items.flatMap(item => [item.name, item.summary ?? "",
+      ...item.details.flatMap((detail: { label: string; value: string }) => [detail.label, detail.value])]),
+    ...packet.links.flatMap(link => [link.label, link.url])];
+  for (const choice of omittedChoices) {
+    const field = normaliseDisclosureField(choice.field);
+    const detector = disclosureDetector(field);
+    const exactValues: readonly string[] = choice.matchValues ?? [];
+    if (!detector && exactValues.length === 0)
+      fail(`omitted disclosure field ${choice.field} needs matchValues because it has no safe generic detector.`);
+    const leaked = renderedText.some(value =>
+      (detector?.test(value) ?? false) || exactValues.some(secret =>
+        value.toLocaleLowerCase().includes(secret.toLocaleLowerCase())));
+    if (leaked) fail(`omitted disclosure field ${choice.field} remains in rendered content.`);
   }
 
   const achievements: PortfolioAchievement[] = packet.items.flatMap(item => {

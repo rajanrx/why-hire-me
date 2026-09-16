@@ -56,6 +56,8 @@ export interface ReviewedLocalPrototypePacket {
   readonly review: { readonly reviewedBy: string; readonly reviewReference: string;
     readonly reviewedAt: string; readonly disclosureChoices: readonly {
       readonly field: string; readonly status: "approved-for-audience" | "omitted";
+      /** Exact private values to reject for omission categories without a safe generic detector. */
+      readonly matchValues?: readonly string[];
     }[] };
   readonly items: readonly CareerPortfolioDisplayItem[];
   /** Each relation is independently reviewed. Never infer graph edges from shared tags or prose. */

@@ -100,7 +100,7 @@ Do not copy the fictional sample shell, copy renderer output from another portfo
 candidate-specific `build_candidate.mjs`, or assemble `index.html` directly. The gateway rejects
 unreviewed/dangling or semantically duplicate relations, unsafe links/assets, invalid status or
 target mappings, omitted private data anywhere in rendered text, unresolved maps, carry-forward
-locators that do not name a candidate output file, an existing output directory, and any attempt
+locators that do not resolve to a real candidate record, relation, link, anchor, or PDF page, an existing output directory, and any attempt
 to write over the baseline.
 Resolve the renderer, contract, sample, and checker relative to the installed skill or package,
 not a developer's machine or repository path. Use the available host tools and filesystem; do not
@@ -252,13 +252,18 @@ Provide, when the authorised input supports them:
 9. an AI handoff section linking the disclosure-safe machine-readable portfolio JSON, relationship
    graph, printable résumé when present, and the official Why Hire Me installation source.
 
-The AI handoff QR resolves `portfolio.json` against the site's current address so the same candidate
-works locally and after a separately approved publication. Label local-preview reachability clearly.
+The AI handoff QR resolves `portfolio.json` against the site's current HTTP(S) address. Hide the QR
+entirely on `file://` previews: a file URL leaks the local path and cannot be opened from another
+device. Keep the ordinary relative JSON link available offline, and use a loopback HTTP server when
+the person needs to test the QR before a separately approved publication.
 The handoff may suggest `output-career-knowledge-guide` and link to the official skill repository, but
 must tell an assistant to obtain the person's approval before installing software. Never encode raw
 source directories, private evidence, omitted contact fields, credentials, or unpublished secrets in
 the QR, prompt, HTML, or machine-readable file. Treat `portfolio.json` as the complete disclosure-safe
 knowledge dump for this projection; do not create a second, drifting data model for AI use.
+In governed mode, `portfolio.json` must contain only the approved display projection and its public
+schema/build markers. Never copy the source release manifest or raw release records into it. Test
+this boundary using private-only sentinel fields, not only record counts or hashes.
 
 Keep Experience readable as knowledge grows. Within each role, sort achievements by approved
 priority (`featured`, then `supporting`, then `summarised`) with stable tie-breaking. Show up to
@@ -266,6 +271,11 @@ eight featured records up front (or two highest-priority records if none are fea
 short specific summaries when available. Place every remaining approved record in a clearly
 labelled native disclosure. This is presentation only: the collapsed records, IDs, relationships,
 and approved knowledge must remain present and inspectable, and print output must include them.
+
+Removing the full-screen graph control, raising the initial featured-record limit from three to
+eight, and placing a prominent AI handoff in Evidence are product decisions. Automated tests and
+visual checks do not approve them. Keep a candidate or PR containing those changes open until the
+person explicitly approves each decision; do not merge it or replace a portfolio on test success.
 
 Always add visible generator attribution: “Made with Why Hire Me” linked to
 `https://github.com/rajanrx/why-hire-me`. The link describes the generator, not a claim about
@@ -385,8 +395,8 @@ fallback, and that the network request happens only after explicit Play.
 
 When the AI handoff is present, verify its JSON, graph, résumé, and official-skill links, scan the QR
 in a real browser, confirm it resolves to the current site's `portfolio.json`, and confirm the QR
-renderer is bundled locally without a remote image or tracking request. A local-preview QR may remain
-computer-local, but must say so.
+renderer is bundled locally without a remote image or tracking request. Also open the bundle through
+`file://` and confirm the QR panel is hidden before any absolute local path can be encoded.
 
 Report generated and failed checks separately. Do not call the portfolio complete or ready if
 required verification fails or has not run. File hashes, manifest counts, and DOM assertions are
@@ -394,8 +404,8 @@ not visual verification. Preserve the input release or prototype packet unchange
 
 For an update, verify preservation against the old projection as well as the new input. Check that
 every approved baseline item and authorised technology use has its promised new locator or an
-approved disposition, and that each non-excluded locator resolves to a file in the generated
-candidate. Check scoped dates, separate measurement definitions, link targets, print
+approved disposition, and that each non-excluded locator resolves to the claimed record or anchor
+inside the generated candidate—not merely to an existing file. Check scoped dates, separate measurement definitions, link targets, print
 content, and the manifest after any refactor. A digest check alone cannot detect a missing fact.
 For a local candidate, run `node scripts/check-template.mjs --baseline <old-directory>
 --candidate <preview-directory> --preview`. It compares the four-lens shell and reports visual or

@@ -36,7 +36,7 @@ test("reviewed prototype adapter preserves truthful provenance and reviewed edge
     object: "technology-1", predicate: "work.uses_technology" }]);
   const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
     .renderDisplayModel(model, packet.inclusionDecisions);
-  assert.equal(projection.manifest.rendererVersion, "0.4.1");
+  assert.equal(projection.manifest.rendererVersion, "0.4.2");
   assert.equal(projection.manifest.releaseId, null);
   assert.equal(projection.manifest.prototypeInput?.status, "session-only");
   assert.match(projection.files["app.js"], /cytoscape/);
@@ -56,6 +56,27 @@ test("reviewed prototype adapter rejects omitted email anywhere in rendered text
   const leaked = { ...packet, items: packet.items.map(item => item.id === "work-1"
     ? { ...item, summary: "Contact reviewed.person@example.com for details." } : item) };
   assert.throws(() => adaptReviewedPrototype(leaked), /omitted disclosure field Email/);
+});
+
+test("reviewed prototype adapter rejects omitted phone, citizenship, address, and custom PII", () => {
+  const cases = [
+    { field: "Phone", leak: "Call +61 412 345 678 for details." },
+    { field: "Citizenship", leak: "Australian citizen." },
+    { field: "Address", leak: "Lives at 12 Example Street." },
+    { field: "Employee identifier", leak: "Internal identifier SECRET-417.", matchValues: ["SECRET-417"] },
+  ];
+  for (const example of cases) {
+    const disclosureChoices = [...packet.review.disclosureChoices,
+      { field: example.field, status: "omitted" as const,
+        ...(example.matchValues ? { matchValues: example.matchValues } : {}) }];
+    const leaked = { ...packet, review: { ...packet.review, disclosureChoices },
+      items: packet.items.map(item => item.id === "work-1" ? { ...item, summary: example.leak } : item) };
+    assert.throws(() => adaptReviewedPrototype(leaked), new RegExp(`omitted disclosure field ${example.field}`));
+  }
+  const unspecified = { ...packet, review: { ...packet.review, disclosureChoices: [
+    ...packet.review.disclosureChoices, { field: "Employee identifier", status: "omitted" as const },
+  ] } };
+  assert.throws(() => adaptReviewedPrototype(unspecified), /needs matchValues/);
 });
 
 test("reviewed prototype adapter rejects semantic duplicate relationships with different IDs", () => {
@@ -86,10 +107,22 @@ test("reviewed prototype adapter rejects invalid technology and reference mappin
 });
 
 test("carry-forward validation rejects locators absent from candidate output", () => {
-  const paths = new Set(["index.html", "portfolio.json", "resume.pdf"]);
+  const outputs = new Map<string, string | Uint8Array>([
+    ["index.html", '<main id="experience"></main>'],
+    ["portfolio.json", JSON.stringify({ displayModel: { items: [{ id: "work-1", name: "Reviewed work" }],
+      relations: [{ id: "relation-1", subject: "work-1", object: "technology-1", predicate: "uses" }],
+      links: [], assets: [] } })],
+    ["resume.pdf", new TextEncoder().encode("/Type /Page /Type /Page")],
+  ]);
   assert.deepEqual(invalidCarryForwardLocators([
     { baselineItemId: "present", disposition: "preserved", newLocator: "portfolio.json#items/work-1" },
+    { baselineItemId: "present-relation", disposition: "preserved", newLocator: "portfolio.json#relations/relation-1" },
+    { baselineItemId: "present-anchor", disposition: "preserved", newLocator: "index.html#experience" },
+    { baselineItemId: "present-page", disposition: "preserved", newLocator: "resume.pdf#page=2" },
+    { baselineItemId: "missing-fragment", disposition: "preserved", newLocator: "portfolio.json#does-not-exist" },
+    { baselineItemId: "file-only", itemType: "record", disposition: "preserved", newLocator: "portfolio.json" },
+    { baselineItemId: "missing-page", disposition: "preserved", newLocator: "resume.pdf#page=3" },
     { baselineItemId: "missing", disposition: "preserved", newLocator: "old/portfolio-data.js#work-1" },
     { baselineItemId: "excluded", disposition: "excluded", newLocator: null },
-  ], paths).map(item => item.baselineItemId), ["missing"]);
+  ], outputs).map(item => item.baselineItemId), ["missing-fragment", "file-only", "missing-page", "missing"]);
 });

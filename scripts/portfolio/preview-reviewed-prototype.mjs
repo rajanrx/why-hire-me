@@ -35,10 +35,11 @@ for (const asset of packet.assets ?? []) {
 const digester = new NodeReleaseDigester();
 const projection = new StaticHtmlCareerPortfolioRenderer(digester)
   .renderDisplayModel(display, packet.inclusionDecisions);
-const outputPaths = new Set([...Object.keys(projection.files), ...assetBytes.map(asset => asset.outputPath),
-  "portfolio-manifest.json", "generation-record.json"]);
-const invalidLocators = invalidCarryForwardLocators(packet.carryForwardMap, outputPaths);
-if (invalidLocators.length) throw new Error(`Carry-forward map contains ${invalidLocators.length} locator(s) that do not exist in the candidate output: ${invalidLocators.slice(0, 8).map(item => `${item.baselineItemId} -> ${item.newLocator}`).join(", ")}`);
+const candidateOutputs = new Map(Object.entries(projection.files));
+for (const asset of assetBytes) candidateOutputs.set(asset.outputPath, asset.bytes);
+candidateOutputs.set("portfolio-manifest.json", JSON.stringify(projection.manifest));
+const invalidLocators = invalidCarryForwardLocators(packet.carryForwardMap, candidateOutputs);
+if (invalidLocators.length) throw new Error(`Carry-forward map contains ${invalidLocators.length} locator(s) that do not resolve to candidate content: ${invalidLocators.slice(0, 8).map(item => `${item.baselineItemId} -> ${item.newLocator}`).join(", ")}`);
 await mkdir(output);
 for (const [path, contents] of Object.entries(projection.files))
   await writeFile(join(output, path), contents, { flag: "wx" });
@@ -60,7 +61,7 @@ const generationRecord = {
     digest: projection.manifest.projectionDigest, assets: assetBytes.map(({ outputPath, bytes, sha256 }) =>
       ({ path: outputPath, bytes: bytes.byteLength, sha256 })) },
   verification: { passed: ["reviewed-packet-validation", "explicit-relationship-validation",
-    "carry-forward-id-coverage", "carry-forward-locator-existence", "asset-hashes"], failed: [],
+    "carry-forward-id-coverage", "carry-forward-locator-target-resolution", "asset-hashes"], failed: [],
     warnings: ["Browser visual graph, responsive, keyboard, and print checks are still required; this candidate is not ready."] },
   delivery: { local: true, uploaded: false, public: false },
 };

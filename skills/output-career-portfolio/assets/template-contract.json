@@ -1,7 +1,7 @@
 {
   "schema": "why-hire-me.portfolio-template/v0.3",
   "portfolioSchema": "why-hire-me.portfolio/v0.3",
-  "rendererVersion": "0.4.1",
+  "rendererVersion": "0.4.2",
   "theme": {
     "default": "light",
     "density": "compact",
@@ -129,9 +129,19 @@
     "knowledgeModel": "same-disclosure-safe-display-model-as-the-rendered-portfolio",
     "resources": ["portfolio-json", "relationship-graph", "resume-pdf-when-present", "official-why-hire-me-skills"],
     "qrTarget": "portfolio-json-resolved-against-current-site-address",
+    "qrVisibility": "http-and-https-only-hidden-for-file-previews",
     "qrRenderer": "packaged-offline-no-remote-request",
     "installation": "assistant-must-ask-person-before-installing-official-skills",
-    "forbidden": ["private-source-paths", "omitted-contact-fields", "credentials", "remote-qr-service", "silent-software-installation"]
+    "forbidden": ["private-source-paths", "file-url-qr-targets", "omitted-personal-fields", "credentials", "remote-qr-service", "silent-software-installation"]
+  },
+  "productApproval": {
+    "requiredBeforeMergeOrPortfolioReplacement": true,
+    "pendingDecisions": [
+      "remove-fullscreen-graph-control",
+      "show-up-to-eight-featured-records-per-role",
+      "prominent-ai-handoff-in-evidence-lens"
+    ],
+    "automatedChecksDoNotConstituteApproval": true
   },
   "offline": {
     "remoteAssetsAllowed": false,
