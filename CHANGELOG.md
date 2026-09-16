@@ -1,5 +1,12 @@
 # why-hire-me
 
+## 0.11.0
+
+### Minor Changes
+
+- 1b7a55a: Make the complete disclosure-safe `portfolio.json` the primary NotebookLM career source and package
+  a deterministic handoff builder with a byte-identical text fallback and approved-reference index.
+
 ## 0.10.2
 
 ### Patch Changes
