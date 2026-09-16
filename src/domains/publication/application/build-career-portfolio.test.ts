@@ -224,6 +224,7 @@ test("canonical template uses featured evidence for visibility and keeps semanti
   assert.match(projection.files["app.js"], /function activeRoots\(\)/);
   assert.match(projection.files["app.js"], /roots\.has\(source\)\|\|roots\.has\(target\)/);
   assert.match(projection.files["app.js"], /focusIds\.size>1\?activeNeighbours\(\)/);
+  assert.match(projection.files["app.js"], /const near=activeNeighbours\(\);fitGraph\(near\?graphCollection\(near\):overviewCollection\(\)/);
   assert.match(projection.files["index.html"], /id="ai-share-title"/);
   assert.match(projection.files["index.html"], /Career knowledge JSON/);
   assert.match(projection.files["index.html"], /ask me before installing them/);
