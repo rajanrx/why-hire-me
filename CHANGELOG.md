@@ -1,5 +1,11 @@
 # why-hire-me
 
+## 0.10.0
+
+### Minor Changes
+
+- 44b4c73: Make `output-career-portfolio` the official gateway for governed releases and reviewed local prototypes through one canonical display model and renderer. Package a truthful prototype adapter, Cytoscape-powered offline graph exploration, preservation validation, dense fictional graph testing, and local side-by-side preview commands.
+
 ## 0.9.4
 
 ### Patch Changes
