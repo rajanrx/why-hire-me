@@ -98,8 +98,10 @@ gateway exactly as follows:
 
 Do not copy the fictional sample shell, copy renderer output from another portfolio, write a
 candidate-specific `build_candidate.mjs`, or assemble `index.html` directly. The gateway rejects
-unreviewed/dangling relations, unsafe links/assets, unresolved inclusion, technology-use, link, or
-carry-forward maps, an existing output directory, and any attempt to write over the baseline.
+unreviewed/dangling or semantically duplicate relations, unsafe links/assets, invalid status or
+target mappings, omitted private data anywhere in rendered text, unresolved maps, carry-forward
+locators that do not resolve to a real candidate record, relation, link, anchor, or PDF page, an existing output directory, and any attempt
+to write over the baseline.
 Resolve the renderer, contract, sample, and checker relative to the installed skill or package,
 not a developer's machine or repository path. Use the available host tools and filesystem; do not
 require a particular agent, browser, operating system, or portfolio directory name. If a bundled
@@ -244,16 +246,36 @@ Provide, when the authorised input supports them:
 4. an equivalent structured list for every graph relationship;
 5. a readable, printable evidence-backed résumé;
 6. safe evidence references and provenance;
-7. limitations, unresolved conflicts, freshness, and excluded-content notes; and
+7. limitations, unresolved conflicts, freshness, and excluded-content notes;
 8. release identity when governed, or prototype packet identity, generation mode, renderer version,
-   and integrity details.
+   and integrity details; and
+9. an AI handoff section linking the disclosure-safe machine-readable portfolio JSON, relationship
+   graph, printable résumé when present, and the official Why Hire Me installation source.
+
+The AI handoff QR resolves `portfolio.json` against the site's current HTTP(S) address. Hide the QR
+entirely on `file://` previews: a file URL leaks the local path and cannot be opened from another
+device. Keep the ordinary relative JSON link available offline, and use a loopback HTTP server when
+the person needs to test the QR before a separately approved publication.
+The handoff may suggest `output-career-knowledge-guide` and link to the official skill repository, but
+must tell an assistant to obtain the person's approval before installing software. Never encode raw
+source directories, private evidence, omitted contact fields, credentials, or unpublished secrets in
+the QR, prompt, HTML, or machine-readable file. Treat `portfolio.json` as the complete disclosure-safe
+knowledge dump for this projection; do not create a second, drifting data model for AI use.
+In governed mode, `portfolio.json` must contain only the approved display projection and its public
+schema/build markers. Never copy the source release manifest or raw release records into it. Test
+this boundary using private-only sentinel fields, not only record counts or hashes.
 
 Keep Experience readable as knowledge grows. Within each role, sort achievements by approved
-priority (`featured`, then `supporting`, then `summarised`) with stable tie-breaking. Show no more
-than three featured records up front (or two highest-priority records if none are featured), with
+priority (`featured`, then `supporting`, then `summarised`) with stable tie-breaking. Show up to
+eight featured records up front (or two highest-priority records if none are featured), with
 short specific summaries when available. Place every remaining approved record in a clearly
 labelled native disclosure. This is presentation only: the collapsed records, IDs, relationships,
 and approved knowledge must remain present and inspectable, and print output must include them.
+
+Removing the full-screen graph control, raising the initial featured-record limit from three to
+eight, and placing a prominent AI handoff in Evidence are product decisions. Automated tests and
+visual checks do not approve them. Keep a candidate or PR containing those changes open until the
+person explicitly approves each decision; do not merge it or replace a portfolio on test success.
 
 Always add visible generator attribution: “Made with Why Hire Me” linked to
 `https://github.com/rajanrx/why-hire-me`. The link describes the generator, not a claim about
@@ -283,8 +305,8 @@ Keep data freshness, query time, phone-visible time, and business outcome as dis
 Never turn internal reports into fabricated public citations or imply causality from correlation.
 Use [`assets/sample-release.json`](assets/sample-release.json) only as fictional presentation
 test data, never as career evidence. Dense graph regression fixtures must also be explicitly
-fictional and must never be mixed into a person's packet. Give records selected as `featured` a
-barely visible, near-white background treatment in every lens where they appear; do not infer
+fictional and must never be mixed into a person's packet. Use `featured` to control default
+visibility and ordering, not decorative backgrounds, borders, or graph colours. Do not infer
 importance from layout position, employer, or record type.
 
 Every displayed entity must expose a stable deep link and a clearly labelled explore control. The
@@ -321,14 +343,21 @@ replace the user's multiselect filters; retain the gray-out state and keep the s
 Use the packaged Cytoscape.js engine and its mature force layout; it is bundled into `app.js` and
 must not come from a CDN. Do not replace it with hand-written parallel lanes, a neural-network-like
 grid, or candidate-specific SVG positioning. At rest, label only representative high-connection
-records. Hover labels the pointed node. Selecting a node labels **every directly connected node**,
-emphasises only its reviewed edges, and keeps the selected readout visible. “Expand neighbours”
-fits that reviewed one-hop neighbourhood without deleting the rest of the graph; “Return to
-overview” restores the complete scene. Size nodes by a bounded relative logarithmic connection
-scale so hubs are recognisable without dominating.
+records and every explicit technology-category hub. Hover labels the pointed node. Selecting a node
+labels **every directly connected node**, emphasises only its reviewed edges, automatically frames
+that one-hop neighbourhood, and keeps the selected readout visible. “Expand neighbours” isolates
+that reviewed neighbourhood without deleting the rest of the graph; “Return to overview” restores
+a readable hub overview rather than shrinking all records to illegible dots. Draw every node as a
+true equal-diameter circle. Size nodes by a bounded `log1p` connection scale so hubs are clearly
+recognisable without dominating. Use a stable, distinct colour for each entity type—organisation,
+engagement, role, work, contribution, technology, technology use, technology category, and
+evidence—and show a compact legend.
 
-Keep pointer pan and zoom, Fit/Reset, and full-screen expansion with an obvious exit and safe
-fallback when native full screen is unavailable. Do not require a focus before showing
+Use one wider, centred portfolio shell across Experience, Expertise, Graph, and Evidence, with
+comfortable responsive side padding. Let the graph use the available shell width in a contained
+canvas that does not mimic fullscreen, while keeping its readout alongside it; collapse cleanly to
+one column on narrow screens.
+Keep pointer pan and zoom and Reset overview with a readable minimum zoom. Do not require a focus before showing
 relationships. Every node must remain accessible through the complete native keyboard browser with
 separate Read connections and Open details actions; pointer click reads, while double-click,
 context-menu, or long-press opens the wider side navigator. Explain controls concisely. If
@@ -364,13 +393,19 @@ order, print output, content escaping, CSP, visible provenance, and absence of u
 requests. If a video modal is included, verify keyboard focus, close/focus return, provider failure
 fallback, and that the network request happens only after explicit Play.
 
+When the AI handoff is present, verify its JSON, graph, résumé, and official-skill links, scan the QR
+in a real browser, confirm it resolves to the current site's `portfolio.json`, and confirm the QR
+renderer is bundled locally without a remote image or tracking request. Also open the bundle through
+`file://` and confirm the QR panel is hidden before any absolute local path can be encoded.
+
 Report generated and failed checks separately. Do not call the portfolio complete or ready if
 required verification fails or has not run. File hashes, manifest counts, and DOM assertions are
 not visual verification. Preserve the input release or prototype packet unchanged.
 
 For an update, verify preservation against the old projection as well as the new input. Check that
 every approved baseline item and authorised technology use has its promised new locator or an
-approved disposition. Check scoped dates, separate measurement definitions, link targets, print
+approved disposition, and that each non-excluded locator resolves to the claimed record or anchor
+inside the generated candidate—not merely to an existing file. Check scoped dates, separate measurement definitions, link targets, print
 content, and the manifest after any refactor. A digest check alone cannot detect a missing fact.
 For a local candidate, run `node scripts/check-template.mjs --baseline <old-directory>
 --candidate <preview-directory> --preview`. It compares the four-lens shell and reports visual or
@@ -384,7 +419,7 @@ elements, or unaccounted content. Verify that at least one organisation, work, t
 outcome has a distinct readout. In a real browser, visually inspect desktop and a narrow mobile
 viewport. Test the default full graph, label restraint, hover, a selected node with every direct
 neighbour label, Expand neighbours and Return to overview, multi-focus search/add/remove/clear,
-zoom/pan, full-screen entry and exit, keyboard Read/Open, the retained selected-node box, drilling
+zoom/pan, Reset overview, keyboard Read/Open, the retained selected-node box, drilling
 into the side navigator, and the mobile bottom drawer. Before releasing a renderer change, also
 generate the packaged fictional fixture of roughly 200 nodes and 400 explicit edges and perform
 those same visual checks; an automated count or snapshot alone is insufficient.

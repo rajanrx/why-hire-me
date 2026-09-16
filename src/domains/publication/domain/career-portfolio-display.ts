@@ -56,6 +56,8 @@ export interface ReviewedLocalPrototypePacket {
   readonly review: { readonly reviewedBy: string; readonly reviewReference: string;
     readonly reviewedAt: string; readonly disclosureChoices: readonly {
       readonly field: string; readonly status: "approved-for-audience" | "omitted";
+      /** Exact private values to reject for omission categories without a safe generic detector. */
+      readonly matchValues?: readonly string[];
     }[] };
   readonly items: readonly CareerPortfolioDisplayItem[];
   /** Each relation is independently reviewed. Never infer graph edges from shared tags or prose. */
@@ -67,11 +69,14 @@ export interface ReviewedLocalPrototypePacket {
   })[];
   readonly inclusionDecisions: readonly PortfolioInclusionDecision[];
   readonly technologyUseMap: readonly { readonly technologyUseId: string;
-    readonly workContextId: string; readonly status: string; readonly targetRecordId: string | null }[];
-  readonly referenceLinkMap: readonly { readonly linkId: string; readonly status: string;
+    readonly workContextId: string; readonly status: "visible-in-context" | "visible-in-expertise" |
+      "summarised-under" | "excluded" | "deferred"; readonly targetRecordId: string | null }[];
+  readonly referenceLinkMap: readonly { readonly linkId: string;
+    readonly status: "visible-on-work" | "visible-in-evidence" | "summarised-under" | "excluded" | "deferred";
     readonly targetRecordId: string | null }[];
   readonly carryForwardMap: readonly { readonly baselineItemId: string; readonly itemType: string;
-    readonly disposition: string; readonly newLocator: string | null; readonly personApproved: boolean }[];
+    readonly disposition: "preserved" | "reworded" | "relocated" | "excluded" | "unresolved";
+    readonly newLocator: string | null; readonly personApproved: boolean }[];
   readonly limitations: readonly string[];
   readonly assets?: readonly { readonly sourcePath: string; readonly outputPath: string;
     readonly reviewed: true; readonly reviewReference: string }[];

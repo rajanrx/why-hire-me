@@ -1,11 +1,11 @@
 {
   "schema": "why-hire-me.portfolio-template/v0.3",
   "portfolioSchema": "why-hire-me.portfolio/v0.3",
-  "rendererVersion": "0.4.0",
+  "rendererVersion": "0.4.2",
   "theme": {
     "default": "light",
     "density": "compact",
-    "featuredBackground": "#fdfdfb",
+    "featuredBackground": "transparent",
     "darkDefaultAllowed": false
   },
   "lenses": [
@@ -31,13 +31,13 @@
     "contentPriority": "distinct-career-work-before-decoration",
     "type": "system-sans-with-clear-hierarchy",
     "colour": "near-white-paper-dark-ink-one-restrained-accent",
-    "surface": "quiet-lines-and-faint-featured-treatment",
+    "surface": "quiet-lines-with-featured-status-expressed-through-ordering-and-default-visibility-only",
     "motion": "functional-only-with-reduced-motion-equivalent",
     "forbidden": ["marketing-hero", "generic-card-dashboard", "decorative-system-map", "unsupported-impact-chart", "new-visual-direction-per-agent"]
   },
   "experience": {
     "priorityOrder": ["featured", "supporting", "summarised"],
-    "initialVisibleLimit": 3,
+    "initialVisibleLimit": 8,
     "whenNoFeaturedVisibleLimit": 2,
     "remainingRecords": "native-disclosure-with-complete-approved-content-and-print-equivalent",
     "summaries": "short-entity-specific-copy-when-available",
@@ -102,13 +102,15 @@
     "focusPicker": "searchable-multiselect-with-removable-selection-chips",
     "multipleFocusEffect": "highlight-union-of-selected-neighbourhoods-dim-but-do-not-hide-other-records",
     "nodeSelectionKeepsFocus": true,
-    "navigation": ["pan", "zoom", "fit-or-reset", "full-screen-with-exit"],
+    "navigation": ["pan", "zoom", "fit-or-reset"],
     "selectionReadout": "single-selected-node-specific-context-remains-visible-in-graph-shell",
     "mobileReadout": "selected-node-bottom-drawer",
     "engine": "packaged-cytoscape-js-offline-no-cdn",
-    "largeGraphReadability": "organic-force-layout-with-anchor-labels-at-rest-and-all-direct-neighbour-labels-on-selection",
-    "nodeSizing": "connection-count-relative-to-typical-degree-log-scaled-with-a-readable-cap",
-    "expansion": "fit-selected-node-and-its-direct-neighbourhood-with-return-to-overview",
+    "largeGraphReadability": "organic-force-layout-with-labelled-category-hubs-and-anchor-labels-at-rest-and-all-direct-neighbour-labels-on-selection",
+    "nodeSizing": "equal-diameter-circles-log-scaled-with-log1p-connection-count-and-type-aware-readable-caps",
+    "categoryHubs": "TechnologyCategory nodes are labelled navigation hubs connected only by explicit reviewed relationships",
+    "workspace": "shared-wide-centred-padded-portfolio-shell-with-contained-non-fullscreen-graph-canvas-and-responsive-single-column-mobile-readout",
+    "expansion": "selection-automatically-fits-the-direct-neighbourhood-and-reset-returns-to-a-readable-hub-overview-with-minimum-zoom",
     "click": "read-selected-node",
     "doubleClick": "explore",
     "contextMenu": "explore",
@@ -117,9 +119,29 @@
     "requiresEquivalentRelationshipList": true
   },
   "semanticPresentation": {
-    "featuredItemsUseFaintBackground": true,
+    "featuredItemsUseFaintBackground": false,
     "technologyCategoriesRequireExplicitClaims": true,
     "categoryPredicate": "technology.belongs_to_category"
+  },
+  "aiHandoff": {
+    "location": "evidence-lens",
+    "knowledgeFile": "portfolio.json",
+    "knowledgeModel": "same-disclosure-safe-display-model-as-the-rendered-portfolio",
+    "resources": ["portfolio-json", "relationship-graph", "resume-pdf-when-present", "official-why-hire-me-skills"],
+    "qrTarget": "portfolio-json-resolved-against-current-site-address",
+    "qrVisibility": "http-and-https-only-hidden-for-file-previews",
+    "qrRenderer": "packaged-offline-no-remote-request",
+    "installation": "assistant-must-ask-person-before-installing-official-skills",
+    "forbidden": ["private-source-paths", "file-url-qr-targets", "omitted-personal-fields", "credentials", "remote-qr-service", "silent-software-installation"]
+  },
+  "productApproval": {
+    "requiredBeforeMergeOrPortfolioReplacement": true,
+    "pendingDecisions": [
+      "remove-fullscreen-graph-control",
+      "show-up-to-eight-featured-records-per-role",
+      "prominent-ai-handoff-in-evidence-lens"
+    ],
+    "automatedChecksDoNotConstituteApproval": true
   },
   "offline": {
     "remoteAssetsAllowed": false,

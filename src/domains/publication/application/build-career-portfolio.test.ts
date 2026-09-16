@@ -59,7 +59,7 @@ test("renders deterministic, escaped, offline and accessible portfolio files", a
     assert.match(html, /No explicit claim relationships are present/);
     assert.doesNotMatch(html, /<img src=x/);
     assert.match(html, /Made with <a href="https:\/\/github\.com\/rajanrx\/why-hire-me">Why Hire Me<\/a>/);
-    assert.doesNotMatch(html.replace("https://github.com/rajanrx/why-hire-me", ""), /https?:\/\//);
+    assert.doesNotMatch(html.replaceAll("https://github.com/rajanrx/why-hire-me", ""), /https?:\/\//);
     assert.match(html, /&lt;script&gt;/);
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
     assert.equal(new Set(ids).size, ids.length);
@@ -70,6 +70,10 @@ test("renders deterministic, escaped, offline and accessible portfolio files", a
     assert.match(first.projection.files["styles.css"], /@media print/);
     assert.match(first.projection.files["styles.css"], /#graph-inspector\.is-mobile-open/);
     assert.match(first.projection.files["app.js"], /mobile-detail-close/);
+    const portable = JSON.parse(first.projection.files["portfolio.json"]!) as Record<string, unknown>;
+    assert.deepEqual(Object.keys(portable).sort(), ["buildMarker", "displayModel", "schema"]);
+    assert.equal(portable.schema, "why-hire-me.portfolio-data/v0.4");
+    assert.doesNotMatch(first.projection.files["portfolio.json"]!, /knowledgeSpaceId|generatedBy|policyLabels|\"release\"|\"records\"/);
     assert.doesNotMatch(first.projection.files["styles.css"], /prefers-color-scheme:dark/);
     await assert.rejects(() => useCase.execute({ releaseDirectory: "/release", inclusionDecisions: [], approvedByPerson: true }), /coverage is incomplete/);
     await assert.rejects(() => useCase.execute({ releaseDirectory: "/release", inclusionDecisions: inclusion, approvedByPerson: false }), /requires person approval/);
@@ -132,7 +136,7 @@ test("prioritises role achievements without dropping supporting or summarised re
   const html = projection.files["index.html"]!;
   const experience = html.split('<section class="view" data-view="experience">')[1]!
     .split('<section class="view" data-view="expertise"')[0]!;
-  assert.match(experience, /Show 6 more records from this work/);
+  assert.match(experience, /Show 5 more records from this work/);
   const disclosure = experience.indexOf('<details class="career-more">');
   assert.ok(disclosure > 0);
   assert.ok(experience.indexOf("Additional initiative 0") < disclosure);
@@ -153,7 +157,7 @@ test("resume length participates in deterministic projection identity", () => {
   assert.match(twoPages.files["index.html"], /resume-two-pages/);
 });
 
-test("canonical template keeps featured evidence subtle and semantic navigation explicit", async () => {
+test("canonical template uses featured evidence for visibility and keeps semantic navigation explicit", async () => {
   const fixture = JSON.parse(await readFile(join(process.cwd(),
     "skills/output-career-portfolio/assets/sample-release.json"), "utf8")) as {
       release: ValidatedKnowledgeRelease;
@@ -169,7 +173,12 @@ test("canonical template keeps featured evidence subtle and semantic navigation 
       templateIdentity: { localPrototypeUpdate: string };
       mobileSelectedRecordDetail: { presentation: string; existingEntityExplorer: string };
       brandingAndNavigation: { githubUrl: string };
-      graph: { defaultView: string; focusPicker: string; selectionReadout: string; nodeSizing: string };
+      graph: { defaultView: string; focusPicker: string; selectionReadout: string; nodeSizing: string; workspace: string };
+      experience: { initialVisibleLimit: number };
+      semanticPresentation: { featuredItemsUseFaintBackground: boolean };
+      aiHandoff: { knowledgeFile: string; qrTarget: string; qrVisibility: string; qrRenderer: string; installation: string };
+      productApproval: { requiredBeforeMergeOrPortfolioReplacement: boolean;
+        pendingDecisions: string[]; automatedChecksDoNotConstituteApproval: boolean };
     };
   const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
     .render(fixture.release, fixture.inclusionDecisions, fixture.options);
@@ -181,11 +190,25 @@ test("canonical template keeps featured evidence subtle and semantic navigation 
   assert.equal(contract.mobileSelectedRecordDetail.existingEntityExplorer, "preserve-separate-side-drawer");
   assert.equal(contract.graph.defaultView, "complete-authorised-relationship-graph-without-a-focus");
   assert.equal(contract.graph.focusPicker, "searchable-multiselect-with-removable-selection-chips");
+  assert.match(contract.graph.workspace, /contained-non-fullscreen/);
+  assert.equal(contract.experience.initialVisibleLimit, 8);
+  assert.equal(contract.semanticPresentation.featuredItemsUseFaintBackground, false);
+  assert.equal(contract.theme.featuredBackground, "transparent");
+  assert.equal(contract.aiHandoff.knowledgeFile, "portfolio.json");
+  assert.match(contract.aiHandoff.qrTarget, /current-site-address/);
+  assert.equal(contract.aiHandoff.qrVisibility, "http-and-https-only-hidden-for-file-previews");
+  assert.match(contract.aiHandoff.qrRenderer, /offline/);
+  assert.match(contract.aiHandoff.installation, /ask-person/);
+  assert.equal(contract.productApproval.requiredBeforeMergeOrPortfolioReplacement, true);
+  assert.equal(contract.productApproval.pendingDecisions.length, 3);
+  assert.equal(contract.productApproval.automatedChecksDoNotConstituteApproval, true);
   assert.match(contract.graph.nodeSizing, /log-scaled/);
   assert.match(projection.files["index.html"], /aria-multiselectable="true"/);
-  assert.match(projection.files["index.html"], /id="graph-fullscreen"/);
+  assert.doesNotMatch(projection.files["index.html"], /id="graph-fullscreen"/);
   assert.match(projection.files["index.html"], /All authorised records are shown/);
-  assert.match(projection.files["styles.css"], /\.graph-shell\.is-fullscreen/);
+  assert.doesNotMatch(projection.files["styles.css"], /\.graph-shell\.is-fullscreen/);
+  assert.match(projection.files["styles.css"], /width:min\(100%,1480px\)/);
+  assert.match(projection.files["styles.css"], /height:clamp\(440px,58svh,620px\)/);
   assert.match(projection.files["app.js"], /graphItems=\[\.\.\.items\.values\(\)\]/);
   assert.match(projection.files["app.js"], /focusIds=new Set\(\)/);
   assert.match(projection.files["app.js"], /Math\.log1p\(maxDegree\)/);
@@ -206,5 +229,21 @@ test("canonical template keeps featured evidence subtle and semantic navigation 
   assert.match(projection.files["app.js"], /expertise-category/);
   assert.match(projection.files["app.js"], /data-focus-graph/);
   assert.match(projection.files["app.js"], /keyboardRead\.addEventListener/);
+  assert.match(projection.files["app.js"], /QR Code Generator for JavaScript/);
+  assert.match(projection.files["app.js"], /\["http:","https:"\]\.includes\(location\.protocol\)/);
+  assert.ok(projection.files["app.js"]!.indexOf("location.protocol") <
+    projection.files["app.js"]!.indexOf('new URL("portfolio.json",document.baseURI)'));
+  assert.match(projection.files["app.js"], /function activeRoots\(\)/);
+  assert.match(projection.files["app.js"], /roots\.has\(source\)\|\|roots\.has\(target\)/);
+  assert.match(projection.files["app.js"], /focusIds\.size>1\?activeNeighbours\(\)/);
+  assert.match(projection.files["app.js"], /const near=activeNeighbours\(\);fitGraph\(near\?graphCollection\(near\):overviewCollection\(\)/);
+  assert.match(projection.files["index.html"], /id="ai-share-title"/);
+  assert.match(projection.files["index.html"], /Career knowledge JSON/);
+  assert.match(projection.files["index.html"], /ask me before installing them/);
+  assert.ok(
+    projection.files["index.html"].indexOf('id="ai-share-title"') <
+      projection.files["index.html"].indexOf('id="evidence-search"'),
+    "AI handoff must remain prominent above the full evidence table",
+  );
   assert.doesNotMatch(projection.files["app.js"], /g\.dataset\.entity=n\.id/);
 });

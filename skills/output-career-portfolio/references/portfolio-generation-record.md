@@ -97,6 +97,7 @@ preview:
   carryForwardCoverage:
     total: integer
     unresolvedBaselineItemIds: []
+    locatorValidation: file-and-record-or-anchor-target-resolution
   entityReadoutMap:
     - entityId: string
       entityType: Organisation | Role | Work | Contribution | Technology | reported-outcome | other

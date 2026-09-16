@@ -11,7 +11,7 @@ import type { ReleaseDigester } from "../../domains/publication/ports/knowledge-
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { createRequire } from "node:module";
-import { cytoscapeCareerGraphApp, cytoscapeCareerGraphStyles } from "./cytoscape-career-graph-template.js";
+import { cytoscapeCareerGraphApp, cytoscapeCareerGraphLegendStyles, cytoscapeCareerGraphStyles } from "./cytoscape-career-graph-template.js";
 import { mobileCareerGraphDetailApp } from "./mobile-career-graph-detail-template.js";
 
 const localRequire = createRequire(import.meta.url);
@@ -19,6 +19,7 @@ const cytoscapeBrowserSource = readFileSync(
   join(dirname(localRequire.resolve("cytoscape")), "cytoscape.min.js"),
   "utf8",
 );
+const qrcodeBrowserSource = readFileSync(localRequire.resolve("qrcode-generator/qrcode.js"), "utf8");
 
 const esc = (value: string) =>
   value
@@ -119,12 +120,17 @@ const app = `(()=>{"use strict";const root=document.querySelector("#portfolio-da
 const enhancedStyles = `${styles}.drawer{width:min(660px,62vw)}.entity-pair{display:inline-flex;align-items:baseline;gap:5px}.entity-drill{display:inline-grid;width:18px;height:18px;place-items:center;border:1px solid var(--line);border-radius:4px;color:var(--blue);font-size:10px;text-decoration:none;background:#fff}.entity-drill:hover{border-color:var(--blue);background:var(--blue-soft)}.entity-graph-focus{display:inline-grid;width:25px;height:25px;margin-left:7px;place-items:center;vertical-align:3px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--green);cursor:pointer}.entity-graph-focus:hover{border-color:var(--green);background:#edf7f2}.role{display:grid;grid-template-columns:155px minmax(0,1fr);padding:0 0 24px}.role-meta{padding:2px 22px 0 0;color:var(--muted);font-size:12px}.role-meta strong,.role-meta span{display:block}.role-meta strong{color:var(--ink);font-size:14px}.role-content{position:relative;border-left:1px solid var(--line);padding:0 0 2px 24px}.role-content:before{content:\"\";position:absolute;left:-5px;top:5px;width:9px;height:9px;border:2px solid var(--blue);border-radius:50%;background:var(--surface)}.role-content h3{margin:0;font-size:17px}.role-summary{margin:3px 0 12px;color:var(--muted);font-size:13px}.ungrouped-career{border-top:1px solid var(--line);padding-top:12px}.career-row{grid-template-columns:130px minmax(0,1fr) auto 22px}.career-row.featured,.usage.featured,tr.featured td{background:#f7f8ec}.career-row.featured:hover,.usage.featured:hover,tr.featured:hover td{background:#f2f4df}.career-row.featured{box-shadow:inset 2px 0 #d9dfaa}.drawer-body[data-featured=true]{background:linear-gradient(180deg,#f8f9ef 0,#fff 170px)}.graph-node.featured circle{fill:#f7f8ec;stroke:#a7ad73}.expertise-category{display:block;color:var(--muted);font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}.graph-instruction{margin:-4px 0 12px;padding:8px 10px;border-left:2px solid var(--blue);background:var(--blue-soft);color:#405063;font-size:12px}@media(max-width:760px){.drawer{width:calc(100vw - 16px)}.role{grid-template-columns:110px minmax(0,1fr)}}@media(max-width:540px){.role{display:block}.role-meta{padding:0 0 7px}.role-content{padding-left:16px}}\n`;
 
 const refinedStyles = enhancedStyles
+  .replace(".shell{max-width:1220px;margin:auto;padding:0 28px}", ".shell{width:min(100%,1480px);margin:auto;padding:0 32px}")
   .replace("width:min(660px,62vw)", "width:min(720px,66vw)")
   .replaceAll("#f7f8ec", "#fdfdfb")
   .replace("#f2f4df", "#fbfcf8")
   .replace("#d9dfaa", "#f2f1e8")
   .replace("#f8f9ef", "#fefefc")
   .replace("#a7ad73", "#dde0cf");
+
+const neutralFeaturedStyles = `.career-row.featured,.career-row.featured:hover,.usage.featured,.usage.featured:hover,tr.featured td,tr.featured:hover td{background:transparent}.career-row.featured{box-shadow:none}.drawer-body[data-featured=true]{background:var(--surface)}.graph-node.featured circle{fill:#fff;stroke:#8e9aaa}`;
+
+const aiShareStyles = `.ai-share{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:32px;margin-top:30px;padding-top:24px;border-top:1px solid var(--line)}.ai-share h3{margin:0 0 7px;font-size:20px}.ai-share-copy>p{max-width:760px;margin:0 0 14px;color:#354253}.ai-share-files{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 16px;padding:0;list-style:none}.ai-share-files a{font-weight:650}.ai-share-prompt{margin:0;padding:12px 14px;border-left:2px solid var(--green);background:#f4f8f6;color:#34453e;font-size:12px;white-space:pre-wrap}.ai-share-qr{align-self:start;text-align:center}.ai-share-qr[hidden]{display:none}.ai-share-qr svg{display:block;width:176px;height:176px;margin:0 auto 8px;background:#fff}.ai-share-qr a{display:block;overflow-wrap:anywhere;font-size:10px}.ai-share-qr p{margin:6px 0 0;color:var(--muted);font-size:10px}@media(max-width:700px){.ai-share{grid-template-columns:1fr}.ai-share-qr{text-align:left}.ai-share-qr svg{margin-left:0}}@media print{.ai-share-qr{display:none}.ai-share{grid-template-columns:1fr}.ai-share-prompt{border:0;padding:0;background:transparent}}`;
 
 const mobileSelectedDetailStyles = `.mobile-detail-close,.mobile-detail-scrim{display:none}@media(max-width:820px){.graph-layout #graph-inspector{position:fixed;z-index:28;inset:auto 0 0;width:100%;height:min(78svh,680px);min-height:280px;overflow:auto;overscroll-behavior:contain;border:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -18px 45px rgba(24,32,42,.14);transform:translateY(105%);visibility:hidden;transition:transform .18s ease,visibility .18s ease}.graph-layout #graph-inspector.is-mobile-open{transform:none;visibility:visible}.mobile-detail-close{display:block;float:right;border:1px solid var(--line);border-radius:5px;padding:7px 10px;background:var(--surface);cursor:pointer}.mobile-detail-scrim:not([hidden]){display:block;position:fixed;z-index:27;inset:0;border:0;background:rgba(24,32,42,.2)}body.mobile-detail-open{overflow:hidden}}@media(max-width:820px) and (prefers-reduced-motion:reduce){.graph-layout #graph-inspector{transition:none}}@media print{.mobile-detail-scrim,.mobile-detail-close{display:none!important}}`;
 
@@ -227,15 +233,13 @@ export class StaticHtmlCareerPortfolioRenderer
       provenance: { mode: "governed-render", releaseId: release.manifest.releaseId,
         releaseDigest: release.manifest.releaseDigest, createdAt: release.manifest.createdAt,
         authorisationExpiresAt: release.manifest.view.expiresAt },
-    }, inclusionDecisions, release.records, release.manifest);
+    }, inclusionDecisions);
   }
 
   /** Both validated releases and reviewed prototype packets use this exact shell and graph runtime. */
   public renderDisplayModel(
     display: CareerPortfolioDisplayModel,
     inclusionDecisions: readonly PortfolioInclusionDecision[],
-    sourceRecords: readonly ReleaseInputRecord[] = [],
-    sourceManifest?: ValidatedKnowledgeRelease["manifest"],
   ): CareerPortfolioProjection {
     const items = [...display.items];
     const relations = [...display.relations];
@@ -261,7 +265,7 @@ export class StaticHtmlCareerPortfolioRenderer
     const renderAchievementGroup = (records: readonly PortfolioItem[]) => {
       const ordered = orderedAchievements(records);
       const featured = ordered.filter((item) => item.inclusion!.status === "featured");
-      const primary = (featured.length ? featured : ordered).slice(0, featured.length ? 3 : 2);
+      const primary = (featured.length ? featured : ordered).slice(0, featured.length ? 8 : 2);
       const primaryIds = new Set(primary.map((item) => item.id));
       const remaining = ordered.filter((item) => !primaryIds.has(item.id));
       return `<div class="achievement-list">${primary.map((item) => renderAchievement(item, true)).join("")}${remaining.length ? `<details class="career-more"><summary>Show ${remaining.length} more ${remaining.length === 1 ? "record" : "records"} from this work</summary><div>${remaining.map((item) => renderAchievement(item)).join("")}</div></details>` : ""}</div>`;
@@ -310,6 +314,13 @@ export class StaticHtmlCareerPortfolioRenderer
       : "";
     const resumeAsset = display.assets.find(asset => asset.kind === "resume-pdf");
     const resumeLink = resumeAsset ? `<a class="resume-download" href="${esc(resumeAsset.outputPath)}" download>Download reviewed résumé PDF</a>` : "";
+    const aiResourceLinks = [
+      '<li><a href="portfolio.json" download>Career knowledge JSON</a> · entities, reviewed relationships, technology context, links, and provenance</li>',
+      '<li><a href="#graph-view">Interactive relationship graph</a> · visual exploration of the same reviewed records</li>',
+      ...(resumeAsset ? [`<li><a href="${esc(resumeAsset.outputPath)}" download>Résumé PDF</a> · printable career summary</li>`] : []),
+      '<li><a href="https://github.com/rajanrx/why-hire-me" target="_blank" rel="noopener noreferrer">Official Why Hire Me skills</a> · installation source and usage guidance</li>',
+    ].join("");
+    const aiShareMarkup = `<section class="ai-share" aria-labelledby="ai-share-title"><div class="ai-share-copy"><p class="overline">Portable career knowledge</p><h3 id="ai-share-title">Use this profile with an AI assistant</h3><p>The JSON is the disclosure-safe portfolio knowledge dump behind this site: entities, explicit graph relationships, contextual technology uses, approved links, and provenance. It does not expose the private source archive.</p><ul class="ai-share-files">${aiResourceLinks}</ul><p class="ai-share-prompt"><strong>Suggested prompt</strong>\nOpen the career knowledge JSON from this profile. If the official Why Hire Me skills are unavailable, ask me before installing them from the linked repository. Then use output-career-knowledge-guide to answer questions about the candidate from this reviewed portfolio projection, preserving its evidence limits and privacy choices.</p></div><div class="ai-share-qr"><div id="ai-share-qr" aria-live="polite"></div><a id="ai-share-target" href="portfolio.json">Career knowledge JSON</a><p>Scan to open the JSON at this site's current HTTP(S) address.</p></div></section>`;
     const title = esc(display.subjectDisplayName);
     const sourceLabel = display.provenance.mode === "governed-render"
       ? display.provenance.releaseId : `Prototype packet ${display.provenance.packetId}`;
@@ -321,7 +332,7 @@ export class StaticHtmlCareerPortfolioRenderer
     if (graphHeadStart < 0 || graphHeadEnd < 0) {
       throw new Error("Canonical graph markup could not be upgraded to the complete graph.");
     }
-    const completeGraphMarkup = '<p class="graph-instruction"><strong>All reviewed relationships</strong> are present · drag to pan · scroll or pinch to zoom · hover for a name · click a node to show every directly connected name · expand or explore for detail.</p><div id="graph-shell" class="graph-shell"><div class="graph-toolbar"><div class="graph-focus-picker"><label for="graph-focus">Focus records</label><input id="graph-focus" type="search" autocomplete="off" role="combobox" aria-controls="graph-focus-options" aria-expanded="false" placeholder="Type a name, technology, or work item"><div id="graph-focus-options" class="graph-focus-options" role="listbox" aria-multiselectable="true" hidden></div><div id="graph-focus-chips" class="graph-focus-chips" aria-live="polite"></div></div><div class="graph-actions"><button id="graph-focus-clear" type="button">Clear focus</button><button id="graph-expand" type="button">Expand neighbours</button><button id="graph-fit" type="button">Fit / reset</button><button id="graph-fullscreen" type="button" aria-pressed="false">Full screen</button></div></div><div class="graph-layout"><div class="graph-wrap"><div id="graph" class="graph" role="img" aria-label="Complete interactive career graph. Use the keyboard browser after the graph for non-pointer access."></div></div><aside id="graph-inspector" class="inspector" aria-label="Selected node context"></aside></div><details class="graph-keyboard"><summary>Browse every graph node by keyboard</summary><div class="tools"><label for="graph-keyboard-node">Record</label><select id="graph-keyboard-node"></select><button id="graph-keyboard-read" type="button">Read connections</button><button id="graph-keyboard-explore" type="button">Open details</button></div></details></div>';
+    const completeGraphMarkup = '<p class="graph-instruction"><strong>All reviewed relationships</strong> are present · drag to pan · scroll or pinch to zoom · hover for a name · click a node to show and frame every directly connected name · expand or explore for detail.</p><div id="graph-shell" class="graph-shell"><div class="graph-toolbar"><div class="graph-focus-picker"><label for="graph-focus">Focus records</label><input id="graph-focus" type="search" autocomplete="off" role="combobox" aria-controls="graph-focus-options" aria-expanded="false" placeholder="Type a name, technology, category, or work item"><div id="graph-focus-options" class="graph-focus-options" role="listbox" aria-multiselectable="true" hidden></div><div id="graph-focus-chips" class="graph-focus-chips" aria-live="polite"></div></div><div class="graph-actions"><button id="graph-focus-clear" type="button">Clear focus</button><button id="graph-expand" type="button">Expand neighbours</button><button id="graph-fit" type="button">Reset overview</button></div></div><div class="graph-layout"><div class="graph-wrap"><div id="graph" class="graph" role="img" aria-label="Complete interactive career graph. Use the keyboard browser after the graph for non-pointer access."></div></div><aside id="graph-inspector" class="inspector" aria-label="Selected node context"></aside></div><details class="graph-keyboard"><summary>Browse every graph node by keyboard</summary><div class="tools"><label for="graph-keyboard-node">Record</label><select id="graph-keyboard-node"></select><button id="graph-keyboard-read" type="button">Read connections</button><button id="graph-keyboard-explore" type="button">Open details</button></div></details></div>';
     const markedHtml = (html.slice(0, graphHeadStart) + completeGraphMarkup + html.slice(graphHeadEnd))
       .replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\"><meta name=\"generator\" content=\"why-hire-me.build/v1\">")
       .replace("Choose a focus, then inspect or drill into connected nodes.", "All authorised records are shown. Add focus records to trace several contexts at once.")
@@ -331,18 +342,18 @@ export class StaticHtmlCareerPortfolioRenderer
         display.provenance.mode === "governed-render"
           ? "Public copies may remain after the release authority expires."
           : "Local prototype · session-only · not governed · partially validated. This packet is not a validated release.")
+      .replace('<div class="tools"><label for="evidence-search">', `${aiShareMarkup}<div class="tools"><label for="evidence-search">`)
       .replace('<div class="notice"><p>', `${linkIndex}<div class="notice"><p>`)
       .replace('<h1>'+title+'</h1>', `<h1>${title}</h1>${resumeLink}`)
       .replace("Renderer 0.3.1 · Offline by default · No analytics or network resources",
-        'Made with <a href="https://github.com/rajanrx/why-hire-me">Why Hire Me</a> · Renderer 0.4.0 · Offline by default · No analytics or network resources');
-    const portfolioJson = `${JSON.stringify({ schema: "why-hire-me.portfolio-data/v0.3",
-      buildMarker: "why-hire-me.build/v1", provenance: display.provenance,
-      ...(sourceManifest ? { release: sourceManifest, records: sourceRecords } : { displayModel: display }),
-      options, inclusionDecisions }, null, 2)}\n`;
+        'Made with <a href="https://github.com/rajanrx/why-hire-me">Why Hire Me</a> · Renderer 0.4.2 · Offline by default · No analytics or network resources');
+    const portfolioJson = `${JSON.stringify({ schema: "why-hire-me.portfolio-data/v0.4",
+      buildMarker: "why-hire-me.build/v1", displayModel: display }, null, 2)}\n`;
     const files = Object.freeze({
       "index.html": markedHtml,
-      "styles.css": refinedStyles + progressiveExperienceStyles + cytoscapeCareerGraphStyles + mobileSelectedDetailStyles,
-      "app.js": cytoscapeBrowserSource + "\n" + completeGraphApp,
+      "styles.css": refinedStyles + neutralFeaturedStyles + aiShareStyles + progressiveExperienceStyles + cytoscapeCareerGraphStyles +
+        cytoscapeCareerGraphLegendStyles + mobileSelectedDetailStyles,
+      "app.js": qrcodeBrowserSource + "\n" + cytoscapeBrowserSource + "\n" + completeGraphApp + `\n(()=>{const host=document.querySelector("#ai-share-qr"),target=document.querySelector("#ai-share-target");if(!host||!target||typeof qrcode!=="function")return;const panel=host.closest(".ai-share-qr");if(!["http:","https:"].includes(location.protocol)){if(panel)panel.hidden=true;return}const url=new URL("portfolio.json",document.baseURI).href;target.href=url;target.textContent=url;const code=qrcode(0,"M");code.addData(url);code.make();host.innerHTML=code.createSvgTag({cellSize:4,margin:4,scalable:true,title:"Career knowledge JSON",alt:"QR code for the machine-readable career knowledge JSON"})})();`,
       "portfolio.json": portfolioJson,
     });
     const paths = [
@@ -360,7 +371,7 @@ export class StaticHtmlCareerPortfolioRenderer
     );
     const identity = {
       schema: "why-hire-me.portfolio/v0.3" as const,
-      rendererVersion: "0.4.0" as const,
+      rendererVersion: "0.4.2" as const,
       buildMarker: "why-hire-me.build/v1" as const,
       resumeLength: options.resumeLength,
       releaseId: display.provenance.mode === "governed-render" ? display.provenance.releaseId : null,
