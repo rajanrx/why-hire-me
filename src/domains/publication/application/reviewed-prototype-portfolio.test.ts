@@ -36,11 +36,31 @@ test("reviewed prototype adapter preserves truthful provenance and reviewed edge
     object: "technology-1", predicate: "work.uses_technology" }]);
   const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
     .renderDisplayModel(model, packet.inclusionDecisions);
-  assert.equal(projection.manifest.rendererVersion, "0.4.2");
+  assert.equal(projection.manifest.rendererVersion, "0.4.3");
   assert.equal(projection.manifest.releaseId, null);
   assert.equal(projection.manifest.prototypeInput?.status, "session-only");
   assert.match(projection.files["app.js"], /cytoscape/);
   assert.match(projection.files["index.html"], /Local prototype · session-only · not governed/);
+});
+
+test("uses the public header for approved profile actions and keeps packet identity in Evidence", () => {
+  const linkedIn = { id: "profile-linkedin", targetRecordId: null, label: "LinkedIn",
+    url: "https://www.linkedin.com/in/reviewed-person", sourceStatus: "supplied-unvisited" as const,
+    reviewed: true as const, reviewReference: "review-1" };
+  const withActions: ReviewedLocalPrototypePacket = { ...packet, links: [linkedIn],
+    referenceLinkMap: [{ linkId: linkedIn.id, status: "visible-in-evidence", targetRecordId: null }],
+    assets: [{ sourcePath: "/reviewed/resume.pdf", outputPath: "resume.pdf",
+      reviewed: true, reviewReference: "review-1" }] };
+  const model = adaptReviewedPrototype(withActions);
+  const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
+    .renderDisplayModel(model, withActions.inclusionDecisions);
+  const html = projection.files["index.html"]!;
+  const header = html.split('<header class="topbar">')[1]!.split("</header>")[0]!;
+  assert.match(header, /aria-label="Open LinkedIn profile"/);
+  assert.match(header, /aria-label="Download reviewed résumé PDF"/);
+  assert.doesNotMatch(header, /Prototype packet|packet-1/);
+  assert.match(html, /Source identity: Prototype packet packet-1/);
+  assert.doesNotMatch(html, /class="resume-download"/);
 });
 
 test("reviewed prototype adapter rejects invented or unreviewed edges", () => {

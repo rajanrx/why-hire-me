@@ -1,7 +1,7 @@
 {
   "schema": "why-hire-me.portfolio-template/v0.3",
   "portfolioSchema": "why-hire-me.portfolio/v0.3",
-  "rendererVersion": "0.4.2",
+  "rendererVersion": "0.4.3",
   "theme": {
     "default": "light",
     "density": "compact",
@@ -49,6 +49,8 @@
     "githubUrl": "https://github.com/rajanrx/why-hire-me",
     "contactNavigation": "only-when-approved-contact-target-is-present-and-working",
     "linkedin": "optional-local-icon-with-accessible-name-after-profile-url-consent",
+    "headerActions": "approved-professional-profile-and-resume-download-only",
+    "provenanceIdentity": "evidence-lens-not-primary-header",
     "remoteIconAssets": false
   },
   "evidencePresentation": {
