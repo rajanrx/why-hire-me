@@ -3,6 +3,7 @@ import test from "node:test";
 import { adaptReviewedPrototype } from "../../../adapters/publication/reviewed-prototype-display-adapter.js";
 import { StaticHtmlCareerPortfolioRenderer } from "../../../adapters/publication/static-html-career-portfolio-renderer.js";
 import { NodeReleaseDigester } from "../../../adapters/publication/node-release-digester.js";
+import { invalidCarryForwardLocators } from "../../../adapters/publication/prototype-carry-forward-validator.js";
 import type { ReviewedLocalPrototypePacket } from "../domain/career-portfolio-display.js";
 
 const decision = { recordId: "work-1", status: "featured" as const,
@@ -35,7 +36,7 @@ test("reviewed prototype adapter preserves truthful provenance and reviewed edge
     object: "technology-1", predicate: "work.uses_technology" }]);
   const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
     .renderDisplayModel(model, packet.inclusionDecisions);
-  assert.equal(projection.manifest.rendererVersion, "0.4.0");
+  assert.equal(projection.manifest.rendererVersion, "0.4.1");
   assert.equal(projection.manifest.releaseId, null);
   assert.equal(projection.manifest.prototypeInput?.status, "session-only");
   assert.match(projection.files["app.js"], /cytoscape/);
@@ -51,3 +52,44 @@ test("reviewed prototype adapter rejects invented or unreviewed edges", () => {
     /unreviewed, invalid, or dangling relationship/);
 });
 
+test("reviewed prototype adapter rejects omitted email anywhere in rendered text", () => {
+  const leaked = { ...packet, items: packet.items.map(item => item.id === "work-1"
+    ? { ...item, summary: "Contact reviewed.person@example.com for details." } : item) };
+  assert.throws(() => adaptReviewedPrototype(leaked), /omitted disclosure field Email/);
+});
+
+test("reviewed prototype adapter rejects semantic duplicate relationships with different IDs", () => {
+  const duplicate = { ...packet, relations: [...packet.relations,
+    { ...packet.relations[0], id: "relation-copy" }] };
+  assert.throws(() => adaptReviewedPrototype(duplicate as ReviewedLocalPrototypePacket),
+    /invalid.*relationship/);
+});
+
+test("reviewed prototype adapter rejects invalid technology and reference mappings", () => {
+  const technologyUse = { id: "technology-use-1", type: "TechnologyUse", name: "Graph engine use",
+    summary: null, recordedAt: "2026-09-16T00:00:00.000Z", details: [], inclusion: null };
+  const contextRelation = { id: "technology-context-1", subject: technologyUse.id, object: "work-1",
+    predicate: "technology_use.in_context", reviewed: true as const, reviewReference: "review-1" };
+  const invalidTechnology = { ...packet, items: [...packet.items, technologyUse],
+    relations: [...packet.relations, contextRelation], technologyUseMap: [{ technologyUseId: technologyUse.id,
+      workContextId: "work-1", status: "made-up", targetRecordId: "work-1" }] };
+  assert.throws(() => adaptReviewedPrototype(invalidTechnology as unknown as ReviewedLocalPrototypePacket),
+    /technology-use map/);
+
+  const link = { id: "link-1", targetRecordId: "work-1", label: "Reviewed link",
+    url: "https://example.com", sourceStatus: "supplied-unvisited" as const,
+    reviewed: true as const, reviewReference: "review-1" };
+  const mismatchedReference = { ...packet, links: [link], referenceLinkMap: [{ linkId: "link-1",
+    status: "visible-on-work", targetRecordId: "technology-1" }] };
+  assert.throws(() => adaptReviewedPrototype(mismatchedReference as unknown as ReviewedLocalPrototypePacket),
+    /reference-link map/);
+});
+
+test("carry-forward validation rejects locators absent from candidate output", () => {
+  const paths = new Set(["index.html", "portfolio.json", "resume.pdf"]);
+  assert.deepEqual(invalidCarryForwardLocators([
+    { baselineItemId: "present", disposition: "preserved", newLocator: "portfolio.json#items/work-1" },
+    { baselineItemId: "missing", disposition: "preserved", newLocator: "old/portfolio-data.js#work-1" },
+    { baselineItemId: "excluded", disposition: "excluded", newLocator: null },
+  ], paths).map(item => item.baselineItemId), ["missing"]);
+});

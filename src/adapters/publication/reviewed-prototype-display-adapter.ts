@@ -4,6 +4,7 @@ import { CareerPortfolioValidationError, resumeLengths } from "../../domains/pub
 
 function fail(message: string): never { throw new CareerPortfolioValidationError(`Reviewed prototype packet: ${message}`); }
 function nonempty(value: unknown): value is string { return typeof value === "string" && value.trim().length > 0; }
+const emailPattern = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
 
 /** A bounded, person-reviewed packet becomes display data, never a forged release. */
 export function adaptReviewedPrototype(packet: ReviewedLocalPrototypePacket): CareerPortfolioDisplayModel {
@@ -34,6 +35,14 @@ export function adaptReviewedPrototype(packet: ReviewedLocalPrototypePacket): Ca
   }
   if (!packet.review.disclosureChoices.every(choice => nonempty(choice.field) &&
     ["approved-for-audience", "omitted"].includes(choice.status))) fail("invalid disclosure choice.");
+  if (omitted.has("email")) {
+    const renderedText = [packet.subjectDisplayName, packet.purpose, ...packet.limitations,
+      ...packet.items.flatMap(item => [item.name, item.summary ?? "",
+        ...item.details.flatMap((detail: { label: string; value: string }) => [detail.label, detail.value])]),
+      ...packet.links.flatMap(link => [link.label, link.url])];
+    if (renderedText.some(value => emailPattern.test(value)))
+      fail("omitted disclosure field Email remains in rendered content.");
+  }
 
   const achievements: PortfolioAchievement[] = packet.items.flatMap(item => {
     const kind = item.type.toLowerCase() === "reported outcome" ? "reported-outcome" :
@@ -51,12 +60,15 @@ export function adaptReviewedPrototype(packet: ReviewedLocalPrototypePacket): Ca
   }
 
   const relationIds = new Set<string>();
+  const semanticRelations = new Set<string>();
   for (const relation of packet.relations) {
+    const semanticKey = `${relation.subject}\u0000${relation.predicate.trim()}\u0000${relation.object}`;
     if (relation.reviewed !== true || !nonempty(relation.reviewReference) || !nonempty(relation.id) ||
       relationIds.has(relation.id) || !ids.has(relation.subject) || !ids.has(relation.object) ||
-      !nonempty(relation.predicate) || relation.subject === relation.object)
+      !nonempty(relation.predicate) || relation.subject === relation.object || semanticRelations.has(semanticKey))
       fail(`unreviewed, invalid, or dangling relationship ${String(relation?.id)}.`);
     relationIds.add(relation.id);
+    semanticRelations.add(semanticKey);
   }
   const linkIds = new Set<string>();
   for (const link of packet.links) {
@@ -79,15 +91,31 @@ export function adaptReviewedPrototype(packet: ReviewedLocalPrototypePacket): Ca
   const technologies = packet.items.filter(item => item.type === "TechnologyUse");
   const tuIds = new Set(technologies.map(item => item.id));
   const mappedTuIds = new Set(packet.technologyUseMap.map(item => item.technologyUseId));
+  const visibleTechnologyStatuses = new Set(["visible-in-context", "visible-in-expertise", "summarised-under"]);
   if (mappedTuIds.size !== packet.technologyUseMap.length || mappedTuIds.size !== tuIds.size ||
     [...tuIds].some(id => !mappedTuIds.has(id)) || packet.technologyUseMap.some(item =>
       (item.workContextId !== "career-wide" && !ids.has(item.workContextId)) ||
-      item.status === "deferred" || item.status === "excluded"))
+      !visibleTechnologyStatuses.has(item.status) ||
+      (item.targetRecordId !== null && !ids.has(item.targetRecordId)) ||
+      (item.status === "visible-in-context" &&
+        (item.workContextId === "career-wide" || item.targetRecordId === null ||
+          !packet.relations.some(relation => relation.subject === item.technologyUseId &&
+            relation.object === item.workContextId && relation.predicate === "technology_use.in_context"))) ||
+      (item.status === "visible-in-expertise" &&
+        (item.workContextId !== "career-wide" || item.targetRecordId !== null)) ||
+      (item.status === "summarised-under" && item.targetRecordId === null)))
     fail("technology-use map is incomplete or contains unresolved work context.");
   const mappedLinkIds = new Set(packet.referenceLinkMap.map(item => item.linkId));
+  const linksById = new Map(packet.links.map(link => [link.id, link]));
+  const visibleReferenceStatuses = new Set(["visible-on-work", "visible-in-evidence", "summarised-under"]);
   if (mappedLinkIds.size !== packet.referenceLinkMap.length || mappedLinkIds.size !== linkIds.size ||
     [...linkIds].some(id => !mappedLinkIds.has(id)) || packet.referenceLinkMap.some(item =>
-      item.status === "deferred" || item.status === "excluded"))
+      !visibleReferenceStatuses.has(item.status) ||
+      (item.targetRecordId !== null && !ids.has(item.targetRecordId)) ||
+      (item.status === "visible-on-work" &&
+        (item.targetRecordId === null || item.targetRecordId !== linksById.get(item.linkId)?.targetRecordId)) ||
+      (item.status === "visible-in-evidence" && item.targetRecordId !== linksById.get(item.linkId)?.targetRecordId) ||
+      (item.status === "summarised-under" && item.targetRecordId === null)))
     fail("reference-link map is incomplete.");
   if (packet.carryForwardMap.some(item => !nonempty(item.baselineItemId) ||
     (item.disposition !== "excluded" && !nonempty(item.newLocator)) || !item.personApproved ||

@@ -1,7 +1,7 @@
 {
   "schema": "why-hire-me.portfolio-template/v0.3",
   "portfolioSchema": "why-hire-me.portfolio/v0.3",
-  "rendererVersion": "0.4.0",
+  "rendererVersion": "0.4.1",
   "theme": {
     "default": "light",
     "density": "compact",
@@ -106,9 +106,11 @@
     "selectionReadout": "single-selected-node-specific-context-remains-visible-in-graph-shell",
     "mobileReadout": "selected-node-bottom-drawer",
     "engine": "packaged-cytoscape-js-offline-no-cdn",
-    "largeGraphReadability": "organic-force-layout-with-anchor-labels-at-rest-and-all-direct-neighbour-labels-on-selection",
-    "nodeSizing": "connection-count-relative-to-typical-degree-log-scaled-with-a-readable-cap",
-    "expansion": "fit-selected-node-and-its-direct-neighbourhood-with-return-to-overview",
+    "largeGraphReadability": "organic-force-layout-with-labelled-category-hubs-and-anchor-labels-at-rest-and-all-direct-neighbour-labels-on-selection",
+    "nodeSizing": "equal-diameter-circles-log-scaled-with-log1p-connection-count-and-type-aware-readable-caps",
+    "categoryHubs": "TechnologyCategory nodes are labelled navigation hubs connected only by explicit reviewed relationships",
+    "workspace": "graph-lens-only-near-full-viewport-width-with-taller-canvas-and-responsive-single-column-mobile-readout",
+    "expansion": "selection-automatically-fits-the-direct-neighbourhood-and-reset-returns-to-a-readable-hub-overview-with-minimum-zoom",
     "click": "read-selected-node",
     "doubleClick": "explore",
     "contextMenu": "explore",

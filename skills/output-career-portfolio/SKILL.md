@@ -98,8 +98,10 @@ gateway exactly as follows:
 
 Do not copy the fictional sample shell, copy renderer output from another portfolio, write a
 candidate-specific `build_candidate.mjs`, or assemble `index.html` directly. The gateway rejects
-unreviewed/dangling relations, unsafe links/assets, unresolved inclusion, technology-use, link, or
-carry-forward maps, an existing output directory, and any attempt to write over the baseline.
+unreviewed/dangling or semantically duplicate relations, unsafe links/assets, invalid status or
+target mappings, omitted private data anywhere in rendered text, unresolved maps, carry-forward
+locators that do not name a candidate output file, an existing output directory, and any attempt
+to write over the baseline.
 Resolve the renderer, contract, sample, and checker relative to the installed skill or package,
 not a developer's machine or repository path. Use the available host tools and filesystem; do not
 require a particular agent, browser, operating system, or portfolio directory name. If a bundled
@@ -321,13 +323,19 @@ replace the user's multiselect filters; retain the gray-out state and keep the s
 Use the packaged Cytoscape.js engine and its mature force layout; it is bundled into `app.js` and
 must not come from a CDN. Do not replace it with hand-written parallel lanes, a neural-network-like
 grid, or candidate-specific SVG positioning. At rest, label only representative high-connection
-records. Hover labels the pointed node. Selecting a node labels **every directly connected node**,
-emphasises only its reviewed edges, and keeps the selected readout visible. “Expand neighbours”
-fits that reviewed one-hop neighbourhood without deleting the rest of the graph; “Return to
-overview” restores the complete scene. Size nodes by a bounded relative logarithmic connection
-scale so hubs are recognisable without dominating.
+records and every explicit technology-category hub. Hover labels the pointed node. Selecting a node
+labels **every directly connected node**, emphasises only its reviewed edges, automatically frames
+that one-hop neighbourhood, and keeps the selected readout visible. “Expand neighbours” isolates
+that reviewed neighbourhood without deleting the rest of the graph; “Return to overview” restores
+a readable hub overview rather than shrinking all records to illegible dots. Draw every node as a
+true equal-diameter circle. Size nodes by a bounded `log1p` connection scale so hubs are clearly
+recognisable without dominating. Use a stable, distinct colour for each entity type—organisation,
+engagement, role, work, contribution, technology, technology use, technology category, and
+evidence—and show a compact legend.
 
-Keep pointer pan and zoom, Fit/Reset, and full-screen expansion with an obvious exit and safe
+Let the Graph lens use near-full viewport width and a taller canvas on desktop while keeping its
+readout alongside it; collapse cleanly to one column on narrow screens. Keep pointer pan and zoom,
+Reset overview with a readable minimum zoom, and full-screen expansion with an obvious exit and safe
 fallback when native full screen is unavailable. Do not require a focus before showing
 relationships. Every node must remain accessible through the complete native keyboard browser with
 separate Read connections and Open details actions; pointer click reads, while double-click,
@@ -370,7 +378,8 @@ not visual verification. Preserve the input release or prototype packet unchange
 
 For an update, verify preservation against the old projection as well as the new input. Check that
 every approved baseline item and authorised technology use has its promised new locator or an
-approved disposition. Check scoped dates, separate measurement definitions, link targets, print
+approved disposition, and that each non-excluded locator resolves to a file in the generated
+candidate. Check scoped dates, separate measurement definitions, link targets, print
 content, and the manifest after any refactor. A digest check alone cannot detect a missing fact.
 For a local candidate, run `node scripts/check-template.mjs --baseline <old-directory>
 --candidate <preview-directory> --preview`. It compares the four-lens shell and reports visual or

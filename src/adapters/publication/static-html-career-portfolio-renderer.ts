@@ -11,7 +11,7 @@ import type { ReleaseDigester } from "../../domains/publication/ports/knowledge-
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { createRequire } from "node:module";
-import { cytoscapeCareerGraphApp, cytoscapeCareerGraphStyles } from "./cytoscape-career-graph-template.js";
+import { cytoscapeCareerGraphApp, cytoscapeCareerGraphLegendStyles, cytoscapeCareerGraphStyles } from "./cytoscape-career-graph-template.js";
 import { mobileCareerGraphDetailApp } from "./mobile-career-graph-detail-template.js";
 
 const localRequire = createRequire(import.meta.url);
@@ -321,7 +321,7 @@ export class StaticHtmlCareerPortfolioRenderer
     if (graphHeadStart < 0 || graphHeadEnd < 0) {
       throw new Error("Canonical graph markup could not be upgraded to the complete graph.");
     }
-    const completeGraphMarkup = '<p class="graph-instruction"><strong>All reviewed relationships</strong> are present · drag to pan · scroll or pinch to zoom · hover for a name · click a node to show every directly connected name · expand or explore for detail.</p><div id="graph-shell" class="graph-shell"><div class="graph-toolbar"><div class="graph-focus-picker"><label for="graph-focus">Focus records</label><input id="graph-focus" type="search" autocomplete="off" role="combobox" aria-controls="graph-focus-options" aria-expanded="false" placeholder="Type a name, technology, or work item"><div id="graph-focus-options" class="graph-focus-options" role="listbox" aria-multiselectable="true" hidden></div><div id="graph-focus-chips" class="graph-focus-chips" aria-live="polite"></div></div><div class="graph-actions"><button id="graph-focus-clear" type="button">Clear focus</button><button id="graph-expand" type="button">Expand neighbours</button><button id="graph-fit" type="button">Fit / reset</button><button id="graph-fullscreen" type="button" aria-pressed="false">Full screen</button></div></div><div class="graph-layout"><div class="graph-wrap"><div id="graph" class="graph" role="img" aria-label="Complete interactive career graph. Use the keyboard browser after the graph for non-pointer access."></div></div><aside id="graph-inspector" class="inspector" aria-label="Selected node context"></aside></div><details class="graph-keyboard"><summary>Browse every graph node by keyboard</summary><div class="tools"><label for="graph-keyboard-node">Record</label><select id="graph-keyboard-node"></select><button id="graph-keyboard-read" type="button">Read connections</button><button id="graph-keyboard-explore" type="button">Open details</button></div></details></div>';
+    const completeGraphMarkup = '<p class="graph-instruction"><strong>All reviewed relationships</strong> are present · drag to pan · scroll or pinch to zoom · hover for a name · click a node to show and frame every directly connected name · expand or explore for detail.</p><div id="graph-shell" class="graph-shell"><div class="graph-toolbar"><div class="graph-focus-picker"><label for="graph-focus">Focus records</label><input id="graph-focus" type="search" autocomplete="off" role="combobox" aria-controls="graph-focus-options" aria-expanded="false" placeholder="Type a name, technology, category, or work item"><div id="graph-focus-options" class="graph-focus-options" role="listbox" aria-multiselectable="true" hidden></div><div id="graph-focus-chips" class="graph-focus-chips" aria-live="polite"></div></div><div class="graph-actions"><button id="graph-focus-clear" type="button">Clear focus</button><button id="graph-expand" type="button">Expand neighbours</button><button id="graph-fit" type="button">Reset overview</button><button id="graph-fullscreen" type="button" aria-pressed="false">Full screen</button></div></div><div class="graph-layout"><div class="graph-wrap"><div id="graph" class="graph" role="img" aria-label="Complete interactive career graph. Use the keyboard browser after the graph for non-pointer access."></div></div><aside id="graph-inspector" class="inspector" aria-label="Selected node context"></aside></div><details class="graph-keyboard"><summary>Browse every graph node by keyboard</summary><div class="tools"><label for="graph-keyboard-node">Record</label><select id="graph-keyboard-node"></select><button id="graph-keyboard-read" type="button">Read connections</button><button id="graph-keyboard-explore" type="button">Open details</button></div></details></div>';
     const markedHtml = (html.slice(0, graphHeadStart) + completeGraphMarkup + html.slice(graphHeadEnd))
       .replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\"><meta name=\"generator\" content=\"why-hire-me.build/v1\">")
       .replace("Choose a focus, then inspect or drill into connected nodes.", "All authorised records are shown. Add focus records to trace several contexts at once.")
@@ -334,14 +334,15 @@ export class StaticHtmlCareerPortfolioRenderer
       .replace('<div class="notice"><p>', `${linkIndex}<div class="notice"><p>`)
       .replace('<h1>'+title+'</h1>', `<h1>${title}</h1>${resumeLink}`)
       .replace("Renderer 0.3.1 · Offline by default · No analytics or network resources",
-        'Made with <a href="https://github.com/rajanrx/why-hire-me">Why Hire Me</a> · Renderer 0.4.0 · Offline by default · No analytics or network resources');
+        'Made with <a href="https://github.com/rajanrx/why-hire-me">Why Hire Me</a> · Renderer 0.4.1 · Offline by default · No analytics or network resources');
     const portfolioJson = `${JSON.stringify({ schema: "why-hire-me.portfolio-data/v0.3",
       buildMarker: "why-hire-me.build/v1", provenance: display.provenance,
       ...(sourceManifest ? { release: sourceManifest, records: sourceRecords } : { displayModel: display }),
       options, inclusionDecisions }, null, 2)}\n`;
     const files = Object.freeze({
       "index.html": markedHtml,
-      "styles.css": refinedStyles + progressiveExperienceStyles + cytoscapeCareerGraphStyles + mobileSelectedDetailStyles,
+      "styles.css": refinedStyles + progressiveExperienceStyles + cytoscapeCareerGraphStyles +
+        cytoscapeCareerGraphLegendStyles + mobileSelectedDetailStyles,
       "app.js": cytoscapeBrowserSource + "\n" + completeGraphApp,
       "portfolio.json": portfolioJson,
     });
@@ -360,7 +361,7 @@ export class StaticHtmlCareerPortfolioRenderer
     );
     const identity = {
       schema: "why-hire-me.portfolio/v0.3" as const,
-      rendererVersion: "0.4.0" as const,
+      rendererVersion: "0.4.1" as const,
       buildMarker: "why-hire-me.build/v1" as const,
       resumeLength: options.resumeLength,
       releaseId: display.provenance.mode === "governed-render" ? display.provenance.releaseId : null,

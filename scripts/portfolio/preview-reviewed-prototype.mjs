@@ -4,6 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import { adaptReviewedPrototype } from "../../dist/adapters/publication/reviewed-prototype-display-adapter.js";
 import { NodeReleaseDigester } from "../../dist/adapters/publication/node-release-digester.js";
 import { StaticHtmlCareerPortfolioRenderer } from "../../dist/adapters/publication/static-html-career-portfolio-renderer.js";
+import { invalidCarryForwardLocators } from "../../dist/adapters/publication/prototype-carry-forward-validator.js";
 
 const value = name => { const i = process.argv.indexOf(name); return i < 0 ? null : process.argv[i + 1]; };
 const packetPath = value("--packet"), outputArg = value("--output"), baselineArg = value("--baseline");
@@ -34,6 +35,10 @@ for (const asset of packet.assets ?? []) {
 const digester = new NodeReleaseDigester();
 const projection = new StaticHtmlCareerPortfolioRenderer(digester)
   .renderDisplayModel(display, packet.inclusionDecisions);
+const outputPaths = new Set([...Object.keys(projection.files), ...assetBytes.map(asset => asset.outputPath),
+  "portfolio-manifest.json", "generation-record.json"]);
+const invalidLocators = invalidCarryForwardLocators(packet.carryForwardMap, outputPaths);
+if (invalidLocators.length) throw new Error(`Carry-forward map contains ${invalidLocators.length} locator(s) that do not exist in the candidate output: ${invalidLocators.slice(0, 8).map(item => `${item.baselineItemId} -> ${item.newLocator}`).join(", ")}`);
 await mkdir(output);
 for (const [path, contents] of Object.entries(projection.files))
   await writeFile(join(output, path), contents, { flag: "wx" });
@@ -55,7 +60,7 @@ const generationRecord = {
     digest: projection.manifest.projectionDigest, assets: assetBytes.map(({ outputPath, bytes, sha256 }) =>
       ({ path: outputPath, bytes: bytes.byteLength, sha256 })) },
   verification: { passed: ["reviewed-packet-validation", "explicit-relationship-validation",
-    "carry-forward-id-coverage", "asset-hashes"], failed: [],
+    "carry-forward-id-coverage", "carry-forward-locator-existence", "asset-hashes"], failed: [],
     warnings: ["Browser visual graph, responsive, keyboard, and print checks are still required; this candidate is not ready."] },
   delivery: { local: true, uploaded: false, public: false },
 };
