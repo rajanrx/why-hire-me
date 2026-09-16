@@ -81,13 +81,25 @@ A local prototype must be labelled `prototype`, record generator and limitations
 byte determinism, production validation, or Publication-port persistence. Do not use an unvalidated
 release for factual output without the person's explicit review of the extracted content.
 
-The production renderer's `render` method accepts `ValidatedKnowledgeRelease` and emits a
-release-labelled four-file bundle. Do not forge that type or a release manifest to make a prototype
-fit it. For a person-requested template preview, use the renderer and bundled contract as the
-presentation specification, map the reviewed packet into a **prototype** display model, and keep
-prototype provenance separate from governed release metadata. If the host cannot safely map a
-record, link, or privacy choice, report that specific gap; absence of a validated release alone is
-not a reason to stop a local candidate preview.
+The production renderer's `render` method accepts `ValidatedKnowledgeRelease`. The packaged
+`adaptReviewedPrototype` adapter accepts `why-hire-me.reviewed-prototype-packet/v1`. Both produce the
+same `why-hire-me.portfolio-display/v1` model and pass through the same HTML, CSS, graph, readout,
+and manifest renderer. The adapter must preserve `local-prototype`, `session-only`,
+`partially-validated` provenance; never forge a release type or release manifest to make a prototype
+fit the governed route. If the host cannot safely map a record, link, relationship, or privacy
+choice, report that specific gap; absence of a validated release alone is not a reason to stop a
+local candidate preview.
+
+For reviewed prototype input, build the package first and invoke the installed, package-relative
+gateway exactly as follows:
+
+`node scripts/portfolio/preview-reviewed-prototype.mjs --packet <reviewed-packet.json> --baseline
+<approved-portfolio-dir> --output <new-candidate-dir>`
+
+Do not copy the fictional sample shell, copy renderer output from another portfolio, write a
+candidate-specific `build_candidate.mjs`, or assemble `index.html` directly. The gateway rejects
+unreviewed/dangling relations, unsafe links/assets, unresolved inclusion, technology-use, link, or
+carry-forward maps, an existing output directory, and any attempt to write over the baseline.
 Resolve the renderer, contract, sample, and checker relative to the installed skill or package,
 not a developer's machine or repository path. Use the available host tools and filesystem; do not
 require a particular agent, browser, operating system, or portfolio directory name. If a bundled
@@ -270,7 +282,8 @@ decision, reported result, and a plain qualifier where attribution or measuremen
 Keep data freshness, query time, phone-visible time, and business outcome as distinct measures.
 Never turn internal reports into fabricated public citations or imply causality from correlation.
 Use [`assets/sample-release.json`](assets/sample-release.json) only as fictional presentation
-test data, never as career evidence. Give records selected as `featured` a
+test data, never as career evidence. Dense graph regression fixtures must also be explicitly
+fictional and must never be mixed into a person's packet. Give records selected as `featured` a
 barely visible, near-white background treatment in every lens where they appear; do not infer
 importance from layout position, employer, or record type.
 
@@ -305,16 +318,20 @@ one node shows its own contextual readout in the graph shell; multiple focus sel
 replace that single selected-node box with a generic summary. Clicking a node must not clear or
 replace the user's multiselect filters; retain the gray-out state and keep the selected node legible.
 
-Make the graph pleasant to explore: readable clustering or layout, progressive labels at dense
-zoom levels, and circle size that reflects connection count without letting one hub dominate.
-Use a relative logarithmic scale capped at roughly 1.65 times the usual radius within a node type;
-compare against the graph's typical degree so a 40-link hub is recognisable but not overwhelming.
-Add neighbour emphasis, pointer pan and zoom, Fit/Reset, and full-screen expansion with an
-obvious exit and safe fallback when native full screen is unavailable. Keep the selected-node box
-inside the expanded graph. Do not require users to choose a focus before seeing relationships.
-Every node must remain selectable by keyboard and pointer; a quick click selects and reads the
-node, while an explicit explore control, keyboard activation, double-click, context-menu action,
-or long-press opens the wider side navigator. Explain the controls concisely above the graph. If
+Use the packaged Cytoscape.js engine and its mature force layout; it is bundled into `app.js` and
+must not come from a CDN. Do not replace it with hand-written parallel lanes, a neural-network-like
+grid, or candidate-specific SVG positioning. At rest, label only representative high-connection
+records. Hover labels the pointed node. Selecting a node labels **every directly connected node**,
+emphasises only its reviewed edges, and keeps the selected readout visible. “Expand neighbours”
+fits that reviewed one-hop neighbourhood without deleting the rest of the graph; “Return to
+overview” restores the complete scene. Size nodes by a bounded relative logarithmic connection
+scale so hubs are recognisable without dominating.
+
+Keep pointer pan and zoom, Fit/Reset, and full-screen expansion with an obvious exit and safe
+fallback when native full screen is unavailable. Do not require a focus before showing
+relationships. Every node must remain accessible through the complete native keyboard browser with
+separate Read connections and Open details actions; pointer click reads, while double-click,
+context-menu, or long-press opens the wider side navigator. Explain controls concisely. If
 relationships are absent, say so rather than drawing implied connections. Provide a searchable
 structured record explorer and a complete relationship list as equivalent paths.
 
@@ -347,8 +364,9 @@ order, print output, content escaping, CSP, visible provenance, and absence of u
 requests. If a video modal is included, verify keyboard focus, close/focus return, provider failure
 fallback, and that the network request happens only after explicit Play.
 
-Report generated and failed checks separately. Do not call the portfolio complete if required
-verification fails. Preserve the input release or prototype packet unchanged.
+Report generated and failed checks separately. Do not call the portfolio complete or ready if
+required verification fails or has not run. File hashes, manifest counts, and DOM assertions are
+not visual verification. Preserve the input release or prototype packet unchanged.
 
 For an update, verify preservation against the old projection as well as the new input. Check that
 every approved baseline item and authorised technology use has its promised new locator or an
@@ -362,10 +380,14 @@ as a candidate-generation failure. For an approved replacement, run the same che
 Pass `--revision <approved-template-revision.json>` only for separately approved template changes.
 Fail an in-place replacement on an unapproved asset change; content and data files may change
 through the carry-forward checks above. A candidate still fails for unsafe assets, missing shell
-elements, or unaccounted content. Verify that at least one organisation, work, technology, and outcome
-has a distinct readout. Test the default full graph, multi-focus search/add/remove/clear, zoom/pan,
-full-screen entry and exit, keyboard node selection, the retained selected-node box, and the mobile
-bottom drawer at a narrow viewport.
+elements, or unaccounted content. Verify that at least one organisation, work, technology, and
+outcome has a distinct readout. In a real browser, visually inspect desktop and a narrow mobile
+viewport. Test the default full graph, label restraint, hover, a selected node with every direct
+neighbour label, Expand neighbours and Return to overview, multi-focus search/add/remove/clear,
+zoom/pan, full-screen entry and exit, keyboard Read/Open, the retained selected-node box, drilling
+into the side navigator, and the mobile bottom drawer. Before releasing a renderer change, also
+generate the packaged fictional fixture of roughly 200 nodes and 400 explicit edges and perform
+those same visual checks; an automated count or snapshot alone is insufficient.
 
 ## Stop at the local boundary
 

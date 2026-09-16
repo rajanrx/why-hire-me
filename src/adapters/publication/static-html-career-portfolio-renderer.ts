@@ -5,9 +5,20 @@ import type {
 } from "../../domains/publication/domain/career-portfolio.js";
 import type { PortfolioInclusionDecision } from "../../domains/publication/domain/career-portfolio-selection.js";
 import type { ReleaseInputRecord } from "../../domains/publication/domain/knowledge-release.js";
+import type { CareerPortfolioDisplayModel, CareerPortfolioDisplayItem, CareerPortfolioDisplayRelation } from "../../domains/publication/domain/career-portfolio-display.js";
 import type { CareerPortfolioRenderer } from "../../domains/publication/ports/career-portfolio-ports.js";
 import type { ReleaseDigester } from "../../domains/publication/ports/knowledge-release-ports.js";
-import { fullCareerGraphApp, fullCareerGraphStyles, mobileCareerGraphDetailApp } from "./full-career-graph-template.js";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { createRequire } from "node:module";
+import { cytoscapeCareerGraphApp, cytoscapeCareerGraphStyles } from "./cytoscape-career-graph-template.js";
+import { mobileCareerGraphDetailApp } from "./mobile-career-graph-detail-template.js";
+
+const localRequire = createRequire(import.meta.url);
+const cytoscapeBrowserSource = readFileSync(
+  join(dirname(localRequire.resolve("cytoscape")), "cytoscape.min.js"),
+  "utf8",
+);
 
 const esc = (value: string) =>
   value
@@ -23,24 +34,8 @@ const object = (value: unknown): Record<string, unknown> =>
 const text = (value: unknown): string | null =>
   typeof value === "string" && value.trim() ? value.trim() : null;
 
-interface PortfolioItem {
-  readonly id: string;
-  readonly type: string;
-  readonly name: string;
-  readonly summary: string | null;
-  readonly recordedAt: string;
-  readonly details: readonly {
-    readonly label: string;
-    readonly value: string;
-  }[];
-  readonly inclusion: PortfolioInclusionDecision | null;
-}
-
-interface PortfolioRelation {
-  readonly subject: string;
-  readonly object: string;
-  readonly predicate: string;
-}
+type PortfolioItem = CareerPortfolioDisplayItem;
+type PortfolioRelation = CareerPortfolioDisplayRelation;
 
 function itemFrom(
   record: ReleaseInputRecord,
@@ -106,6 +101,7 @@ function relationFrom(record: ReleaseInputRecord): PortfolioRelation | null {
     text(data.objectId) ?? text(data.object) ?? text(object(data.object).ref);
   return subject && target
     ? {
+        id: record.id,
         subject,
         object: target,
         predicate:
@@ -133,6 +129,8 @@ const refinedStyles = enhancedStyles
 const mobileSelectedDetailStyles = `.mobile-detail-close,.mobile-detail-scrim{display:none}@media(max-width:820px){.graph-layout #graph-inspector{position:fixed;z-index:28;inset:auto 0 0;width:100%;height:min(78svh,680px);min-height:280px;overflow:auto;overscroll-behavior:contain;border:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -18px 45px rgba(24,32,42,.14);transform:translateY(105%);visibility:hidden;transition:transform .18s ease,visibility .18s ease}.graph-layout #graph-inspector.is-mobile-open{transform:none;visibility:visible}.mobile-detail-close{display:block;float:right;border:1px solid var(--line);border-radius:5px;padding:7px 10px;background:var(--surface);cursor:pointer}.mobile-detail-scrim:not([hidden]){display:block;position:fixed;z-index:27;inset:0;border:0;background:rgba(24,32,42,.2)}body.mobile-detail-open{overflow:hidden}}@media(max-width:820px) and (prefers-reduced-motion:reduce){.graph-layout #graph-inspector{transition:none}}@media print{.mobile-detail-scrim,.mobile-detail-close{display:none!important}}`;
 
 const enhancedApp = app
+  .replace("No reviewed narrative is present in this release.", "No reviewed entity-specific narrative is present; explore related records for context.")
+  .replace("return true}function open(id", "const refs=(model.links||[]).filter(link=>link.targetRecordId===id);if(refs.length)body.insertAdjacentHTML('beforeend','<section class=\"reviewed-links\"><p class=\"overline\">Reference links</p>'+refs.map(link=>'<p><a href=\"'+esc(link.url)+'\" target=\"_blank\" rel=\"noopener noreferrer\">'+esc(link.label)+'</a> · '+esc(link.sourceStatus)+'</p>').join('')+'</section>');return true}function open(id")
   .replace("entity=(id,label,klass=\"\")=>'<a class=\"entity-link '+klass+'\" href=\"'+href(id)+'\" data-entity=\"'+esc(id)+'\">'+esc(label)+'</a>'", "entity=(id,label,klass=\"\")=>'<span class=\"entity-pair '+klass+'\"><span>'+esc(label)+'</span><a class=\"entity-drill\" href=\"'+href(id)+'\" data-entity=\"'+esc(id)+'\" aria-label=\"Explore '+esc(label)+'\">↗</a></span>'")
   .replace("const tech=model.items.filter(i=>i.type.toLowerCase()===\"technology\"),expertiseList", "const tech=model.items.filter(i=>i.type.toLowerCase()===\"technology\"),categoryFor=t=>{const relation=relations.find(r=>r.predicate===\"technology.belongs_to_category\"&&r.subject===t.id);return relation?items.get(relation.object):null},expertiseList")
   .replace("esc(t.name)+'</span><small>'+neighbourhood(t.id).length", "'<small class=\"expertise-category\">'+esc(categoryFor(t)?.name||\"Uncategorised\")+'</small>'+esc(t.name)+'</span><small>'+neighbourhood(t.id).length")
@@ -155,7 +153,7 @@ if (legacyMobileStart < 0 || completeGraphStart < 0 || completeGraphEnd < 0 || c
 }
 const existingAppWithoutLegacyMobile = mobileSelectedDetailApp.slice(0, legacyMobileStart);
 const completeGraphApp = existingAppWithoutLegacyMobile.slice(0, completeGraphStart)
-  + fullCareerGraphApp
+  + cytoscapeCareerGraphApp
   + existingAppWithoutLegacyMobile.slice(completeGraphEnd)
   + "\n" + mobileCareerGraphDetailApp;
 const progressiveExperienceStyles = `.career-entry{display:flex;min-width:0;flex-direction:column;gap:3px}.career-entry strong{line-height:1.35}.career-summary{display:-webkit-box;max-width:58ch;overflow:hidden;color:var(--muted);font-size:12px;line-height:1.45;-webkit-line-clamp:2;-webkit-box-orient:vertical}.career-more{padding:8px 0 0;border-bottom:1px solid var(--line)}.career-more>summary{display:flex;align-items:center;gap:8px;padding:8px 10px;color:var(--blue);font-size:12px;font-weight:650;cursor:pointer;list-style:none}.career-more>summary::-webkit-details-marker{display:none}.career-more>summary:before{content:"+";display:grid;width:18px;height:18px;place-items:center;border:1px solid #b7cbdc;border-radius:3px;background:#fff}.career-more[open]>summary:before{content:"−"}.career-more>summary:hover{background:var(--blue-soft)}.career-more .career-row:last-child{border-bottom:0}@media print{.career-more>summary{display:none}.career-more>div{display:block!important}.career-summary{-webkit-line-clamp:unset;display:block}}`;
@@ -215,9 +213,36 @@ export class StaticHtmlCareerPortfolioRenderer
           ? [relation]
           : [];
       });
+    return this.renderDisplayModel({
+      schema: "why-hire-me.portfolio-display/v1",
+      subjectDisplayName: release.manifest.subject.displayName,
+      purpose: release.manifest.purpose,
+      audience: release.manifest.audience,
+      resumeLength: options.resumeLength,
+      items,
+      relations,
+      links: [],
+      assets: [],
+      limitations: release.manifest.limitations,
+      provenance: { mode: "governed-render", releaseId: release.manifest.releaseId,
+        releaseDigest: release.manifest.releaseDigest, createdAt: release.manifest.createdAt,
+        authorisationExpiresAt: release.manifest.view.expiresAt },
+    }, inclusionDecisions, release.records, release.manifest);
+  }
+
+  /** Both validated releases and reviewed prototype packets use this exact shell and graph runtime. */
+  public renderDisplayModel(
+    display: CareerPortfolioDisplayModel,
+    inclusionDecisions: readonly PortfolioInclusionDecision[],
+    sourceRecords: readonly ReleaseInputRecord[] = [],
+    sourceManifest?: ValidatedKnowledgeRelease["manifest"],
+  ): CareerPortfolioProjection {
+    const items = [...display.items];
+    const relations = [...display.relations];
+    const options = { resumeLength: display.resumeLength };
     const achievements = items.filter((item) => item.inclusion !== null);
     const evidence = items.filter((item) => item.type === "Evidence");
-    const model = esc(JSON.stringify({ items, relations }));
+    const model = esc(JSON.stringify({ items, relations, links: display.links }));
     const drill = (item: PortfolioItem) => `<a class="entity-drill" href="#entity/${encodeURIComponent(item.id)}" data-entity="${esc(item.id)}" aria-label="Explore ${esc(item.name)}">↗</a>`;
     const connected = (id: string, type: string) => relations
       .flatMap((relation) => relation.subject === id ? [relation.object] : relation.object === id ? [relation.subject] : [])
@@ -279,24 +304,45 @@ export class StaticHtmlCareerPortfolioRenderer
         )
         .join("") ||
       "<p>No explicit claim relationships are present; the renderer has not invented any.</p>";
-    const title = esc(release.manifest.subject.displayName);
+    const linkIndex = display.links.length
+      ? `<section class="reviewed-links" aria-label="Reviewed reference links"><h3>Reference links</h3><ul>${display.links.map(link =>
+        `<li><a href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)}</a>${link.targetRecordId ? ` · ${esc(items.find(item => item.id === link.targetRecordId)?.name ?? link.targetRecordId)}` : ""} · ${esc(link.sourceStatus)}</li>`).join("")}</ul></section>`
+      : "";
+    const resumeAsset = display.assets.find(asset => asset.kind === "resume-pdf");
+    const resumeLink = resumeAsset ? `<a class="resume-download" href="${esc(resumeAsset.outputPath)}" download>Download reviewed résumé PDF</a>` : "";
+    const title = esc(display.subjectDisplayName);
+    const sourceLabel = display.provenance.mode === "governed-render"
+      ? display.provenance.releaseId : `Prototype packet ${display.provenance.packetId}`;
+    const release = { manifest: { releaseId: sourceLabel, purpose: display.purpose,
+      audience: display.audience, limitations: display.limitations } };
     const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'"><title>${title} · Career profile</title><link rel="stylesheet" href="styles.css"><script src="app.js" defer></script></head><body class="resume-${esc(options.resumeLength)}"><a class="skip" href="#content">Skip to career record</a><header class="topbar"><a class="wordmark" href="#experience">${title}</a><nav class="tabs" role="tablist" aria-label="Career profile views"><button data-tab="experience" role="tab" aria-selected="true">Experience</button><button data-tab="expertise" role="tab" aria-selected="false">Expertise</button><button data-tab="graph-view" role="tab" aria-selected="false">Graph</button><button data-tab="evidence" role="tab" aria-selected="false">Evidence</button></nav><span class="release-id">${esc(release.manifest.releaseId)}</span></header><main id="content" class="shell"><section class="profile"><div><p class="overline">Evidence-linked career profile</p><h1>${title}</h1><p class="lead">A compact, navigable view prepared for ${esc(release.manifest.purpose)}. Use the explore icon beside an entity to open its connected career context.</p></div><dl class="facts"><div><dt>Audience</dt><dd>${esc(release.manifest.audience)}</dd></div><div><dt>Career records</dt><dd>${achievements.length}</dd></div><div><dt>Relationships</dt><dd>${relations.length}</dd></div><div><dt>Résumé</dt><dd>${esc(options.resumeLength)}</dd></div></dl></section><section class="view" data-view="experience"><div class="heading"><div><p class="overline">Career</p><h2>Experience</h2></div><p>Use the explore icon beside a record to open its context and relationships.</p></div><div class="experience-layout"><div class="career-list">${careerRows}</div><aside class="inspector"><p class="overline">Career record</p><h3>Explore the evidence</h3><p>The explore icon opens a stable deep link in the side navigator without making every row disruptive.</p></aside></div></section><section class="view" data-view="expertise" hidden><div class="heading"><div><p class="overline">Explore by capability</p><h2>Expertise</h2></div><p>Technology views are derived only from explicit release relationships.</p></div><div class="explore-layout"><aside class="tools"><label for="expertise-search">Find expertise</label><input id="expertise-search" type="search"><div id="expertise-list" class="expertise-list"></div></aside><div id="expertise-results"></div></div></section><section class="view" data-view="graph-view" hidden><div class="heading"><div><p class="overline">Relationships</p><h2>Career graph</h2></div><p>Choose a focus, then inspect or drill into connected nodes.</p></div><p class="graph-instruction"><strong>Click</strong> to focus · <strong>double-click, right-click, or long-press</strong> to open the side navigator · <strong>Enter</strong> opens a focused node from the keyboard</p><div class="graph-toolbar"><label for="graph-focus">Focus</label><select id="graph-focus"></select></div><div class="graph-layout"><div class="graph-wrap"><svg id="graph" class="graph" viewBox="0 0 800 500" role="img" aria-labelledby="graph-title graph-desc"><title id="graph-title">Interactive career graph</title><desc id="graph-desc">A focused view of explicit career relationships.</desc></svg></div><aside id="graph-inspector" class="inspector"></aside></div><div id="graph-list" class="relationship-list">${relationIndex}</div></section><section class="view" data-view="evidence" hidden><div class="heading"><div><p class="overline">Traceability</p><h2>Evidence</h2></div><p>All displayed records remain available outside the graph.</p></div><div class="tools"><label for="evidence-search">Search records</label><input id="evidence-search" type="search"></div><div class="table-wrap"><table><thead><tr><th>Record</th><th>Name</th><th>Type</th><th>Use</th></tr></thead><tbody id="evidence-body">${evidenceRows}</tbody></table></div><div class="notice"><p>${evidence.length} evidence records · ${release.manifest.limitations.map(esc).join(" · ")}</p><p>Résumé projection: ${esc(options.resumeLength)}. Public copies may remain after the release authority expires.</p></div></section></main><aside id="drawer" class="drawer" aria-label="Entity explorer" aria-hidden="true"><header><button id="drawer-back" disabled>← Back</button><p id="drawer-path"></p><button id="drawer-close">Close</button></header><div id="drawer-body" class="drawer-body"></div></aside><button id="scrim" class="scrim" hidden aria-label="Close entity explorer"></button><div id="portfolio-data" hidden data-model="${model}"></div><footer>Renderer 0.3.1 · Offline by default · No analytics or network resources</footer></body></html>\n`;
     const graphHeadStart = html.indexOf('<p class="graph-instruction">');
     const graphHeadEnd = html.indexOf('<div id="graph-list"', graphHeadStart);
     if (graphHeadStart < 0 || graphHeadEnd < 0) {
       throw new Error("Canonical graph markup could not be upgraded to the complete graph.");
     }
-    const completeGraphMarkup = '<p class="graph-instruction"><strong>See every relationship</strong> by default · type to add several focus records · drag the background to pan · scroll to zoom · click a node to read it · Shift+Enter, double-click, right-click, or long-press to explore.</p><div id="graph-shell" class="graph-shell"><div class="graph-toolbar"><div class="graph-focus-picker"><label for="graph-focus">Focus records</label><input id="graph-focus" type="search" autocomplete="off" role="combobox" aria-controls="graph-focus-options" aria-expanded="false" placeholder="Type a name, technology, or work item"><div id="graph-focus-options" class="graph-focus-options" role="listbox" aria-multiselectable="true" hidden></div><div id="graph-focus-chips" class="graph-focus-chips" aria-live="polite"></div></div><div class="graph-actions"><button id="graph-focus-clear" type="button">Clear focus</button><button id="graph-fit" type="button">Fit / reset</button><button id="graph-fullscreen" type="button" aria-pressed="false">Full screen</button></div></div><div class="graph-layout"><div class="graph-wrap"><svg id="graph" class="graph" viewBox="0 0 1200 800" role="group" aria-labelledby="graph-title graph-desc"><title id="graph-title">Complete interactive career graph</title><desc id="graph-desc">All authorised career records and their explicit relationships. The equivalent relationship list follows.</desc></svg></div><aside id="graph-inspector" class="inspector" aria-label="Selected node context"></aside></div></div>';
+    const completeGraphMarkup = '<p class="graph-instruction"><strong>All reviewed relationships</strong> are present · drag to pan · scroll or pinch to zoom · hover for a name · click a node to show every directly connected name · expand or explore for detail.</p><div id="graph-shell" class="graph-shell"><div class="graph-toolbar"><div class="graph-focus-picker"><label for="graph-focus">Focus records</label><input id="graph-focus" type="search" autocomplete="off" role="combobox" aria-controls="graph-focus-options" aria-expanded="false" placeholder="Type a name, technology, or work item"><div id="graph-focus-options" class="graph-focus-options" role="listbox" aria-multiselectable="true" hidden></div><div id="graph-focus-chips" class="graph-focus-chips" aria-live="polite"></div></div><div class="graph-actions"><button id="graph-focus-clear" type="button">Clear focus</button><button id="graph-expand" type="button">Expand neighbours</button><button id="graph-fit" type="button">Fit / reset</button><button id="graph-fullscreen" type="button" aria-pressed="false">Full screen</button></div></div><div class="graph-layout"><div class="graph-wrap"><div id="graph" class="graph" role="img" aria-label="Complete interactive career graph. Use the keyboard browser after the graph for non-pointer access."></div></div><aside id="graph-inspector" class="inspector" aria-label="Selected node context"></aside></div><details class="graph-keyboard"><summary>Browse every graph node by keyboard</summary><div class="tools"><label for="graph-keyboard-node">Record</label><select id="graph-keyboard-node"></select><button id="graph-keyboard-read" type="button">Read connections</button><button id="graph-keyboard-explore" type="button">Open details</button></div></details></div>';
     const markedHtml = (html.slice(0, graphHeadStart) + completeGraphMarkup + html.slice(graphHeadEnd))
       .replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\"><meta name=\"generator\" content=\"why-hire-me.build/v1\">")
       .replace("Choose a focus, then inspect or drill into connected nodes.", "All authorised records are shown. Add focus records to trace several contexts at once.")
+      .replace("explicit release relationships", "explicit reviewed relationships")
+      .replace("No reviewed narrative is present in this release.", "No reviewed entity-specific narrative is present.")
+      .replace("Public copies may remain after the release authority expires.",
+        display.provenance.mode === "governed-render"
+          ? "Public copies may remain after the release authority expires."
+          : "Local prototype · session-only · not governed · partially validated. This packet is not a validated release.")
+      .replace('<div class="notice"><p>', `${linkIndex}<div class="notice"><p>`)
+      .replace('<h1>'+title+'</h1>', `<h1>${title}</h1>${resumeLink}`)
       .replace("Renderer 0.3.1 · Offline by default · No analytics or network resources",
-        'Made with <a href="https://github.com/rajanrx/why-hire-me">Why Hire Me</a> · Renderer 0.3.3 · Offline by default · No analytics or network resources');
-    const portfolioJson = `${JSON.stringify({ schema: "why-hire-me.portfolio-data/v0.3", buildMarker: "why-hire-me.build/v1", release: release.manifest, options, inclusionDecisions, records: release.records }, null, 2)}\n`;
+        'Made with <a href="https://github.com/rajanrx/why-hire-me">Why Hire Me</a> · Renderer 0.4.0 · Offline by default · No analytics or network resources');
+    const portfolioJson = `${JSON.stringify({ schema: "why-hire-me.portfolio-data/v0.3",
+      buildMarker: "why-hire-me.build/v1", provenance: display.provenance,
+      ...(sourceManifest ? { release: sourceManifest, records: sourceRecords } : { displayModel: display }),
+      options, inclusionDecisions }, null, 2)}\n`;
     const files = Object.freeze({
       "index.html": markedHtml,
-      "styles.css": refinedStyles + progressiveExperienceStyles + fullCareerGraphStyles + mobileSelectedDetailStyles,
-      "app.js": completeGraphApp,
+      "styles.css": refinedStyles + progressiveExperienceStyles + cytoscapeCareerGraphStyles + mobileSelectedDetailStyles,
+      "app.js": cytoscapeBrowserSource + "\n" + completeGraphApp,
       "portfolio.json": portfolioJson,
     });
     const paths = [
@@ -314,17 +360,22 @@ export class StaticHtmlCareerPortfolioRenderer
     );
     const identity = {
       schema: "why-hire-me.portfolio/v0.3" as const,
-      rendererVersion: "0.3.3" as const,
+      rendererVersion: "0.4.0" as const,
       buildMarker: "why-hire-me.build/v1" as const,
       resumeLength: options.resumeLength,
-      releaseId: release.manifest.releaseId,
-      releaseDigest: release.manifest.releaseDigest,
-      authorisationExpiresAt: release.manifest.view.expiresAt,
-      generatedAt: release.manifest.createdAt,
+      releaseId: display.provenance.mode === "governed-render" ? display.provenance.releaseId : null,
+      releaseDigest: display.provenance.mode === "governed-render" ? display.provenance.releaseDigest : null,
+      authorisationExpiresAt: display.provenance.mode === "governed-render" ? display.provenance.authorisationExpiresAt : null,
+      generatedAt: display.provenance.mode === "governed-render" ? display.provenance.createdAt : display.provenance.generatedAt,
       entryPoint: "index.html" as const,
       files: fileManifest,
-      limitations: release.manifest.limitations,
+      limitations: display.limitations,
       inclusionDecisions: Object.freeze([...inclusionDecisions]),
+      ...(display.provenance.mode === "local-prototype" ? { prototypeInput: {
+        packetId: display.provenance.packetId, reviewedBy: display.provenance.reviewedBy,
+        reviewReference: display.provenance.reviewReference,
+        validation: display.provenance.validation, status: display.provenance.status,
+      } } : {}),
     };
     const projectionDigest = this.digester.sha256(JSON.stringify(identity));
     return Object.freeze({

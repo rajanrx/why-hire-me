@@ -29,7 +29,7 @@ priorProjection:
   projectionId: string | null
   baselineStatus: inventoried | absent | unresolved
 templateConformance:
-  contractSchema: why-hire-me.portfolio-template/v0.2
+  contractSchema: why-hire-me.portfolio-template/v0.3
   source: canonical-renderer | existing-approved-shell | canonical-template-prototype-candidate | approved-template-revision
   baselineRendererVersion: string | null
   baselineShellDirectory: absolute-path | null
