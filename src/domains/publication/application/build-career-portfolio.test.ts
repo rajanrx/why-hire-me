@@ -50,7 +50,8 @@ test("renders deterministic, escaped, offline and accessible portfolio files", a
     assert.match(html, /Content-Security-Policy/);
     assert.match(html, /why-hire-me\.build\/v1/);
     assert.match(html, /Skip to career record/);
-    assert.match(html, /role="group" aria-labelledby="graph-title graph-desc"/);
+    assert.match(html, /id="graph" class="graph" role="img"/);
+    assert.match(html, /Browse every graph node by keyboard/);
     assert.match(html, /Experience/);
     assert.match(html, /Expertise/);
     assert.match(html, /Career graph/);
@@ -94,10 +95,10 @@ test("keeps large record sets navigable and renders only explicit relationships"
     rationale: "Relevant work with explicit technical context.", summarisedUnderRecordId: null }];
   const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester()).render(richRelease, decision, { resumeLength: "complete" });
   assert.match(projection.files["index.html"], /work\.has_technology_use/);
-  assert.match(projection.files["app.js"], /contextmenu/);
-  assert.match(projection.files["app.js"], /pointerdown/);
-  assert.match(projection.files["app.js"], /dataset\.node/);
-  assert.match(projection.files["app.js"], /keydown/);
+  assert.match(projection.files["app.js"], /cytoscape/);
+  assert.match(projection.files["app.js"], /cxttap/);
+  assert.match(projection.files["app.js"], /taphold/);
+  assert.match(projection.files["app.js"], /graph-keyboard-node/);
   assert.doesNotMatch(projection.files["index.html"], /No explicit claim relationships are present/);
 });
 
@@ -174,21 +175,22 @@ test("canonical template keeps featured evidence subtle and semantic navigation 
     .render(fixture.release, fixture.inclusionDecisions, fixture.options);
 
   assert.equal(contract.rendererVersion, projection.manifest.rendererVersion);
-  assert.equal(contract.schema, "why-hire-me.portfolio-template/v0.2");
+  assert.equal(contract.schema, "why-hire-me.portfolio-template/v0.3");
   assert.equal(contract.templateIdentity.localPrototypeUpdate, "reuse-existing-approved-shell");
   assert.equal(contract.mobileSelectedRecordDetail.presentation, "bottom-drawer");
   assert.equal(contract.mobileSelectedRecordDetail.existingEntityExplorer, "preserve-separate-side-drawer");
   assert.equal(contract.graph.defaultView, "complete-authorised-relationship-graph-without-a-focus");
   assert.equal(contract.graph.focusPicker, "searchable-multiselect-with-removable-selection-chips");
-  assert.match(contract.graph.nodeSizing, /capped-at-1\.65x/);
+  assert.match(contract.graph.nodeSizing, /log-scaled/);
   assert.match(projection.files["index.html"], /aria-multiselectable="true"/);
   assert.match(projection.files["index.html"], /id="graph-fullscreen"/);
   assert.match(projection.files["index.html"], /All authorised records are shown/);
   assert.match(projection.files["styles.css"], /\.graph-shell\.is-fullscreen/);
   assert.match(projection.files["app.js"], /graphItems=\[\.\.\.items\.values\(\)\]/);
   assert.match(projection.files["app.js"], /focusIds=new Set\(\)/);
-  assert.match(projection.files["app.js"], /Math\.log1p\(degree\)/);
-  assert.match(projection.files["app.js"], /1\+\.65\*Math\.min\(1/);
+  assert.match(projection.files["app.js"], /Math\.log1p\(maxDegree\)/);
+  assert.match(projection.files["app.js"], /node\.toggleClass\("is-labelled"/);
+  assert.match(projection.files["app.js"], /graphAdj\.get\(selectedNode\)/);
   assert.match(projection.files["app.js"], /graph-selection-change/);
   assert.match(projection.files["index.html"], new RegExp(contract.brandingAndNavigation.githubUrl));
   assert.deepEqual(contract.lenses, ["experience", "expertise", "graph", "evidence"]);
@@ -203,6 +205,6 @@ test("canonical template keeps featured evidence subtle and semantic navigation 
   assert.match(projection.files["app.js"], /technology\.belongs_to_category/);
   assert.match(projection.files["app.js"], /expertise-category/);
   assert.match(projection.files["app.js"], /data-focus-graph/);
-  assert.match(projection.files["app.js"], /graph\.addEventListener\("keydown"/);
+  assert.match(projection.files["app.js"], /keyboardRead\.addEventListener/);
   assert.doesNotMatch(projection.files["app.js"], /g\.dataset\.entity=n\.id/);
 });

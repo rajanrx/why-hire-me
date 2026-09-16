@@ -1,7 +1,7 @@
 {
-  "schema": "why-hire-me.portfolio-template/v0.2",
+  "schema": "why-hire-me.portfolio-template/v0.3",
   "portfolioSchema": "why-hire-me.portfolio/v0.3",
-  "rendererVersion": "0.3.3",
+  "rendererVersion": "0.4.0",
   "theme": {
     "default": "light",
     "density": "compact",
@@ -105,13 +105,15 @@
     "navigation": ["pan", "zoom", "fit-or-reset", "full-screen-with-exit"],
     "selectionReadout": "single-selected-node-specific-context-remains-visible-in-graph-shell",
     "mobileReadout": "selected-node-bottom-drawer",
-    "largeGraphReadability": "progressive-labels-and-neighbour-emphasis-with-every-node-still-available",
-    "nodeSizing": "connection-count-relative-to-typical-degree-log-scaled-and-capped-at-1.65x-within-each-node-type",
+    "engine": "packaged-cytoscape-js-offline-no-cdn",
+    "largeGraphReadability": "organic-force-layout-with-anchor-labels-at-rest-and-all-direct-neighbour-labels-on-selection",
+    "nodeSizing": "connection-count-relative-to-typical-degree-log-scaled-with-a-readable-cap",
+    "expansion": "fit-selected-node-and-its-direct-neighbourhood-with-return-to-overview",
     "click": "read-selected-node",
     "doubleClick": "explore",
     "contextMenu": "explore",
     "longPress": "explore",
-    "keyboardActivation": "Enter-to-read-Shift-Enter-to-explore",
+    "keyboardActivation": "complete-native-select-with-separate-read-and-explore-actions",
     "requiresEquivalentRelationshipList": true
   },
   "semanticPresentation": {

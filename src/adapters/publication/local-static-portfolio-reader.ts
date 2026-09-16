@@ -27,7 +27,7 @@ export class LocalStaticPortfolioReader implements StaticPortfolioReader {
   public async validate(directory: string, expected: CareerPortfolioManifest) {
     const errors: string[] = [];
     if (expected === null || typeof expected !== "object" || expected.schema !== "why-hire-me.portfolio/v0.3" ||
-      expected.entryPoint !== "index.html" || !["0.3.1", "0.3.2", "0.3.3"].includes(expected.rendererVersion) ||
+      expected.entryPoint !== "index.html" || !["0.3.1", "0.3.2", "0.3.3", "0.4.0"].includes(expected.rendererVersion) ||
       expected.buildMarker !== "why-hire-me.build/v1" ||
       !["one-page", "two-pages", "three-pages", "complete"].includes(expected.resumeLength) ||
       !/^release-[a-f0-9]{24}$/.test(expected.releaseId ?? "") ||

@@ -18,12 +18,16 @@ export interface CareerPortfolioManifest {
   readonly schema: "why-hire-me.portfolio/v0.3";
   readonly portfolioId: string;
   readonly projectionDigest: string;
-  readonly rendererVersion: "0.3.1" | "0.3.2" | "0.3.3";
+  readonly rendererVersion: "0.3.1" | "0.3.2" | "0.3.3" | "0.4.0";
   readonly buildMarker: "why-hire-me.build/v1";
   readonly resumeLength: ResumeLength;
-  readonly releaseId: string;
-  readonly releaseDigest: string;
-  readonly authorisationExpiresAt: string;
+  readonly releaseId: string | null;
+  readonly releaseDigest: string | null;
+  readonly authorisationExpiresAt: string | null;
+  /** Present only for a non-governed local candidate; it is never a release identity. */
+  readonly prototypeInput?: { readonly packetId: string; readonly reviewedBy: string;
+    readonly reviewReference: string; readonly validation: "partially-validated";
+    readonly status: "session-only" };
   readonly generatedAt: string;
   readonly entryPoint: "index.html";
   readonly files: readonly {

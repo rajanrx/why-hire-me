@@ -19,6 +19,8 @@
     "cli": "tsx src/apps/cli/main.ts",
     "license:scan-public": "node scripts/license/scan-public-usage.mjs",
     "portfolio:sample": "pnpm run build && node scripts/portfolio/generate-sample.mjs",
+    "portfolio:preview-reviewed": "pnpm run build && node scripts/portfolio/preview-reviewed-prototype.mjs",
+    "portfolio:test-dense": "pnpm run build && node scripts/portfolio/generate-dense-fictional.mjs",
     "release:bundle": "node scripts/release/build-bundle.mjs",
     "release:publish": "pnpm run build && changeset publish",
     "spec:validate": "node scripts/spec/validate-private-design.mjs",
@@ -27,7 +29,8 @@
     "version-packages": "changeset version && node scripts/release/sync-plugin-version.mjs"
   },
   "dependencies": {
-    "better-sqlite3": "12.11.1"
+    "better-sqlite3": "12.11.1",
+    "cytoscape": "3.33.4"
   },
   "devDependencies": {
     "@changesets/cli": "3.0.2",
