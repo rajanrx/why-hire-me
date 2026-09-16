@@ -8,7 +8,7 @@
     {
       "name": "why-hire-me",
       "description": "Build and explore a private, evidence-backed picture of your career.",
-      "version": "0.10.2",
+      "version": "0.11.0",
       "source": "./",
       "author": {
         "name": "Rajan Rauniyar"
