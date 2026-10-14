@@ -19,7 +19,9 @@ restart it. Then run three skills in order. Each one builds on the knowledge the
 | **3 · Q&A interview** | `why-hire-me:evidence-led-interviewer` | Your answers: deep dive or general, multiple choice or your own words | The decisions, numbers, and context documents never hold, checked against what is already recorded |
 
 Then `why-hire-me:output-career-portfolio` turns what you approved into an offline portfolio and
-printable résumé, and the publisher skills share it only where you choose.
+printable résumé, and the publisher skills share it only where you choose. The portfolio commands need the
+package itself: `git clone https://github.com/rajanrx/why-hire-me && cd why-hire-me && pnpm install && pnpm run build`
+(or unpack the release bundle and run the same two pnpm commands).
 
 **Copy these prompts into your AI app:**
 
