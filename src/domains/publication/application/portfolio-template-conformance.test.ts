@@ -57,3 +57,26 @@ test("local portfolio updates keep the approved shell unless a template revision
     await rm(root, { recursive: true, force: true });
   }
 });
+
+test("material-profile shells are checked against their own destinations", async () => {
+  const root = await mkdtemp(join(tmpdir(), "why-hire-me-material-"));
+  const material = `<!doctype html><html><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'"><link rel="stylesheet" href="styles.css"><script src="app.js"></script></head><body data-template="material-profile"><a href="#content">Skip</a><main id="content">
+${["overview", "career", "skills", "explore", "records"].map(name => `<section data-destination="${name}"></section>`).join("")}
+<ul id="relationship-list"></ul><tbody id="records-body"></tbody></main><section id="record-sheet" role="dialog"></section></body></html>`;
+  try {
+    for (const directory of ["old", "next"]) {
+      await mkdir(join(root, directory));
+      await writeFile(join(root, directory, "index.html"), material);
+      await writeFile(join(root, directory, "styles.css"), "body{}");
+      await writeFile(join(root, directory, "app.js"), "");
+    }
+    const check = () => spawnSync(process.execPath, [checker, "--baseline", join(root, "old"), "--candidate", join(root, "next")], { encoding: "utf8" });
+    assert.equal(check().status, 0);
+    await writeFile(join(root, "next", "index.html"), material.replace('data-destination="explore"', ""));
+    const result = check();
+    assert.equal(result.status, 1);
+    assert.match(result.stdout, /missing explore destination/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});

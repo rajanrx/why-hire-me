@@ -299,6 +299,35 @@ they do not choose a fresh visual direction or replace the shell. An explicit re
 requires a template revision: preview structural and asset changes, update the contract and
 renderer or approved shell together, and seek separate approval.
 
+## Choose a template family
+
+Ask the person which template family to use during the exact preview, and record the answer:
+
+- `editorial-record` (default): the compact four-lens record described above.
+- `material-profile`: an evaluator-first Material 3 profile with Overview, Career, Skills, and
+  Explore destinations, light and dark themes, a navigation rail on wide screens and a bottom bar on
+  phones. Explore starts from a question and opens a focused graph of one neighbourhood at a time;
+  "All records" holds the complete record explorer and relationship list. Its contract is
+  [`assets/template-contract.material-profile.json`](assets/template-contract.material-profile.json).
+
+Pass `--template material-profile` to `why-hire-me portfolio preview|build`, the sample scripts, or
+`scripts/portfolio/preview-reviewed-prototype.mjs`. Omitting it keeps `editorial-record` and its
+byte-identical output. Switching an approved portfolio between families is a template revision and
+needs the same exact side-by-side preview and approval as any other shell change.
+
+The material profile derives its headline from the Person summary and its impact tiles from reported
+outcomes that are featured, or summarised under featured records (at most one per featured record).
+It never fills a missing section. Two optional items need their own disclosure approval in a reviewed
+packet, separate from the link or file review:
+
+- an external AI notebook link (`role: "ai-notebook"`) with an approved `AI notebook` disclosure
+  choice, which adds the Ask destination; and
+- an audio overview (`.mp3` or `.m4a` asset) with an approved `Audio overview` disclosure choice,
+  labelled on the page as AI-generated.
+
+Ask the person to confirm the notebook is shared for the intended audience before approval; the page
+only links to it and never requests it.
+
 Present claims with a research-like grammar: work context, the person's contribution or led
 decision, reported result, and a plain qualifier where attribution or measurement is limited.
 Keep data freshness, query time, phone-visible time, and business outcome as distinct measures.

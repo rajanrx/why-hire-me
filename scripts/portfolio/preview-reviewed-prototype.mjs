@@ -1,15 +1,26 @@
 import { createHash } from "node:crypto";
 import { lstat, mkdir, readFile, writeFile, copyFile, readdir } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
+import { parseArgs } from "node:util";
 import { adaptReviewedPrototype } from "../../dist/adapters/publication/reviewed-prototype-display-adapter.js";
 import { NodeReleaseDigester } from "../../dist/adapters/publication/node-release-digester.js";
-import { StaticHtmlCareerPortfolioRenderer } from "../../dist/adapters/publication/static-html-career-portfolio-renderer.js";
+import { careerPortfolioRenderer } from "../../dist/adapters/publication/career-portfolio-renderers.js";
 import { invalidCarryForwardLocators } from "../../dist/adapters/publication/prototype-carry-forward-validator.js";
 
-const value = name => { const i = process.argv.indexOf(name); return i < 0 ? null : process.argv[i + 1]; };
-const packetPath = value("--packet"), outputArg = value("--output"), baselineArg = value("--baseline");
+const usage = "Usage: node scripts/portfolio/preview-reviewed-prototype.mjs --packet <reviewed-json> --baseline <approved-portfolio-dir> --output <new-candidate-dir> [--template <editorial-record|material-profile>]\n";
+let options;
+try {
+  ({ values: options } = parseArgs({ options: {
+    packet: { type: "string" }, baseline: { type: "string" }, output: { type: "string" },
+    template: { type: "string", default: "editorial-record" },
+  } }));
+} catch (error) {
+  process.stderr.write(`${error.message}\n${usage}`);
+  process.exit(2);
+}
+const { packet: packetPath, output: outputArg, baseline: baselineArg, template } = options;
 if (!packetPath || !outputArg || !baselineArg) {
-  process.stderr.write("Usage: node scripts/portfolio/preview-reviewed-prototype.mjs --packet <reviewed-json> --baseline <approved-portfolio-dir> --output <new-candidate-dir>\n");
+  process.stderr.write(usage);
   process.exit(2);
 }
 const output = resolve(outputArg), baseline = resolve(baselineArg);
@@ -33,8 +44,8 @@ for (const asset of packet.assets ?? []) {
     sha256: createHash("sha256").update(bytes).digest("hex") });
 }
 const digester = new NodeReleaseDigester();
-const projection = new StaticHtmlCareerPortfolioRenderer(digester)
-  .renderDisplayModel(display, packet.inclusionDecisions);
+const renderer = careerPortfolioRenderer(template, digester);
+const projection = renderer.renderDisplayModel(display, packet.inclusionDecisions);
 const candidateOutputs = new Map(Object.entries(projection.files));
 for (const asset of assetBytes) candidateOutputs.set(asset.outputPath, asset.bytes);
 candidateOutputs.set("portfolio-manifest.json", JSON.stringify(projection.manifest));
@@ -56,7 +67,7 @@ const generationRecord = {
     inclusionMap: packet.inclusionDecisions, technologyUseMap: packet.technologyUseMap,
     referenceLinkMap: packet.referenceLinkMap, carryForwardMap: packet.carryForwardMap,
     personalDisclosure: packet.review.disclosureChoices, approvedByPerson: false },
-  projection: { renderer: "StaticHtmlCareerPortfolioRenderer", rendererVersion: projection.manifest.rendererVersion,
+  projection: { renderer: renderer.constructor.name, template, rendererVersion: projection.manifest.rendererVersion,
     label: "prototype", entryFile: "index.html", manifestFile: "portfolio-manifest.json",
     digest: projection.manifest.projectionDigest, assets: assetBytes.map(({ outputPath, bytes, sha256 }) =>
       ({ path: outputPath, bytes: bytes.byteLength, sha256 })) },

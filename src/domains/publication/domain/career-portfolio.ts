@@ -10,15 +10,24 @@ export interface ValidatedKnowledgeRelease {
 export const resumeLengths = ["one-page", "two-pages", "three-pages", "complete"] as const;
 export type ResumeLength = (typeof resumeLengths)[number];
 
+export const templateFamilies = ["editorial-record", "material-profile"] as const;
+export type TemplateFamily = (typeof templateFamilies)[number];
+
 export interface CareerPortfolioOptions {
   readonly resumeLength: ResumeLength;
+  /** Omitted means `editorial-record`, whose output stays byte-identical to earlier builds. */
+  readonly template?: TemplateFamily;
 }
+
+export type PortfolioFilePath = "index.html" | "styles.css" | "app.js" | "portfolio.json";
 
 export interface CareerPortfolioManifest {
   readonly schema: "why-hire-me.portfolio/v0.3";
   readonly portfolioId: string;
   readonly projectionDigest: string;
-  readonly rendererVersion: "0.3.1" | "0.3.2" | "0.3.3" | "0.4.0" | "0.4.1" | "0.4.2" | "0.4.3";
+  readonly rendererVersion: "0.3.1" | "0.3.2" | "0.3.3" | "0.4.0" | "0.4.1" | "0.4.2" | "0.4.3" | "1.0.0";
+  /** Present only for a non-default template family. */
+  readonly template?: Exclude<TemplateFamily, "editorial-record">;
   readonly buildMarker: "why-hire-me.build/v1";
   readonly resumeLength: ResumeLength;
   readonly releaseId: string | null;
@@ -31,7 +40,7 @@ export interface CareerPortfolioManifest {
   readonly generatedAt: string;
   readonly entryPoint: "index.html";
   readonly files: readonly {
-    readonly path: "index.html" | "styles.css" | "app.js" | "portfolio.json";
+    readonly path: PortfolioFilePath;
     readonly bytes: number;
     readonly sha256: string;
   }[];
@@ -41,7 +50,7 @@ export interface CareerPortfolioManifest {
 
 export interface CareerPortfolioProjection {
   readonly manifest: CareerPortfolioManifest;
-  readonly files: Readonly<Record<"index.html" | "styles.css" | "app.js" | "portfolio.json", string>>;
+  readonly files: Readonly<Record<PortfolioFilePath, string>>;
 }
 
 export class CareerPortfolioValidationError extends Error {

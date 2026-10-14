@@ -1,10 +1,13 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { parseArgs } from "node:util";
+import { careerPortfolioRenderer } from "../../dist/adapters/publication/career-portfolio-renderers.js";
 import { NodeReleaseDigester } from "../../dist/adapters/publication/node-release-digester.js";
-import { StaticHtmlCareerPortfolioRenderer } from "../../dist/adapters/publication/static-html-career-portfolio-renderer.js";
 
-const output = process.argv[2];
-if (!output) { process.stderr.write("Usage: node scripts/portfolio/generate-dense-fictional.mjs <new-output-dir>\n"); process.exit(2); }
+const { values, positionals } = parseArgs({ allowPositionals: true, args: process.argv.slice(2).filter(arg => arg !== "--"),
+  options: { template: { type: "string", default: "editorial-record" } } });
+const output = positionals[0];
+if (!output) { process.stderr.write("Usage: node scripts/portfolio/generate-dense-fictional.mjs <new-output-dir> [--template <editorial-record|material-profile>]\n"); process.exit(2); }
 const types = ["Organisation", "Role", "Engagement", "Work", "Contribution",
   "Reported outcome", "Technology", "TechnologyUse", "Evidence"];
 const items = Array.from({ length: 200 }, (_, index) => {
@@ -33,7 +36,7 @@ const model = { schema: "why-hire-me.portfolio-display/v1",
     reviewedBy: "test fixture", reviewReference: "fictional fixture",
     validation: "partially-validated", status: "session-only", generatedAt: "2026-09-16T00:00:00.000Z" } };
 const decisions = items.flatMap(item => item.inclusion ? [item.inclusion] : []);
-const projection = new StaticHtmlCareerPortfolioRenderer(new NodeReleaseDigester())
+const projection = careerPortfolioRenderer(values.template, new NodeReleaseDigester())
   .renderDisplayModel(model, decisions);
 await mkdir(resolve(output));
 for (const [path, content] of Object.entries(projection.files))

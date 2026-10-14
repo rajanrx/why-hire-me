@@ -56,3 +56,16 @@ Show Contact in top navigation only if an approved contact destination works. An
 profile may use the bundled `linkedin.svg` icon in an `<a aria-label="LinkedIn">` link; give the
 decorative icon an empty `alt` when rendered with `<img>`. Do not publish a profile URL
 or other personal contact details merely because they appeared in a source file.
+
+## Material profile family
+
+`material-profile` is a second, opt-in family (`--template material-profile`). Its HTML comes from
+[`../../src/adapters/publication/material-career-portfolio-renderer.ts`](../../src/adapters/publication/material-career-portfolio-renderer.ts),
+its styles and runtime are the plain files in [`material-profile/`](material-profile/), and its contract is
+[`../../skills/output-career-portfolio/assets/template-contract.material-profile.json`](../../skills/output-career-portfolio/assets/template-contract.material-profile.json).
+It reads the same display model and writes the same four files, so publishing and AI handoff are unchanged.
+The default `editorial-record` output is byte-identical with or without this family.
+
+```bash
+pnpm portfolio:sample -- /tmp/why-hire-me-material --template material-profile
+```

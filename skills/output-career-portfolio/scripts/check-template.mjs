@@ -40,7 +40,23 @@ function assets(html) {
   return names;
 }
 
+const templateFamily = (html) => /data-template=["']material-profile["']/i.test(html) ? "material-profile" : "editorial-record";
+
+function materialShell(html, label) {
+  if (!/<main\b/i.test(html)) failed.push(`${label}: missing main landmark`);
+  if (!/href=["']#content["']/i.test(html)) failed.push(`${label}: missing skip target`);
+  if (!/default-src 'none'/.test(html)) failed.push(`${label}: missing restrictive content security policy`);
+  for (const destination of ["overview", "career", "skills", "explore", "records"]) {
+    if (!new RegExp(`data-destination=["']${destination}["']`).test(html)) failed.push(`${label}: missing ${destination} destination`);
+  }
+  if (!/id=["']relationship-list["']/i.test(html)) failed.push(`${label}: missing graph text equivalent`);
+  if (!/id=["']records-body["']/i.test(html)) failed.push(`${label}: missing evidence explorer`);
+  if (!/id=["']record-sheet["'][^>]*role=["']dialog["']|role=["']dialog["'][^>]*id=["']record-sheet["']/i.test(html))
+    failed.push(`${label}: missing entity explorer`);
+}
+
 function shell(html, label) {
+  if (templateFamily(html) === "material-profile") return materialShell(html, label);
   if (!/<main\b/i.test(html)) failed.push(`${label}: missing main landmark`);
   if (!/class=["'][^"']*\bprofile\b/i.test(html)) failed.push(`${label}: missing profile hierarchy`);
   if (!/href=["']#(?:content|main)["']/i.test(html)) failed.push(`${label}: missing skip target`);
@@ -81,6 +97,8 @@ try {
   shell(oldHtml, "baseline");
   shell(newHtml, "candidate");
   contactNavigation(newHtml);
+  if (templateFamily(oldHtml) !== templateFamily(newHtml))
+    warnings.push(`Template family changes from ${templateFamily(oldHtml)} to ${templateFamily(newHtml)}; every shell asset needs person approval`);
   const oldAssets = assets(oldHtml);
   const newAssets = assets(newHtml);
   const allAssets = new Set([...oldAssets, ...newAssets]);
@@ -119,7 +137,9 @@ try {
   }
 
   if (!failed.some((item) => item.includes("missing") || item.includes("Unsafe")))
-    passed.push("Four-lens shell, graph equivalent, and entity explorer are present");
+    passed.push(templateFamily(newHtml) === "material-profile"
+      ? "Material destinations, graph equivalent, record explorer, and record sheet are present"
+      : "Four-lens shell, graph equivalent, and entity explorer are present");
   const baselineAssetDigest = createHash("sha256").update(
     [...oldAssets].sort().join("\n"), "utf8",
   ).digest("hex");

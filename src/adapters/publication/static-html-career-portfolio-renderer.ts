@@ -1,6 +1,8 @@
 import type {
+  CareerPortfolioManifest,
   CareerPortfolioOptions,
   CareerPortfolioProjection,
+  PortfolioFilePath,
   ValidatedKnowledgeRelease,
 } from "../../domains/publication/domain/career-portfolio.js";
 import type { PortfolioInclusionDecision } from "../../domains/publication/domain/career-portfolio-selection.js";
@@ -180,6 +182,101 @@ for (const requiredTemplateToken of [
   }
 }
 
+/** Shared by every template family: release records become the public display model. */
+export function releaseDisplayModel(
+  release: ValidatedKnowledgeRelease,
+  inclusionDecisions: readonly PortfolioInclusionDecision[],
+  options: CareerPortfolioOptions,
+): CareerPortfolioDisplayModel {
+  const decisions = new Map(
+    inclusionDecisions.map((decision) => [decision.recordId, decision]),
+  );
+  const excluded = new Set(
+    inclusionDecisions
+      .filter((decision) => decision.status === "excluded")
+      .map((decision) => decision.recordId),
+  );
+  const displayRecords = release.records.filter(
+    (record) =>
+      (record.recordType === "Entity" ||
+        record.recordType === "Evidence" ||
+        (record.recordType === "Claim" &&
+          object(record.data).claimType === "reported-outcome")) &&
+      !excluded.has(record.id),
+  );
+  const items = displayRecords.map((record) =>
+    itemFrom(record, decisions.get(record.id) ?? null),
+  );
+  const itemIds = new Set(items.map((item) => item.id));
+  const relations = release.records
+    .filter((record) => record.recordType === "Claim")
+    .flatMap((record) => {
+      const relation = relationFrom(record);
+      return relation &&
+        itemIds.has(relation.subject) &&
+        itemIds.has(relation.object)
+        ? [relation]
+        : [];
+    });
+  return Object.freeze({
+    schema: "why-hire-me.portfolio-display/v1",
+    subjectDisplayName: release.manifest.subject.displayName,
+    purpose: release.manifest.purpose,
+    audience: release.manifest.audience,
+    resumeLength: options.resumeLength,
+    items,
+    relations,
+    links: [],
+    assets: [],
+    limitations: release.manifest.limitations,
+    provenance: { mode: "governed-render" as const, releaseId: release.manifest.releaseId,
+      releaseDigest: release.manifest.releaseDigest, createdAt: release.manifest.createdAt,
+      authorisationExpiresAt: release.manifest.view.expiresAt },
+  });
+}
+
+
+
+/** One manifest shape for every template family; `template` is recorded only when it is not the default. */
+export function portfolioProjection(
+  files: Readonly<Record<PortfolioFilePath, string>>,
+  display: CareerPortfolioDisplayModel,
+  inclusionDecisions: readonly PortfolioInclusionDecision[],
+  digester: ReleaseDigester,
+  rendererVersion: CareerPortfolioManifest["rendererVersion"],
+  template?: CareerPortfolioManifest["template"],
+): CareerPortfolioProjection {
+  const paths = ["index.html", "styles.css", "app.js", "portfolio.json"] as const;
+  const fileManifest = paths.map((path) =>
+    Object.freeze({ path, bytes: Buffer.byteLength(files[path]), sha256: digester.sha256(files[path]) }));
+  const provenance = display.provenance;
+  const identity = {
+    schema: "why-hire-me.portfolio/v0.3" as const,
+    rendererVersion,
+    buildMarker: "why-hire-me.build/v1" as const,
+    resumeLength: display.resumeLength,
+    releaseId: provenance.mode === "governed-render" ? provenance.releaseId : null,
+    releaseDigest: provenance.mode === "governed-render" ? provenance.releaseDigest : null,
+    authorisationExpiresAt: provenance.mode === "governed-render" ? provenance.authorisationExpiresAt : null,
+    generatedAt: provenance.mode === "governed-render" ? provenance.createdAt : provenance.generatedAt,
+    entryPoint: "index.html" as const,
+    files: fileManifest,
+    limitations: display.limitations,
+    inclusionDecisions: Object.freeze([...inclusionDecisions]),
+    ...(provenance.mode === "local-prototype" ? { prototypeInput: {
+      packetId: provenance.packetId, reviewedBy: provenance.reviewedBy,
+      reviewReference: provenance.reviewReference,
+      validation: provenance.validation, status: provenance.status,
+    } } : {}),
+    ...(template ? { template } : {}),
+  };
+  const projectionDigest = digester.sha256(JSON.stringify(identity));
+  return Object.freeze({
+    files,
+    manifest: Object.freeze({ ...identity, portfolioId: `portfolio-${projectionDigest.slice(0, 24)}`, projectionDigest }),
+  });
+}
+
 export class StaticHtmlCareerPortfolioRenderer
   implements CareerPortfolioRenderer
 {
@@ -190,51 +287,7 @@ export class StaticHtmlCareerPortfolioRenderer
     inclusionDecisions: readonly PortfolioInclusionDecision[],
     options: CareerPortfolioOptions,
   ): CareerPortfolioProjection {
-    const decisions = new Map(
-      inclusionDecisions.map((decision) => [decision.recordId, decision]),
-    );
-    const excluded = new Set(
-      inclusionDecisions
-        .filter((decision) => decision.status === "excluded")
-        .map((decision) => decision.recordId),
-    );
-    const displayRecords = release.records.filter(
-      (record) =>
-        (record.recordType === "Entity" ||
-          record.recordType === "Evidence" ||
-          (record.recordType === "Claim" &&
-            object(record.data).claimType === "reported-outcome")) &&
-        !excluded.has(record.id),
-    );
-    const items = displayRecords.map((record) =>
-      itemFrom(record, decisions.get(record.id) ?? null),
-    );
-    const itemIds = new Set(items.map((item) => item.id));
-    const relations = release.records
-      .filter((record) => record.recordType === "Claim")
-      .flatMap((record) => {
-        const relation = relationFrom(record);
-        return relation &&
-          itemIds.has(relation.subject) &&
-          itemIds.has(relation.object)
-          ? [relation]
-          : [];
-      });
-    return this.renderDisplayModel({
-      schema: "why-hire-me.portfolio-display/v1",
-      subjectDisplayName: release.manifest.subject.displayName,
-      purpose: release.manifest.purpose,
-      audience: release.manifest.audience,
-      resumeLength: options.resumeLength,
-      items,
-      relations,
-      links: [],
-      assets: [],
-      limitations: release.manifest.limitations,
-      provenance: { mode: "governed-render", releaseId: release.manifest.releaseId,
-        releaseDigest: release.manifest.releaseDigest, createdAt: release.manifest.createdAt,
-        authorisationExpiresAt: release.manifest.view.expiresAt },
-    }, inclusionDecisions);
+    return this.renderDisplayModel(releaseDisplayModel(release, inclusionDecisions, options), inclusionDecisions);
   }
 
   /** Both validated releases and reviewed prototype packets use this exact shell and graph runtime. */
@@ -369,46 +422,6 @@ export class StaticHtmlCareerPortfolioRenderer
       "app.js": qrcodeBrowserSource + "\n" + cytoscapeBrowserSource + "\n" + completeGraphApp + `\n(()=>{const host=document.querySelector("#ai-share-qr"),target=document.querySelector("#ai-share-target");if(!host||!target||typeof qrcode!=="function")return;const panel=host.closest(".ai-share-qr");if(!["http:","https:"].includes(location.protocol)){if(panel)panel.hidden=true;return}const url=new URL("portfolio.json",document.baseURI).href;target.href=url;target.textContent=url;const code=qrcode(0,"M");code.addData(url);code.make();host.innerHTML=code.createSvgTag({cellSize:4,margin:4,scalable:true,title:"Career knowledge JSON",alt:"QR code for the machine-readable career knowledge JSON"})})();`,
       "portfolio.json": portfolioJson,
     });
-    const paths = [
-      "index.html",
-      "styles.css",
-      "app.js",
-      "portfolio.json",
-    ] as const;
-    const fileManifest = paths.map((path) =>
-      Object.freeze({
-        path,
-        bytes: Buffer.byteLength(files[path]),
-        sha256: this.digester.sha256(files[path]),
-      }),
-    );
-    const identity = {
-      schema: "why-hire-me.portfolio/v0.3" as const,
-      rendererVersion: "0.4.3" as const,
-      buildMarker: "why-hire-me.build/v1" as const,
-      resumeLength: options.resumeLength,
-      releaseId: display.provenance.mode === "governed-render" ? display.provenance.releaseId : null,
-      releaseDigest: display.provenance.mode === "governed-render" ? display.provenance.releaseDigest : null,
-      authorisationExpiresAt: display.provenance.mode === "governed-render" ? display.provenance.authorisationExpiresAt : null,
-      generatedAt: display.provenance.mode === "governed-render" ? display.provenance.createdAt : display.provenance.generatedAt,
-      entryPoint: "index.html" as const,
-      files: fileManifest,
-      limitations: display.limitations,
-      inclusionDecisions: Object.freeze([...inclusionDecisions]),
-      ...(display.provenance.mode === "local-prototype" ? { prototypeInput: {
-        packetId: display.provenance.packetId, reviewedBy: display.provenance.reviewedBy,
-        reviewReference: display.provenance.reviewReference,
-        validation: display.provenance.validation, status: display.provenance.status,
-      } } : {}),
-    };
-    const projectionDigest = this.digester.sha256(JSON.stringify(identity));
-    return Object.freeze({
-      files,
-      manifest: Object.freeze({
-        ...identity,
-        portfolioId: `portfolio-${projectionDigest.slice(0, 24)}`,
-        projectionDigest,
-      }),
-    });
+    return portfolioProjection(files, display, inclusionDecisions, this.digester, "0.4.3");
   }
 }
