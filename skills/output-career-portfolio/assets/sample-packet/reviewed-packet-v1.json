@@ -1,0 +1,488 @@
+{
+  "schema": "why-hire-me.reviewed-prototype-packet/v1",
+  "packetId": "alex-rivera-v1",
+  "subjectDisplayName": "Alex Rivera",
+  "purpose": "public career portfolio",
+  "audience": "public",
+  "resumeLength": "two-pages",
+  "review": {
+    "reviewedBy": "Alex approved this fictional sample",
+    "reviewReference": "sample-review",
+    "reviewedAt": "2026-10-01T00:00:00.000Z",
+    "disclosureChoices": [
+      {
+        "field": "Email",
+        "status": "omitted"
+      },
+      {
+        "field": "Phone",
+        "status": "omitted"
+      },
+      {
+        "field": "Location",
+        "status": "approved-for-audience"
+      },
+      {
+        "field": "LinkedIn",
+        "status": "approved-for-audience"
+      }
+    ]
+  },
+  "items": [
+    {
+      "id": "PERSON",
+      "type": "Person",
+      "name": "Alex Rivera",
+      "summary": "Platform engineer who turns fragile operations into reliable, observable services.",
+      "recordedAt": "2026-10-01",
+      "details": [
+        {
+          "label": "Location",
+          "value": "Wellington, New Zealand"
+        }
+      ],
+      "inclusion": null
+    },
+    {
+      "id": "ORG-N",
+      "type": "Organisation",
+      "name": "Northwind Logistics",
+      "summary": "Freight software company. Named initiatives: Dispatch API rebuild; On-call handbook.",
+      "recordedAt": "2026-10-01",
+      "details": [],
+      "inclusion": null
+    },
+    {
+      "id": "ORG-F",
+      "type": "Organisation",
+      "name": "Fabrikam Health",
+      "summary": "Clinical scheduling company. Named initiatives: Appointment reminders.",
+      "recordedAt": "2026-10-01",
+      "details": [],
+      "inclusion": null
+    },
+    {
+      "id": "ENG-N",
+      "type": "Engagement",
+      "name": "Northwind Logistics · Senior Engineer",
+      "summary": "Leads the dispatch platform team.",
+      "recordedAt": "2026-10-01",
+      "details": [
+        {
+          "label": "Period",
+          "value": "2022–present"
+        }
+      ],
+      "inclusion": null
+    },
+    {
+      "id": "ENG-F",
+      "type": "Engagement",
+      "name": "Fabrikam Health · Software Engineer",
+      "summary": "Built patient-facing scheduling features.",
+      "recordedAt": "2026-10-01",
+      "details": [
+        {
+          "label": "Period",
+          "value": "2018–2022"
+        }
+      ],
+      "inclusion": null
+    },
+    {
+      "id": "ROLE-N",
+      "type": "Role",
+      "name": "Senior Engineer",
+      "summary": "Senior Engineer at Northwind Logistics.",
+      "recordedAt": "2026-10-01",
+      "details": [],
+      "inclusion": null
+    },
+    {
+      "id": "ROLE-F",
+      "type": "Role",
+      "name": "Software Engineer",
+      "summary": "Software Engineer at Fabrikam Health.",
+      "recordedAt": "2026-10-01",
+      "details": [],
+      "inclusion": null
+    },
+    {
+      "id": "W1",
+      "type": "Work",
+      "name": "Dispatch API rebuild",
+      "summary": "Rebuilt the dispatch API as typed Go services with contract tests.",
+      "recordedAt": "2026-10-01",
+      "details": [
+        {
+          "label": "Evidence",
+          "value": "résumé page 1"
+        },
+        {
+          "label": "Attribution",
+          "value": "reviewed résumé"
+        }
+      ],
+      "inclusion": {
+        "recordId": "W1",
+        "status": "featured",
+        "rationale": "Primary initiative.",
+        "summarisedUnderRecordId": null
+      }
+    },
+    {
+      "id": "W2",
+      "type": "Work",
+      "name": "On-call handbook",
+      "summary": "Wrote the team's incident runbooks.",
+      "recordedAt": "2026-10-01",
+      "details": [
+        {
+          "label": "Evidence",
+          "value": "résumé page 1"
+        },
+        {
+          "label": "Attribution",
+          "value": "reviewed résumé"
+        }
+      ],
+      "inclusion": {
+        "recordId": "W2",
+        "status": "supporting",
+        "rationale": "Complete record.",
+        "summarisedUnderRecordId": null
+      }
+    },
+    {
+      "id": "C1",
+      "type": "Contribution",
+      "name": "Mentored two engineers",
+      "summary": null,
+      "recordedAt": "2026-10-01",
+      "details": [
+        {
+          "label": "Evidence",
+          "value": "résumé page 1"
+        },
+        {
+          "label": "Attribution",
+          "value": "reviewed résumé"
+        }
+      ],
+      "inclusion": {
+        "recordId": "C1",
+        "status": "supporting",
+        "rationale": "Leadership scope.",
+        "summarisedUnderRecordId": null
+      }
+    },
+    {
+      "id": "O1",
+      "type": "Reported outcome",
+      "name": "Dispatch errors halved",
+      "summary": null,
+      "recordedAt": "2026-10-01",
+      "details": [
+        {
+          "label": "Evidence",
+          "value": "résumé page 1"
+        },
+        {
+          "label": "Attribution",
+          "value": "reviewed résumé"
+        }
+      ],
+      "inclusion": {
+        "recordId": "O1",
+        "status": "summarised",
+        "rationale": "Measured W1 result.",
+        "summarisedUnderRecordId": "W1"
+      }
+    },
+    {
+      "id": "W3",
+      "type": "Work",
+      "name": "Appointment reminders",
+      "summary": "Built SMS and email reminders for clinics.",
+      "recordedAt": "2026-10-01",
+      "details": [
+        {
+          "label": "Evidence",
+          "value": "résumé page 2"
+        },
+        {
+          "label": "Attribution",
+          "value": "reviewed résumé"
+        }
+      ],
+      "inclusion": {
+        "recordId": "W3",
+        "status": "featured",
+        "rationale": "Earlier primary initiative.",
+        "summarisedUnderRecordId": null
+      }
+    },
+    {
+      "id": "CAT-L",
+      "type": "TechnologyCategory",
+      "name": "Languages",
+      "summary": null,
+      "recordedAt": "2026-10-01",
+      "details": [],
+      "inclusion": null
+    },
+    {
+      "id": "TECH-GO",
+      "type": "Technology",
+      "name": "Go",
+      "summary": null,
+      "recordedAt": "2026-10-01",
+      "details": [],
+      "inclusion": null
+    },
+    {
+      "id": "TECH-PG",
+      "type": "Technology",
+      "name": "PostgreSQL",
+      "summary": null,
+      "recordedAt": "2026-10-01",
+      "details": [],
+      "inclusion": null
+    },
+    {
+      "id": "TECH-TS",
+      "type": "Technology",
+      "name": "TypeScript",
+      "summary": null,
+      "recordedAt": "2026-10-01",
+      "details": [],
+      "inclusion": null
+    },
+    {
+      "id": "TU-1",
+      "type": "TechnologyUse",
+      "name": "Go in the dispatch API",
+      "summary": "Go services behind the dispatch API.",
+      "recordedAt": "2026-10-01",
+      "details": [],
+      "inclusion": null
+    }
+  ],
+  "relations": [
+    {
+      "id": "REL-0",
+      "subject": "PERSON",
+      "object": "ENG-N",
+      "predicate": "person.has_engagement",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-1",
+      "subject": "PERSON",
+      "object": "ENG-F",
+      "predicate": "person.has_engagement",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-2",
+      "subject": "ENG-N",
+      "object": "ORG-N",
+      "predicate": "engagement.with_organisation",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-3",
+      "subject": "ENG-F",
+      "object": "ORG-F",
+      "predicate": "engagement.with_organisation",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-4",
+      "subject": "ENG-N",
+      "object": "ROLE-N",
+      "predicate": "engagement.has_role",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-5",
+      "subject": "ENG-F",
+      "object": "ROLE-F",
+      "predicate": "engagement.has_role",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-6",
+      "subject": "ENG-N",
+      "object": "W1",
+      "predicate": "engagement.includes_record",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-7",
+      "subject": "ENG-N",
+      "object": "W2",
+      "predicate": "engagement.includes_record",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-8",
+      "subject": "ENG-N",
+      "object": "C1",
+      "predicate": "engagement.includes_record",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-9",
+      "subject": "ENG-N",
+      "object": "O1",
+      "predicate": "engagement.includes_record",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-10",
+      "subject": "O1",
+      "object": "W1",
+      "predicate": "record.summarised_under",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-11",
+      "subject": "ENG-F",
+      "object": "W3",
+      "predicate": "engagement.includes_record",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-12",
+      "subject": "W1",
+      "object": "TECH-PG",
+      "predicate": "record.has_contextual_technology",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-13",
+      "subject": "W3",
+      "object": "TECH-TS",
+      "predicate": "record.has_contextual_technology",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-14",
+      "subject": "TU-1",
+      "object": "W1",
+      "predicate": "technology_use.in_context",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-15",
+      "subject": "TU-1",
+      "object": "TECH-GO",
+      "predicate": "record.has_contextual_technology",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-16",
+      "subject": "TECH-GO",
+      "object": "CAT-L",
+      "predicate": "technology.belongs_to_category",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    },
+    {
+      "id": "REL-17",
+      "subject": "TECH-TS",
+      "object": "CAT-L",
+      "predicate": "technology.belongs_to_category",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    }
+  ],
+  "links": [
+    {
+      "id": "LINK-LI",
+      "targetRecordId": null,
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/example",
+      "sourceStatus": "supplied-unvisited",
+      "reviewed": true,
+      "reviewReference": "sample-review"
+    }
+  ],
+  "inclusionDecisions": [
+    {
+      "recordId": "W1",
+      "status": "featured",
+      "rationale": "Primary initiative.",
+      "summarisedUnderRecordId": null
+    },
+    {
+      "recordId": "W2",
+      "status": "supporting",
+      "rationale": "Complete record.",
+      "summarisedUnderRecordId": null
+    },
+    {
+      "recordId": "C1",
+      "status": "supporting",
+      "rationale": "Leadership scope.",
+      "summarisedUnderRecordId": null
+    },
+    {
+      "recordId": "O1",
+      "status": "summarised",
+      "rationale": "Measured W1 result.",
+      "summarisedUnderRecordId": "W1"
+    },
+    {
+      "recordId": "W3",
+      "status": "featured",
+      "rationale": "Earlier primary initiative.",
+      "summarisedUnderRecordId": null
+    }
+  ],
+  "technologyUseMap": [
+    {
+      "technologyUseId": "TU-1",
+      "workContextId": "W1",
+      "status": "visible-in-context",
+      "targetRecordId": "W1"
+    }
+  ],
+  "referenceLinkMap": [
+    {
+      "linkId": "LINK-LI",
+      "status": "visible-in-evidence",
+      "targetRecordId": null
+    }
+  ],
+  "carryForwardMap": [],
+  "limitations": [
+    "Fictional sample data."
+  ],
+  "assets": [
+    {
+      "sourcePath": "northwind-logo.svg",
+      "outputPath": "logo-northwind.svg",
+      "reviewed": true,
+      "reviewReference": "sample-review",
+      "targetRecordId": "ORG-N"
+    }
+  ]
+}

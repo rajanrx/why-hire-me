@@ -4,6 +4,16 @@ These examples show what to ask, what the skills should return, and where human 
 necessary. Replace sample names and paths with your own. Share only sources you are authorised to
 use.
 
+## Start here
+
+Run three skills in order, reviewing between each:
+[résumé](examples/input-resume-explorer.md) →
+[source review](examples/input-work-evidence-explorer.md) →
+[Q&A interview](examples/evidence-led-interviewer.md). Then
+[build the portfolio](examples/output-career-portfolio.md) with the
+[reviewed-packet workflow](../skills/output-career-portfolio/references/reviewed-packet-workflow.md),
+whose commands give the same output on any machine. The README has copyable prompts for each step.
+
 ## Available skills
 
 | Skill | Example |

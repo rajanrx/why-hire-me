@@ -1,0 +1,38 @@
+{
+  "schema": "why-hire-me.packet-amendments/v1",
+  "packetId": "alex-rivera-v2",
+  "reviewedBy": "Alex approved the discovery interview answers (fictional)",
+  "reviewedAt": "2026-10-15T00:00:00.000Z",
+  "evidence": "Alex's discovery interview · 2026-10-15",
+  "updates": [
+    {
+      "id": "W1",
+      "name": "Dispatch API rebuild with contract tests",
+      "summary": "Designed and led the rebuild of the dispatch API as typed Go services, choosing contract tests over end-to-end suites to keep releases daily."
+    },
+    {
+      "id": "C1",
+      "summary": "Mentored two engineers through their first on-call rotations."
+    }
+  ],
+  "additions": [
+    {
+      "item": {
+        "id": "O2",
+        "type": "Reported outcome",
+        "name": "Releases from weekly to daily",
+        "summary": "Releases moved from weekly to daily after the rebuild (person-stated, approximate)."
+      },
+      "engagementId": "ENG-N",
+      "parentId": "W1",
+      "inclusion": {
+        "status": "featured",
+        "rationale": "Measured result from the discovery interview.",
+        "summarisedUnderRecordId": null
+      }
+    }
+  ],
+  "limitations": [
+    "Interview figures are person-stated and approximate."
+  ]
+}
