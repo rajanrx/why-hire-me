@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
 
 function usage() {
@@ -97,11 +97,20 @@ async function main() {
     files,
   };
 
-  await mkdir(output, { recursive: false });
-  await writeFile(resolve(output, "portfolio.json"), portfolio, { flag: "wx", mode: 0o600 });
-  await writeFile(resolve(output, "portfolio-json.txt"), portfolio, { flag: "wx", mode: 0o600 });
-  await writeFile(resolve(output, "approved-reference-sources.md"), references, { flag: "wx", mode: 0o600 });
-  await writeFile(resolve(output, "notebooklm-handoff.json"), `${JSON.stringify(manifest, null, 2)}\n`, { flag: "wx", mode: 0o600 });
+  const outputs = new Map([["portfolio.json", portfolio], ["portfolio-json.txt", portfolio],
+    ["approved-reference-sources.md", references],
+    ["notebooklm-handoff.json", Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`)]]);
+  // Preparing the same portfolio again is a no-op; a different portfolio never overwrites a handoff.
+  const existing = await readdir(output).catch(() => null);
+  if (existing) {
+    for (const [name, bytes] of outputs) {
+      const current = await readFile(resolve(output, name)).catch(() => null);
+      if (!current?.equals(bytes)) throw new Error(`${output} already holds a different handoff (${name}).`);
+    }
+  } else {
+    await mkdir(output, { recursive: false });
+    for (const [name, bytes] of outputs) await writeFile(resolve(output, name), bytes, { flag: "wx", mode: 0o600 });
+  }
   process.stdout.write(`${resolve(output, "notebooklm-handoff.json")}\n`);
 }
 

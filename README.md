@@ -7,16 +7,45 @@ A CV cannot hold every decision, contribution, lesson, credential, or piece of w
 you can do. Why Hire Me helps you recover that context, connect it to evidence, and use AI for
 thoughtful, asynchronous career conversations.
 
-## 🚀 Start in three steps
+## 🚀 Get started
 
-| Step | What to do | Status |
-|---|---|---|
-| 1 · Install | Run `npx skills add rajanrx/why-hire-me --skill '*' -g`, choose your AI app, then restart it | ✅ Available |
-| 2 · Explore | Ask: “Use `why-hire-me:evidence-led-interviewer` to explore this project and understand my contribution.” | ✅ Available |
-| 3 · Share | Review your knowledge, generate an offline career portfolio, then optionally publish it through the platform of your choice | ✅ Workflow available |
+**Install once:** run `npx skills add rajanrx/why-hire-me --skill '*' -g`, choose your AI app, then
+restart it. Then run three skills in order. Each one builds on the knowledge the last one reviewed.
+
+| | Skill | What you give it | What you get |
+|---|---|---|---|
+| **1 · Résumé** | `why-hire-me:input-resume-explorer` | Your résumé or CV | Evidence-linked records of your roles, work, outcomes, and technologies, plus questions about anything unclear |
+| **2 · Source review** | `why-hire-me:input-work-evidence-explorer` | Folders you choose: code, designs, writing, case work (and links via `input-career-reference-explorer`) | What you actually built and decided, cited to the exact files |
+| **3 · Q&A interview** | `why-hire-me:evidence-led-interviewer` | Your answers: deep dive or general, multiple choice or your own words | The decisions, numbers, and context documents never hold, checked against what is already recorded |
+
+Then `why-hire-me:output-career-portfolio` turns what you approved into an offline portfolio and
+printable résumé, and the publisher skills share it only where you choose.
+
+**Copy these prompts into your AI app:**
+
+> Use `why-hire-me:input-resume-explorer` on `~/Documents/resume.pdf`. Propose evidence-linked
+> career records and ask me about anything unclear before I review them.
+
+> Use `why-hire-me:input-work-evidence-explorer` on `~/code/payments-service` and `~/docs/design-notes`.
+> Show me which decisions and contributions are mine, with file citations.
+
+> Use `why-hire-me:evidence-led-interviewer` to fill the gaps in my career knowledge. Ask me first
+> whether I want a deep dive, give me answer options with room for my own words, and flag anything
+> that conflicts with what is already recorded.
+
+**Or let your AI run the whole journey:**
+
+> Help me build my career knowledge with Why Hire Me. Start with `input-resume-explorer` on
+> `~/Documents/resume.pdf`, then `input-work-evidence-explorer` on the folders I name, then
+> `evidence-led-interviewer` as a deep dive. Pause for my review after each step. When I approve,
+> use `output-career-portfolio` to build a local material-profile portfolio and three-page résumé,
+> following its reviewed-packet workflow so every step is a repeatable command. Don't publish
+> anything until I say so.
 
 You stay in control throughout. AI may explore and propose; you decide what becomes trusted
-knowledge and what can leave your computer.
+knowledge and what can leave your computer. Every build step is a command over files you reviewed,
+so the same inputs give the same portfolio on any machine (see the
+[reviewed-packet workflow](skills/output-career-portfolio/references/reviewed-packet-workflow.md)).
 
 ## ✨ AI skills
 

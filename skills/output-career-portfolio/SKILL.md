@@ -93,15 +93,24 @@ local candidate preview.
 For reviewed prototype input, build the package first and invoke the installed, package-relative
 gateway exactly as follows:
 
-`node scripts/portfolio/preview-reviewed-prototype.mjs --packet <reviewed-packet.json> --baseline
-<approved-portfolio-dir> --output <new-candidate-dir>`
+`node scripts/portfolio/preview-reviewed-prototype.mjs --packet <reviewed-packet.json> [--baseline
+<directory-with-approved-generation-record>] --output <new-candidate-dir>`
+
+Omit `--baseline` only for a first build. Follow
+[`references/reviewed-packet-workflow.md`](references/reviewed-packet-workflow.md) for the complete,
+repeatable sequence: approved interview answers become a `packet-amendments` file applied with
+`amend-reviewed-packet.mjs`, an approved candidate is applied with `approve-candidate.mjs`, the
+printable résumé comes from `print-resume.mjs`, hosted copies are checked with `verify-hosted.mjs`, and
+NotebookLM files come from the sync skill's `prepare-handoff.mjs`. Never hand-edit a packet or a published directory; the same inputs must give
+the same bundle on any machine.
 
 Do not copy the fictional sample shell, copy renderer output from another portfolio, write a
 candidate-specific `build_candidate.mjs`, or assemble `index.html` directly. The gateway rejects
 unreviewed/dangling or semantically duplicate relations, unsafe links/assets, invalid status or
 target mappings, omitted private data anywhere in rendered text, unresolved maps, carry-forward
-locators that do not resolve to a real candidate record, relation, link, anchor, or PDF page, an existing output directory, and any attempt
-to write over the baseline.
+locators that do not resolve to a real candidate record, relation, link, anchor, or PDF page, an existing
+output directory holding a different build (re-running the same build reports `unchanged`), and any
+attempt to write over the baseline.
 Resolve the renderer, contract, sample, and checker relative to the installed skill or package,
 not a developer's machine or repository path. Use the available host tools and filesystem; do not
 require a particular agent, browser, operating system, or portfolio directory name. If a bundled
