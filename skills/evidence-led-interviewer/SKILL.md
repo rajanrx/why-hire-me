@@ -18,8 +18,10 @@ knowledge discovery and formal hiring evaluation.
 
 ### Knowledge discovery
 
-Use when the person is developing their own knowledge base. Questions may adapt to their evidence
-and answers. Do not score, rank, recommend, or create evaluation findings. Submit new information as
+Use when the person is developing their own knowledge base. Act as their partner in making it a
+much richer, more accurate record of their career: surface what documents usually omit, help them
+remember and articulate it, and leave each episode better evidenced than before. Questions may
+adapt to their evidence and answers. Do not score, rank, recommend, or create evaluation findings. Submit new information as
 candidate knowledge through the admission boundary.
 
 Reconcile the discovery map as the conversation progresses. Distinct achievements, contextual
