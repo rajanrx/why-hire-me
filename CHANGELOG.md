@@ -1,5 +1,14 @@
 # why-hire-me
 
+## 0.12.1
+
+### Patch Changes
+
+- 74000a5: Document how the portfolio skill writes a person's first reviewed packet (envelope, record types,
+  relation predicates, inclusion coverage, maps, links, and assets), that the portfolio commands need
+  the cloned or bundled package after `pnpm install && pnpm run build`, and that hosted verification is
+  kept beside the destination's publication record rather than replacing it.
+
 ## 0.12.0
 
 ### Minor Changes
