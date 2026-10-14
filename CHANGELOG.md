@@ -1,5 +1,38 @@
 # why-hire-me
 
+## 0.12.0
+
+### Minor Changes
+
+- 69bc7a9: Let the evidence-led interviewer ask whether the person wants a deep dive or general questions
+  before knowledge discovery, and offer each discovery question as non-leading answer options with a
+  free-text answer. Formal evaluation keeps open, identical core questions.
+  After each answer, the interviewer reconciles it with existing evidence as aligned, new, or
+  conflicting, asks the person to resolve conflicts without overwriting either side, and offers
+  recall aids from their own evidence to help them answer accurately.
+- cb36481: Add the opt-in `material-profile` portfolio template: an evaluator-first Material 3 profile with
+  Overview, Career, Skills, and question-led Explore with a focused graph, light and dark themes, and
+  optional approved AI-notebook and audio-overview disclosures. `editorial-record` stays the
+  byte-identical default; choose a family with `--template`.
+- 6769cb9: Polish the material-profile template: LogicBook-style Material 3 tokens with embedded Roboto Flex,
+  Lucide icons, company logos from approved assets, brand-coloured technology badges with company
+  hover cards, a reading-focused record sheet, and a focused graph that expands in place as a radial
+  tree with logos, matte kind colours and a full-screen mode.
+- 69bc7a9: Make the reviewed-packet portfolio workflow reproducible for anyone: approved interview answers apply
+  through an idempotent `packet-amendments` file (`amend-reviewed-packet.mjs`) that also keeps renamed
+  records in step across derived text; `approve-candidate.mjs` applies an approved candidate with
+  relative paths; `print-resume.mjs` renders a print-ready résumé from the portfolio's reviewed data and
+  prints it with a local Chrome; `verify-hosted.mjs` checks a hosted copy byte-for-byte. The preview
+  builds a first portfolio without a baseline, resolves assets relative to the packet, and treats a
+  re-run of the same build as unchanged; the NotebookLM handoff is likewise re-runnable. A fictional
+  sample packet and a CI test run the whole sequence twice and pin its digest. The README opens with a
+  three-skill getting-started path and copyable prompts.
+
+### Patch Changes
+
+- 3c2f788: Keep the material-profile focused graph readable: cap zoom for small neighbourhoods and open the graph
+  in place of the Explore lists so it appears first on phones.
+
 ## 0.11.0
 
 ### Minor Changes
