@@ -96,7 +96,8 @@ gateway exactly as follows:
 `node scripts/portfolio/preview-reviewed-prototype.mjs --packet <reviewed-packet.json> [--baseline
 <directory-with-approved-generation-record>] --output <new-candidate-dir>`
 
-Omit `--baseline` only for a first build. Follow
+Write the first packet yourself from the person's reviewed proposals, in the shape the workflow
+reference and fictional sample define, and omit `--baseline` only for that first build. Follow
 [`references/reviewed-packet-workflow.md`](references/reviewed-packet-workflow.md) for the complete,
 repeatable sequence: approved interview answers become a `packet-amendments` file applied with
 `amend-reviewed-packet.mjs`, an approved candidate is applied with `approve-candidate.mjs`, the

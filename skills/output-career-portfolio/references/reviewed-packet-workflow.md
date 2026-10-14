@@ -2,11 +2,45 @@
 
 Every step is a command over files the person has reviewed. Given the same files, any machine
 produces the same portfolio bytes, and re-running a step that already ran reports `unchanged`.
-Run the commands from the why-hire-me package (a clone or the release bundle after
-`pnpm install && pnpm run build`); the paths below are relative to it.
+The paths below are relative to the why-hire-me package.
 
 A complete fictional example lives in [`../assets/sample-packet/`](../assets/sample-packet/), and
 `src/portfolio-reproducibility.test.ts` runs this whole sequence twice in CI.
+
+## 0. Get the commands
+
+Skill installers copy only the skills. The commands below need the package: clone
+`https://github.com/rajanrx/why-hire-me` or unpack a release bundle, then run
+`pnpm install && pnpm run build` once.
+
+## Write the first packet
+
+`output-career-portfolio` writes version 1 of the packet from the person's reviewed proposals
+(résumé, work evidence, references, interview answers); later versions come only from amendments.
+Start from [`../assets/sample-packet/reviewed-packet-v1.json`](../assets/sample-packet/reviewed-packet-v1.json)
+and keep its shape. The preview command is the validator: it refuses anything below.
+
+- **Envelope:** `schema` `why-hire-me.reviewed-prototype-packet/v1`, a `packetId`, `subjectDisplayName`,
+  `purpose`, `audience` (`private`, `restricted`, or `public`), `resumeLength` (`one-page`, `two-pages`,
+  `three-pages`, `complete`), and `review` with who reviewed, when, and one disclosure choice per
+  personal field (`approved-for-audience` or `omitted`).
+- **Items:** `id`, `type`, `name`, `summary` (or `null`), `recordedAt`, `details` (label/value pairs such
+  as `Period`, `Location`, `Evidence`), and `inclusion`. Types: `Person`, `Organisation`, `Engagement`,
+  `Role`, `Work`, `Contribution`, `Reported outcome`, `Technology`, `TechnologyCategory`,
+  `TechnologyUse`, `Credential`.
+- **Relations:** each one explicit, reviewed, and unique. Use the sample's predicates:
+  `person.has_engagement`, `engagement.with_organisation`, `engagement.has_role`,
+  `engagement.includes_record`, `record.summarised_under`, `record.has_contextual_technology`,
+  `technology_use.in_context`, `technology.belongs_to_category`. Never infer an edge from shared words.
+- **Inclusion:** every Work, Contribution, and Reported outcome has exactly one decision (`featured`,
+  `supporting`, `summarised` with the record it sits under, `excluded`, or `deferred`) in both the item
+  and `inclusionDecisions`.
+- **Maps:** `technologyUseMap` covers every TechnologyUse; `referenceLinkMap` covers every link;
+  `carryForwardMap` is empty for a first build.
+- **Links:** `sourceStatus` is `supplied-unvisited` or `separately-reviewed`; an AI notebook link uses
+  `role: "ai-notebook"` and needs an approved `AI notebook` disclosure.
+- **Assets:** `sourcePath` relative to the packet; `.pdf` becomes the résumé, `.mp3`/`.m4a` an audio
+  overview (needs an approved `Audio overview` disclosure), and a logo names its `targetRecordId`.
 
 ## 1. Build the first portfolio
 
@@ -77,8 +111,9 @@ approve. Use `--output resume.html` to print it yourself when no browser is avai
 ## 4. Share
 
 - **Hosting:** deploy the published directory with the destination's own tool (for Firebase,
-  `firebase deploy --only hosting`), then verify every file byte-for-byte and keep the record:
-  `node scripts/portfolio/verify-hosted.mjs --portfolio career/public --url https://<site> --output career/publication-record.json`
+  `firebase deploy --only hosting`), then verify every file byte-for-byte and keep that evidence beside the destination skill's own
+  publication record:
+  `node scripts/portfolio/verify-hosted.mjs --portfolio career/public --url https://<site> --output career/hosted-verification.json`
 - **NotebookLM:** consumer NotebookLM has no supported upload API, so prepare a manual handoff with
   the sync skill's script, named after the portfolio digest so each version gets its own folder:
   `node skills/output-notebooklm-sync/scripts/prepare-handoff.mjs --portfolio career/public/portfolio.json --output career/notebooklm-handoff/<digest-prefix>`

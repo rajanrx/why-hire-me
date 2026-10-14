@@ -87,8 +87,9 @@ entry point and declared assets through their public URLs and compare bytes or d
 `accepted`, `deployed`, `partially-verified`, and `observed-public` separately. A successful CLI exit or
 returned URL alone is not proof that every expected file is reachable.
 For a reviewed-packet portfolio, run `node scripts/portfolio/verify-hosted.mjs --portfolio <published-dir>
---url <hosting-url> --output <publication-record.json>` from the package; it fetches every published
-file and records each byte comparison.
+--url <hosting-url> --output <hosted-verification.json>` from the package; it fetches every published
+file and records each byte comparison. Copy its file list and result into the publication record
+above rather than replacing that record.
 
 Also load the live entry point in a normal browser session and a fresh or cache-bypassed session.
 Compare rendered critical content and styling with the approved local preview, including dates,
