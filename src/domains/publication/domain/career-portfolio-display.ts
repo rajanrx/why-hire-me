@@ -25,6 +25,8 @@ export interface CareerPortfolioDisplayLink {
   readonly label: string;
   readonly url: string;
   readonly sourceStatus: "supplied-unvisited" | "separately-reviewed";
+  /** An explicitly approved external AI notebook about this person; never inferred from the URL. */
+  readonly role?: "ai-notebook";
 }
 
 export interface CareerPortfolioDisplayModel {
@@ -36,7 +38,7 @@ export interface CareerPortfolioDisplayModel {
   readonly items: readonly CareerPortfolioDisplayItem[];
   readonly relations: readonly CareerPortfolioDisplayRelation[];
   readonly links: readonly CareerPortfolioDisplayLink[];
-  readonly assets: readonly { readonly outputPath: string; readonly kind: "resume-pdf" | "other" }[];
+  readonly assets: readonly { readonly outputPath: string; readonly kind: "resume-pdf" | "audio-overview" | "other" }[];
   readonly limitations: readonly string[];
   readonly provenance:
     | { readonly mode: "governed-render"; readonly releaseId: string; readonly releaseDigest: string;

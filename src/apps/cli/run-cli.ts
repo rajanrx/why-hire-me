@@ -35,7 +35,7 @@ import { LocalReleaseRepository, validateLocalRelease } from "../../adapters/pub
 import { CreateLocalKnowledgeRelease } from "../../domains/publication/application/create-local-knowledge-release.js";
 import type { ReleaseInputRecord } from "../../domains/publication/domain/knowledge-release.js";
 import { LocalKnowledgeReleaseReader } from "../../adapters/publication/local-knowledge-release-reader.js";
-import { StaticHtmlCareerPortfolioRenderer } from "../../adapters/publication/static-html-career-portfolio-renderer.js";
+import { careerPortfolioRenderer } from "../../adapters/publication/career-portfolio-renderers.js";
 import { LocalCareerPortfolioRepository } from "../../adapters/publication/local-career-portfolio-repository.js";
 import { BuildCareerPortfolio } from "../../domains/publication/application/build-career-portfolio.js";
 import { readFile } from "node:fs/promises";
@@ -153,8 +153,8 @@ export function usage(): string {
     "  why-hire-me knowledge create-view --profile <id> --purpose <text> --audience <private|restricted|public> --expires-at <RFC3339> --confirm [options]",
     "  why-hire-me release create --profile <id> --view <id> [--releases <path>]",
     "  why-hire-me release validate --path <release-directory>",
-    "  why-hire-me portfolio preview --release <directory> --inclusion-map <json-file> [--resume-length <one-page|two-pages|three-pages|complete>]",
-    "  why-hire-me portfolio build --release <directory> --inclusion-map <json-file> --confirm [--resume-length <one-page|two-pages|three-pages|complete>] [--portfolios <path>]",
+    "  why-hire-me portfolio preview --release <directory> --inclusion-map <json-file> [--resume-length <one-page|two-pages|three-pages|complete>] [--template <editorial-record|material-profile>]",
+    "  why-hire-me portfolio build --release <directory> --inclusion-map <json-file> --confirm [--resume-length <one-page|two-pages|three-pages|complete>] [--template <editorial-record|material-profile>] [--portfolios <path>]",
     "  why-hire-me portfolio publish-firebase --portfolio <directory> --project <id> --site <id> --mode <preview-channel|live> --confirm-public [options]",
     "",
     "Environment:",
@@ -353,7 +353,7 @@ export async function runCli(
     const resumeLength = requestedResumeLength as ResumeLength;
     const digester = new NodeReleaseDigester();
     const useCase = new BuildCareerPortfolio(new LocalKnowledgeReleaseReader(digester),
-      new StaticHtmlCareerPortfolioRenderer(digester), new LocalCareerPortfolioRepository(portfolioRoot, digester),
+      careerPortfolioRenderer(option(args, "--template"), digester), new LocalCareerPortfolioRepository(portfolioRoot, digester),
       { now: () => new Date() });
     if (args[1] === "preview") return Object.freeze({ kind: "career-portfolio-preview",
       preview: await useCase.preview({ releaseDirectory, inclusionDecisions, resumeLength }) });

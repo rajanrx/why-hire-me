@@ -1,0 +1,50 @@
+{
+  "schema": "why-hire-me.portfolio-template/v0.3",
+  "templateFamily": "material-profile",
+  "portfolioSchema": "why-hire-me.portfolio/v0.3",
+  "rendererVersion": "1.0.0",
+  "sources": {
+    "html": "src/adapters/publication/material-career-portfolio-renderer.ts",
+    "styles": "templates/career-portfolio/material-profile/styles.css",
+    "script": "templates/career-portfolio/material-profile/app.js"
+  },
+  "theme": {
+    "system": "material-3",
+    "seed": "#4758a9",
+    "default": "follow-system-colour-scheme",
+    "override": "remembered-toggle-in-local-storage-with-system-fallback",
+    "font": "system-stack-no-webfont"
+  },
+  "destinations": ["overview", "career", "skills", "explore", "records"],
+  "optionalDestinations": { "ask": "only-with-approved-ai-notebook-link-or-audio-overview" },
+  "layout": {
+    "expanded": "navigation-rail-at-840px-and-wider",
+    "compactAndMedium": "bottom-navigation-bar",
+    "career": "list-detail-full-screen-detail-on-compact",
+    "recordDetail": "side-sheet-on-expanded-full-screen-on-compact",
+    "horizontalPageScroll": "forbidden"
+  },
+  "overview": {
+    "headline": "person-summary-only",
+    "impactTiles": "featured-outcomes-then-one-outcome-per-featured-parent-max-four",
+    "forbidden": ["projection-metadata", "invented-metrics", "availability-claims-without-approved-record"]
+  },
+  "explore": {
+    "entry": "question-led-where-built-achieved-groups",
+    "graph": "focused-neighbourhood-with-trail-and-text-panel",
+    "completeGraphAsInitialView": false,
+    "evidenceLens": "records-destination-with-relationship-list"
+  },
+  "accessibility": ["wcag-2.2-aa-contrast-both-themes", "keyboard-complete", "focus-return-on-close",
+    "reduced-motion", "graph-text-equivalent", "stable-url-fragments"],
+  "offline": {
+    "networkRequestsAllowed": false,
+    "networkRequestsScope": "initial-and-unprompted-rendering",
+    "csp": "default-src-none-self-only-media-src-only-with-audio"
+  },
+  "print": "resume-with-all-included-records-honouring-resume-length",
+  "brandingAndNavigation": {
+    "generatorAttribution": "visible-why-hire-me-name-and-official-github-link",
+    "githubUrl": "https://github.com/rajanrx/why-hire-me"
+  }
+}

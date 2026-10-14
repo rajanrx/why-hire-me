@@ -109,9 +109,21 @@ export function adaptReviewedPrototype(packet: ReviewedLocalPrototypePacket): Ca
   }
   for (const asset of packet.assets ?? []) {
     if (asset.reviewed !== true || !nonempty(asset.reviewReference) || !nonempty(asset.sourcePath) ||
-      !/^[a-zA-Z0-9][a-zA-Z0-9._-]*\.(pdf|svg|png|jpg)$/.test(asset.outputPath))
+      !/^[a-zA-Z0-9][a-zA-Z0-9._-]*\.(pdf|svg|png|jpg|mp3|m4a)$/.test(asset.outputPath))
       fail(`unreviewed or unsafe asset ${String(asset?.outputPath)}.`);
   }
+  // AI-derived disclosures need their own approval, separate from the link or file review.
+  const approved = (field: string) => packet.review.disclosureChoices.some(choice =>
+    normaliseDisclosureField(choice.field) === field && choice.status === "approved-for-audience");
+  for (const link of packet.links) {
+    if (link.role !== undefined && link.role !== "ai-notebook") fail(`link ${link.id} has an unknown role.`);
+    if (link.role === "ai-notebook" && !approved("ai notebook"))
+      fail(`link ${link.id} is an AI notebook but the "AI notebook" disclosure is not approved.`);
+  }
+  if (packet.links.filter(link => link.role === "ai-notebook").length > 1) fail("only one AI notebook link is allowed.");
+  const isAudio = (path: string) => /\.(mp3|m4a)$/.test(path);
+  if ((packet.assets ?? []).some(asset => isAudio(asset.outputPath)) && !approved("audio overview"))
+    fail(`an audio overview is present but the "Audio overview" disclosure is not approved.`);
   const technologies = packet.items.filter(item => item.type === "TechnologyUse");
   const tuIds = new Set(technologies.map(item => item.id));
   const mappedTuIds = new Set(packet.technologyUseMap.map(item => item.technologyUseId));
@@ -154,11 +166,12 @@ export function adaptReviewedPrototype(packet: ReviewedLocalPrototypePacket): Ca
     items: Object.freeze([...packet.items]),
     relations: Object.freeze(packet.relations.map(({ id, subject, object, predicate }) =>
       Object.freeze({ id, subject, object, predicate }))),
-    links: Object.freeze(packet.links.map(({ id, targetRecordId, label, url, sourceStatus }) =>
-      Object.freeze({ id, targetRecordId, label, url, sourceStatus }))),
+    links: Object.freeze(packet.links.map(({ id, targetRecordId, label, url, sourceStatus, role }) =>
+      Object.freeze({ id, targetRecordId, label, url, sourceStatus, ...(role ? { role } : {}) }))),
     assets: Object.freeze((packet.assets ?? []).map(asset => Object.freeze({
       outputPath: asset.outputPath,
-      kind: asset.outputPath.endsWith(".pdf") ? "resume-pdf" as const : "other" as const,
+      kind: asset.outputPath.endsWith(".pdf") ? "resume-pdf" as const
+        : isAudio(asset.outputPath) ? "audio-overview" as const : "other" as const,
     }))),
     limitations: Object.freeze([...packet.limitations]),
     provenance: Object.freeze({ mode: "local-prototype", packetId: packet.packetId,
