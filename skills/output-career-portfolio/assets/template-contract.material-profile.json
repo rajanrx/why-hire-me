@@ -10,37 +10,58 @@
   },
   "theme": {
     "system": "material-3",
-    "seed": "#4758a9",
+    "seed": "#6750a4",
     "default": "follow-system-colour-scheme",
     "override": "remembered-toggle-in-local-storage-with-system-fallback",
-    "font": "system-stack-no-webfont"
+    "font": "roboto-flex-latin-variable-embedded-as-data-uri",
+    "icons": "lucide-static-outline-inlined",
+    "technologyIcons": "simple-icons-brand-mark-on-tinted-circle-category-glyph-fallback",
+    "logos": "approved-organisation-logo-assets-initials-fallback"
   },
-  "destinations": ["overview", "career", "skills", "explore", "records"],
-  "optionalDestinations": { "ask": "only-with-approved-ai-notebook-link-or-audio-overview" },
+  "destinations": [
+    "overview",
+    "career",
+    "skills",
+    "explore",
+    "records"
+  ],
+  "optionalDestinations": {
+    "ask": "only-with-approved-ai-notebook-link-or-audio-overview"
+  },
   "layout": {
-    "expanded": "navigation-rail-at-840px-and-wider",
+    "expanded": "240px-navigation-drawer-collapsible-to-80px-rail",
     "compactAndMedium": "bottom-navigation-bar",
     "career": "list-detail-full-screen-detail-on-compact",
-    "recordDetail": "side-sheet-on-expanded-full-screen-on-compact",
+    "recordDetail": "reading-sheet-60vw-on-expanded-full-screen-on-compact",
     "horizontalPageScroll": "forbidden"
   },
   "overview": {
     "headline": "person-summary-only",
     "impactTiles": "featured-outcomes-then-one-outcome-per-featured-parent-max-four",
-    "forbidden": ["projection-metadata", "invented-metrics", "availability-claims-without-approved-record"]
+    "forbidden": [
+      "projection-metadata",
+      "invented-metrics",
+      "availability-claims-without-approved-record"
+    ]
   },
   "explore": {
     "entry": "question-led-where-built-achieved-groups",
-    "graph": "focused-neighbourhood-with-trail-and-text-panel",
+    "graph": "radial-tree-expands-in-place-logos-and-brand-marks-full-screen-option",
     "completeGraphAsInitialView": false,
     "evidenceLens": "records-destination-with-relationship-list"
   },
-  "accessibility": ["wcag-2.2-aa-contrast-both-themes", "keyboard-complete", "focus-return-on-close",
-    "reduced-motion", "graph-text-equivalent", "stable-url-fragments"],
+  "accessibility": [
+    "wcag-2.2-aa-contrast-both-themes",
+    "keyboard-complete",
+    "focus-return-on-close",
+    "reduced-motion",
+    "graph-text-equivalent",
+    "stable-url-fragments"
+  ],
   "offline": {
     "networkRequestsAllowed": false,
     "networkRequestsScope": "initial-and-unprompted-rendering",
-    "csp": "default-src-none-self-only-media-src-only-with-audio"
+    "csp": "default-src-none-self-only-font-src-data-media-src-only-with-audio"
   },
   "print": "resume-with-all-included-records-honouring-resume-length",
   "brandingAndNavigation": {

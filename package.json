@@ -29,9 +29,12 @@
     "version-packages": "changeset version && node scripts/release/sync-plugin-version.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/roboto-flex": "5.3.0",
     "better-sqlite3": "12.11.1",
     "cytoscape": "3.33.4",
-    "qrcode-generator": "1.4.4"
+    "lucide-static": "1.48.0",
+    "qrcode-generator": "1.4.4",
+    "simple-icons": "16.33.0"
   },
   "devDependencies": {
     "@changesets/cli": "3.0.2",

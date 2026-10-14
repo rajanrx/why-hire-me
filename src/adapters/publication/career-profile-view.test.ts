@@ -50,7 +50,8 @@ test("profile is built from record types and approved priority, not predicates o
   assert.deepEqual(view.impact.map(tile => tile.id), ["X1", "X3"]);
   assert.deepEqual(view.categories.map(category => [category.name, category.technologies.map(tech => tech.name)]),
     [["Languages", ["Go"]], ["Other", ["Kafka"]]]);
-  assert.deepEqual(view.categories[0]!.technologies[0]!.usedAt, ["Acme"]);
+  assert.deepEqual(view.categories[0]!.technologies[0]!.usedAt.map(place => [place.organisation, place.title, place.period]),
+    [["Acme", "Principal Engineer", "2024–present"]]);
 });
 
 test("missing approved content yields empty sections instead of filler", () => {

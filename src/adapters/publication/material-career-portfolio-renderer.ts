@@ -12,7 +12,8 @@ import type { CareerPortfolioDisplayModel } from "../../domains/publication/doma
 import type { PortfolioInclusionDecision } from "../../domains/publication/domain/career-portfolio-selection.js";
 import type { CareerPortfolioRenderer } from "../../domains/publication/ports/career-portfolio-ports.js";
 import type { ReleaseDigester } from "../../domains/publication/ports/knowledge-release-ports.js";
-import { careerProfileView, type ProfileRef, type ProfileRole } from "./career-profile-view.js";
+import { careerProfileView, type CareerProfileView, type ProfilePlace, type ProfileRef, type ProfileRole } from "./career-profile-view.js";
+import { technologyBadge, technologyGlyph } from "./technology-icons.js";
 import { portfolioProjection, releaseDisplayModel } from "./static-html-career-portfolio-renderer.js";
 
 const templateDirectory = join(dirname(fileURLToPath(import.meta.url)), "../../../templates/career-portfolio/material-profile");
@@ -31,24 +32,38 @@ const recordLink = (item: ProfileRef, className = "record-link") =>
 const initials = (value: string) =>
   value.split(/[\s·&/-]+/).filter(word => /^[\p{L}\p{N}]/u.test(word)).slice(0, 2).map(word => word[0]!.toUpperCase()).join("") || "•";
 
-/** Material 3 icons (Apache-2.0 glyph paths), inlined so the page makes no font or image request. */
-const icon = (name: keyof typeof icons) =>
-  `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${icons[name]}"/></svg>`;
-const icons = {
-  home: "M4 21V9l8-6 8 6v12h-6v-7h-4v7H4Z",
-  work: "M4 21q-.8 0-1.4-.6T2 19V8q0-.8.6-1.4T4 6h4V4q0-.8.6-1.4T10 2h4q.8 0 1.4.6T16 4v2h4q.8 0 1.4.6T22 8v11q0 .8-.6 1.4T20 21H4Zm6-15h4V4h-4v2Z",
-  skills: "m12 17.3-6.2 3.7 1.6-7L2 9.3l7.1-.6L12 2l2.9 6.7 7.1.6-5.4 4.7 1.6 7L12 17.3Z",
-  explore: "M6 22q-1.3 0-2.1-.9T3 19q0-1.3.9-2.1T6 16q.4 0 .7.1l.6.2 4.2-5.3q-.4-.5-.6-1T10.6 9q0-1.3.9-2.1T13.6 6q1.3 0 2.1.9t.9 2.1q0 .5-.2 1t-.5.9l3 3.6q.3-.1.5-.1h.6q1.3 0 2.1.9T23 17q0 1.3-.9 2.1T20 20q-1.3 0-2.1-.9T17 17q0-.4.1-.8l.3-.7-3-3.6-.4.1h-.8L9 17.3q.4.4.7 1t.3 1.4q0 1.3-.9 2.1T6 22Z",
-  ask: "m12 1 2.6 6.4L21 10l-6.4 2.6L12 19l-2.6-6.4L3 10l6.4-2.6L12 1Zm7 13 1.2 2.8L23 18l-2.8 1.2L19 22l-1.2-2.8L15 18l2.8-1.2L19 14Z",
-  download: "M12 16 7 11l1.4-1.4 2.6 2.6V4h2v8.2l2.6-2.6L17 11l-5 5Zm-6 4q-.8 0-1.4-.6T4 18v-3h2v3h12v-3h2v3q0 .8-.6 1.4T18 20H6Z",
-  theme: "M12 22q-2.1 0-3.9-.8t-3.2-2.1q-1.4-1.4-2.1-3.2T2 12q0-2.1.8-3.9t2.1-3.2Q6.3 3.6 8.1 2.8T12 2q2.1 0 3.9.8t3.2 2.1q1.4 1.4 2.1 3.2T22 12q0 2.1-.8 3.9t-2.1 3.2q-1.4 1.4-3.2 2.1T12 22Zm1-2.1q3-.4 5-2.6t2-5.3q0-3.1-2-5.3t-5-2.6v15.8Z",
-  arrow: "M16.2 13H4v-2h12.2l-5.6-5.6L12 4l8 8-8 8-1.4-1.4 5.6-5.6Z",
-  back: "M7.8 13l5.6 5.6L12 20l-8-8 8-8 1.4 1.4L7.8 11H20v2H7.8Z",
-  close: "M6.4 19 5 17.6l5.6-5.6L5 6.4 6.4 5l5.6 5.6L17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6L6.4 19Z",
-  copy: "M9 18q-.8 0-1.4-.6T7 16V4q0-.8.6-1.4T9 2h9q.8 0 1.4.6T20 4v12q0 .8-.6 1.4T18 18H9Zm-4 4q-.8 0-1.4-.6T3 20V6h2v14h11v2H5Z",
-  open: "M5 21q-.8 0-1.4-.6T3 19V5q0-.8.6-1.4T5 3h7v2H5v14h14v-7h2v7q0 .8-.6 1.4T19 21H5Zm4.7-5.3-1.4-1.4L17.6 5H14V3h7v7h-2V6.4l-9.3 9.3Z",
-  linkedin: "M5.3 3.8A2.3 2.3 0 1 1 5.3 8.4 2.3 2.3 0 0 1 5.3 3.8ZM3.4 10h3.8v10.6H3.4V10Zm6.2 0h3.6v1.5h.1c.5-.9 1.8-1.9 3.7-1.9 3.9 0 4.6 2.5 4.6 5.9v5.1h-3.8v-4.5c0-1.1 0-3-1.9-3-1.9 0-2.2 1.4-2.2 2.9v4.6H9.6V10Z",
+/** Lucide outline icons (ISC), read from the pinned package and inlined so the page makes no request. */
+const LUCIDE = {
+  home: "house", work: "briefcase-business", skills: "layers", explore: "waypoints", ask: "sparkles",
+  download: "download", theme: "moon", arrow: "arrow-right", back: "arrow-left", close: "x", copy: "copy",
+  open: "external-link", menu: "panel-left", impact: "trending-up", fullscreen: "maximize-2",
 } as const;
+const lucideDirectory = join(dirname(localRequire.resolve("lucide-static/package.json")), "icons");
+const lucideInner = new Map(Object.entries(LUCIDE).map(([name, file]) => {
+  const svg = readFileSync(join(lucideDirectory, `${file}.svg`), "utf8");
+  return [name, svg.slice(svg.indexOf(">", svg.indexOf("<svg")) + 1, svg.lastIndexOf("</svg>")).replace(/\s+/g, " ").trim()];
+}));
+const icon = (name: keyof typeof LUCIDE | "linkedin") => name === "linkedin"
+  ? `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="${LINKEDIN_PATH}"/></svg>`
+  : `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${lucideInner.get(name)}</svg>`;
+/** Matte colours per record kind, shared by the graph nodes and the legend. */
+const GRAPH_KINDS = {
+  where: { colour: "#7e6ba8", icon: "building-2" }, built: { colour: "#4f7cac", icon: "briefcase-business" },
+  achieved: { colour: "#4e8f6f", icon: "trending-up" }, tool: { colour: "#b08850", icon: "cpu" },
+  other: { colour: "#8a8f98", icon: "circle-dot" },
+} as const;
+/** Each kind's Lucide icon as an SVG data URI in its matte colour, for use as a graph node image. */
+const graphIcons = Object.fromEntries(Object.entries(GRAPH_KINDS).map(([kind, { colour, icon: file }]) => {
+  const svg = readFileSync(join(lucideDirectory, `${file}.svg`), "utf8");
+  const inner = svg.slice(svg.indexOf(">", svg.indexOf("<svg")) + 1, svg.lastIndexOf("</svg>")).replace(/\s+/g, " ").trim();
+  const markup = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="${colour}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+  return [kind, { colour, image: `data:image/svg+xml;utf8,${encodeURIComponent(markup)}` }];
+}));
+/** LinkedIn glyph (Simple Icons dropped the brand); the same mark the editorial template uses. */
+const LINKEDIN_PATH = "M5.3 3.8A2.3 2.3 0 1 1 5.3 8.4 2.3 2.3 0 0 1 5.3 3.8ZM3.4 10h3.8v10.6H3.4V10Zm6.2 0h3.6v1.5h.1c.5-.9 1.8-1.9 3.7-1.9 3.9 0 4.6 2.5 4.6 5.9v5.1h-3.8v-4.5c0-1.1 0-3-1.9-3-1.9 0-2.2 1.4-2.2 2.9v4.6H9.6V10Z";
+/** Roboto Flex (OFL-1.1), Latin variable-weight subset, embedded so typography never needs the network. */
+const fontFace = `@font-face{font-family:"Roboto Flex";font-style:normal;font-display:swap;font-weight:100 1000;src:url(data:font/woff2;base64,${
+  readFileSync(join(dirname(localRequire.resolve("@fontsource-variable/roboto-flex/package.json")), "files/roboto-flex-latin-wght-normal.woff2")).toString("base64")}) format("woff2-variations");}\n`;
 
 /** Decorative thumbnail: the role at the centre, its work, results, and tools around it. */
 function connectionThumbnail(role: ProfileRole): string {
@@ -62,10 +77,34 @@ function connectionThumbnail(role: ProfileRole): string {
   return `<svg class="thumb" viewBox="0 0 78 56" aria-hidden="true">${dots}<circle class="k-focus" cx="39" cy="28" r="8"/></svg>`;
 }
 
-function roleDetail(role: ProfileRole): string {
+/** Company logo when an approved one exists; initials are the last resort. */
+const avatar = (role: ProfileRole): string => role.logo
+  ? `<span class="avatar logo"><img src="${esc(role.logo)}" alt="" width="30" height="30"></span>`
+  : `<span class="avatar">${esc(initials(role.organisation || role.title))}</span>`;
+
+/** Technology id -> icon path, so server-rendered and runtime chips share the same marks. */
+function technologyIcons(view: CareerProfileView): Map<string, string> {
+  return new Map(view.categories.flatMap(category => category.technologies.map(tech =>
+    [tech.id, technologyBadge(tech.name, category.id ? category.name : null)] as const)));
+}
+const techIcon = (badge: string | undefined) => badge ?? "";
+
+/** Where a skill was used: one small logo (or initials) per role, each with its own hover card. */
+const MAX_PLACES = 4;
+function placeStack(places: readonly ProfilePlace[]): string {
+  if (!places.length) return "";
+  const label = places.map(place => place.organisation).join(", ");
+  const mark = (place: ProfilePlace) => place.logo
+    ? `<img src="${esc(place.logo)}" alt="" width="16" height="16">`
+    : esc(initials(place.organisation));
+  return `<span class="places" aria-label="Used at ${esc(label)}">${places.slice(0, MAX_PLACES).map(place =>
+    `<span class="place${place.logo ? " has-logo" : ""}">${mark(place)}<span class="place-card" role="tooltip"><strong>${esc(place.organisation)}</strong><span>${esc([place.title, place.period].filter(Boolean).join(" · "))}</span>${place.summary ? `<span class="muted">${esc(place.summary)}</span>` : ""}</span></span>`).join("")}${places.length > MAX_PLACES ? `<span class="place more-places">+${places.length - MAX_PLACES}</span>` : ""}<span class="places-count">${places.length === 1 ? esc(places[0]!.organisation) : `${places.length} roles`}</span></span>`;
+}
+
+function roleDetail(role: ProfileRole, icons: Map<string, string>): string {
   const workCount = role.featuredWork.length + role.moreWork.length;
   const chips = role.technologies.map(tech =>
-    `<a class="chip" href="${fragment("explore", tech.id)}">${esc(tech.name)}${icon("explore")}<span class="visually-hidden">: explore connections</span></a>`).join("");
+    `<a class="chip" href="${fragment("explore", tech.id)}">${techIcon(icons.get(tech.id))}${esc(tech.name)}${icon("explore")}<span class="visually-hidden">: explore connections</span></a>`).join("");
   const workItem = (item: ProfileRef) => `<li>${recordLink(item)}</li>`;
   return `<article class="role-detail card elevated" id="role-${esc(role.id)}" data-role="${esc(role.id)}" aria-labelledby="role-title-${esc(role.id)}">
 <a class="back-to-list" href="#career">${icon("back")}All roles</a>
@@ -82,13 +121,14 @@ ${chips ? `<h4 class="title-small">Technologies</h4><div class="chips">${chips}<
 
 function renderHtml(display: CareerPortfolioDisplayModel): string {
   const view = careerProfileView(display);
+  const techIcons = technologyIcons(view);
   const name = esc(view.name);
   const current = view.roles[0];
   const askButton = (className: string, label: string) => view.notebookUrl
     ? `<a class="${className}" href="${esc(view.notebookUrl)}" target="_blank" rel="noopener noreferrer">${icon("ask")}<span>${label}</span><span class="visually-hidden"> (opens an external AI notebook in a new tab)</span></a>` : "";
-  const destinations: [string, string, keyof typeof icons][] = [
+  const destinations: [string, string, keyof typeof LUCIDE][] = [
     ["overview", "Overview", "home"], ["career", "Career", "work"], ["skills", "Skills", "skills"],
-    ["explore", "Explore", "explore"], ...(view.notebookUrl || view.audioPath ? [["ask", "Ask", "ask"] as [string, string, keyof typeof icons]] : []),
+    ["explore", "Explore", "explore"], ...(view.notebookUrl || view.audioPath ? [["ask", "Ask", "ask"] as [string, string, keyof typeof LUCIDE]] : []),
   ];
   const nav = destinations.map(([id, label, glyph]) =>
     `<a class="nav-item" href="#${id}" data-nav="${id}">${icon(glyph)}<span>${label}</span></a>`).join("");
@@ -105,21 +145,23 @@ function renderHtml(display: CareerPortfolioDisplayModel): string {
 ${view.headline ? `<p class="headline-text">${esc(view.headline)}</p>` : ""}
 <div class="actions">${askButton("button filled", `Ask ${name}'s AI`)}${listen}<a class="button outlined" href="#career">${icon("work")}<span>View career</span></a></div>
 </div>
-${view.impact.length ? `<h2 class="title-large">Impact</h2><ul class="tiles impact">${view.impact.map(item => `<li><a class="tile" href="${fragment("entity", item.id)}">${esc(item.name)}</a></li>`).join("")}</ul>` : ""}
-${view.roles.length ? `<h2 class="title-large">Recent roles</h2><ul class="role-cards">${view.roles.slice(0, 3).map(role => `<li><a class="role-card card" href="${fragment("career", role.id)}"><span class="avatar">${esc(initials(role.organisation || role.title))}</span><span><strong>${esc(role.title)}</strong><span class="muted">${esc([role.organisation, role.period].filter(Boolean).join(" · "))}</span></span>${icon("arrow")}</a></li>`).join("")}</ul>` : ""}
-${strongest ? `<h2 class="title-large">Explore by area</h2><div class="chips">${strongest}</div>` : ""}
+<div class="overview-grid">
+${view.roles.length ? `<div class="panel"><h2 class="title-medium">Recent roles</h2><ul class="role-cards">${view.roles.slice(0, 3).map(role => `<li><a class="role-card card" href="${fragment("career", role.id)}">${avatar(role)}<span><strong>${esc(role.title)}</strong><span class="muted">${esc([role.organisation, role.period].filter(Boolean).join(" · "))}</span></span>${icon("arrow")}</a></li>`).join("")}</ul></div>` : ""}
+${view.impact.length ? `<div class="panel"><h2 class="title-medium">Impact</h2><ul class="tiles impact">${view.impact.map(item => `<li><a class="tile" href="${fragment("entity", item.id)}"><span class="tile-icon">${icon("impact")}</span><span>${esc(item.name)}</span></a></li>`).join("")}</ul></div>` : ""}
+</div>
+${strongest ? `<h2 class="title-medium">Explore by area</h2><div class="chips">${strongest}</div>` : ""}
 </section>`;
 
   const career = `<section class="destination" id="career" data-destination="career" aria-labelledby="career-title">
 <h2 class="headline-small" id="career-title">Career</h2>
-${view.roles.length ? `<div class="list-detail"><ul class="role-list" aria-label="Roles">${view.roles.map(role => `<li><a class="role-card card" href="${fragment("career", role.id)}" data-role-link="${esc(role.id)}"><span class="avatar">${esc(initials(role.organisation || role.title))}</span><span><strong>${esc(role.title)}</strong><span class="muted">${esc([role.organisation, role.period].filter(Boolean).join(" · "))}</span></span></a></li>`).join("")}</ul>
-<div class="role-details">${view.roles.map(roleDetail).join("")}</div></div>` : `<p class="muted">No roles are included in this portfolio.</p>`}
+${view.roles.length ? `<div class="list-detail"><ul class="role-list" aria-label="Roles">${view.roles.map(role => `<li><a class="role-card card" href="${fragment("career", role.id)}" data-role-link="${esc(role.id)}">${avatar(role)}<span><strong>${esc(role.title)}</strong><span class="muted">${esc([role.organisation, role.period].filter(Boolean).join(" · "))}</span></span></a></li>`).join("")}</ul>
+<div class="role-details">${view.roles.map(role => roleDetail(role, techIcons)).join("")}</div></div>` : `<p class="muted">No roles are included in this portfolio.</p>`}
 ${view.credentials.length ? `<h3 class="title-large">Education, credentials &amp; publications</h3><ul class="work-list">${view.credentials.map(item => `<li>${recordLink(item)}</li>`).join("")}</ul>` : ""}
 </section>`;
 
   const skills = `<section class="destination" id="skills" data-destination="skills" aria-labelledby="skills-title">
 <h2 class="headline-small" id="skills-title">Skills</h2>
-${view.categories.length ? view.categories.map(category => `<section class="skill-group card"><h3 class="title-medium">${esc(category.name)}</h3><ul class="skill-list">${category.technologies.map(tech => `<li><a class="chip" href="${fragment("explore", tech.id)}">${esc(tech.name)}${icon("explore")}</a>${tech.usedAt.length ? `<span class="muted label-small">${esc(tech.usedAt.join(" · "))}</span>` : ""}</li>`).join("")}</ul></section>`).join("") : `<p class="muted">No technologies are included in this portfolio.</p>`}
+${view.categories.length ? view.categories.map(category => `<section class="skill-group card"><h3 class="title-medium">${esc(category.name)}</h3><ul class="skill-list">${category.technologies.map(tech => `<li><a class="skill-row" href="${fragment("explore", tech.id)}">${techIcon(techIcons.get(tech.id))}<span class="skill-name">${esc(tech.name)}</span>${placeStack(tech.usedAt)}</a></li>`).join("")}</ul></section>`).join("") : `<p class="muted">No technologies are included in this portfolio.</p>`}
 </section>`;
 
   const explore = `<section class="destination" id="explore" data-destination="explore" aria-labelledby="explore-title">
@@ -127,7 +169,7 @@ ${view.categories.length ? view.categories.map(category => `<section class="skil
 <div class="search"><label for="explore-search">Show me where ${name} used…</label><input id="explore-search" type="search" autocomplete="off" placeholder="Search a skill, company, or piece of work" aria-controls="explore-suggestions"></div>
 <div id="explore-suggestions" class="chips" aria-live="polite"></div>
 <div id="explore-result" aria-live="polite"><p class="muted">Pick an area above, or search, to see where it was used, what was built, and what it achieved.</p></div>
-<div id="focused-graph" class="graph-panel" hidden><div class="graph-bar"><nav id="graph-trail" class="trail" aria-label="Graph history"></nav><a class="button text" id="graph-exit" href="#explore">${icon("close")}<span>Close graph</span></a></div><div class="graph-body"><div id="graph-canvas" class="graph-canvas" role="img" aria-label="Focused career graph. The panel lists the same connections as text."></div><aside id="graph-node" class="graph-node-panel card" aria-live="polite"></aside></div><p class="legend"><span class="k-where">Company or role</span><span class="k-built">Work</span><span class="k-achieved">Result</span><span class="k-tool">Technology</span></p></div>
+<div id="focused-graph" class="graph-panel" hidden><div class="graph-bar"><nav id="graph-trail" class="trail" aria-label="Graph history"></nav><span class="graph-actions"><button class="button text" type="button" id="graph-fullscreen" aria-pressed="false">${icon("fullscreen")}<span>Full screen</span></button><a class="button text" id="graph-exit" href="#explore">${icon("close")}<span>Close graph</span></a></span></div><div class="graph-body"><div id="graph-canvas" class="graph-canvas" role="img" aria-label="Focused career graph. The panel lists the same connections as text."></div><aside id="graph-node" class="graph-node-panel card" aria-live="polite"></aside></div><p class="legend"><span class="k-where">Company or role</span><span class="k-built">Work</span><span class="k-achieved">Result</span><span class="k-tool">Technology</span></p></div>
 <p><a class="button outlined" href="#records">Browse all records</a></p>
 </section>`;
 
@@ -160,15 +202,20 @@ ${view.audioPath ? `<div class="ask-card card"><h3 class="title-large">Listen to
     ? `<a class="button outlined compact" href="${esc(view.resumePath)}" download>${icon("download")}<span>Résumé</span></a>` : "";
   const linkedIn = view.linkedInUrl
     ? `<a class="icon-button" href="${esc(view.linkedInUrl)}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">${icon("linkedin")}</a>` : "";
-  const csp = `default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:;${view.audioPath ? " media-src 'self';" : ""} connect-src 'none'; base-uri 'none'; form-action 'none'`;
-  const data = JSON.stringify({ items: display.items, relations: display.relations, links: display.links })
+  const csp = `default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:;${view.audioPath ? " media-src 'self';" : ""} font-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'`;
+  const data = JSON.stringify({ items: display.items, relations: display.relations, links: display.links,
+    technologyIcons: Object.fromEntries(techIcons),
+    graphKinds: graphIcons,
+    technologyGlyphs: Object.fromEntries(view.categories.flatMap(category => category.technologies.map(tech =>
+      [tech.id, technologyGlyph(tech.name, category.id ? category.name : null)]))),
+    logos: Object.fromEntries(display.assets.flatMap(asset => asset.kind === "logo" && asset.targetRecordId ? [[asset.targetRecordId, asset.outputPath]] : [])) })
     .replace(/</g, "\\u003c");
 
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="generator" content="why-hire-me.build/v1"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><meta http-equiv="Content-Security-Policy" content="${csp}"><link rel="icon" href="data:,"><title>${name} · Career profile</title><link rel="stylesheet" href="styles.css"></head>
 <body class="resume-${esc(display.resumeLength)}" data-template="material-profile">
 <a class="skip" href="#content">Skip to content</a>
-<header class="top-bar"><a class="brand title-large" href="#overview">${name}</a><div class="top-actions"><button class="icon-button" type="button" id="theme-toggle" aria-label="Switch between light and dark theme">${icon("theme")}</button>${linkedIn}${resume}${askButton("button filled compact ask-top", "Ask AI")}</div></header>
-<nav class="nav" aria-label="Sections">${nav}</nav>
+<header class="top-bar"><button class="icon-button nav-toggle" type="button" id="nav-toggle" aria-controls="site-nav" aria-expanded="true" aria-label="Collapse navigation">${icon("menu")}</button><a class="brand" href="#overview">${name}</a><div class="top-actions"><button class="icon-button" type="button" id="theme-toggle" aria-label="Switch between light and dark theme">${icon("theme")}</button>${linkedIn}${resume}${askButton("button filled compact ask-top", "Ask AI")}</div></header>
+<nav class="nav" id="site-nav" aria-label="Sections"><a class="nav-brand" href="#overview"><span class="avatar">${esc(initials(view.name))}</span><span class="nav-brand-text"><strong>${name}</strong><span>Career profile</span></span></a>${nav}</nav>
 <main id="content" tabindex="-1">${overview}${career}${skills}${explore}${records}${ask}</main>
 ${askButton("fab", "Ask")}
 <div class="sheet-scrim" id="sheet-scrim" hidden></div>
@@ -192,7 +239,7 @@ export class MaterialCareerPortfolioRenderer implements CareerPortfolioRenderer 
     inclusionDecisions: readonly PortfolioInclusionDecision[]): CareerPortfolioProjection {
     const files = Object.freeze({
       "index.html": renderHtml(display),
-      "styles.css": stylesSource,
+      "styles.css": fontFace + stylesSource,
       "app.js": `${cytoscapeSource}\n${appSource}`,
       "portfolio.json": `${JSON.stringify({ schema: "why-hire-me.portfolio-data/v0.4",
         buildMarker: "why-hire-me.build/v1", displayModel: display }, null, 2)}\n`,

@@ -6,6 +6,7 @@ import type { ReviewedLocalPrototypePacket } from "../../domains/publication/dom
 import { careerPortfolioRenderer } from "./career-portfolio-renderers.js";
 import { NodeReleaseDigester } from "./node-release-digester.js";
 import { adaptReviewedPrototype } from "./reviewed-prototype-display-adapter.js";
+import { technologyBadge } from "./technology-icons.js";
 
 const digester = new NodeReleaseDigester();
 const fixture = JSON.parse(await readFile("skills/output-career-portfolio/assets/sample-release.json", "utf8"));
@@ -84,4 +85,22 @@ test("an audio overview needs its own approval and opens media-src only when pre
   assert.match(html, /media-src 'self'/);
   assert.match(html, /<audio controls preload="none" src="overview\.mp3">/);
   assert.match(html, /AI-generated/);
+});
+
+test("an approved organisation logo replaces initials, and an unknown target is rejected", () => {
+  const withLogo = { ...basePacket,
+    items: [...basePacket.items, item("org-1", "Organisation")],
+    relations: [...basePacket.relations, { id: "rel-org", subject: "eng-1", object: "org-1", predicate: "any.relation", reviewed: true as const, reviewReference: "review-1" }],
+    assets: [{ sourcePath: "/tmp/logo.svg", outputPath: "logo-acme.svg", reviewed: true as const, reviewReference: "review-1", targetRecordId: "org-1" }] };
+  assert.match(render(withLogo).files["index.html"], /<span class="avatar logo"><img src="logo-acme\.svg"/);
+  assert.throws(() => adaptReviewedPrototype({ ...withLogo, assets: [{ ...withLogo.assets[0]!, targetRecordId: "missing" }] }),
+    /must be an image that names an existing record/);
+});
+
+test("technology badges use the brand colour, and concepts fall back to theme classes", () => {
+  const go = technologyBadge("Go", "Languages");
+  assert.match(go, /<circle fill="#00ADD8" fill-opacity="\.16"/i);
+  assert.match(technologyBadge("JavaScript", "Languages"), /fill="#[0-9a-f]{6}"/i);
+  assert.doesNotMatch(technologyBadge("JavaScript", "Languages"), /<path fill="#F7DF1E"/i, "light brands are darkened");
+  assert.match(technologyBadge("Event-driven design", "Messaging & eventing"), /class="badge-bg"/);
 });

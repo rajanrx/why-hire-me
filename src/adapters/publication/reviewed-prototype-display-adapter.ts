@@ -111,6 +111,8 @@ export function adaptReviewedPrototype(packet: ReviewedLocalPrototypePacket): Ca
     if (asset.reviewed !== true || !nonempty(asset.reviewReference) || !nonempty(asset.sourcePath) ||
       !/^[a-zA-Z0-9][a-zA-Z0-9._-]*\.(pdf|svg|png|jpg|mp3|m4a)$/.test(asset.outputPath))
       fail(`unreviewed or unsafe asset ${String(asset?.outputPath)}.`);
+    if (asset.targetRecordId !== undefined && (!ids.has(asset.targetRecordId) || !/\.(svg|png|jpg)$/.test(asset.outputPath)))
+      fail(`logo asset ${asset.outputPath} must be an image that names an existing record.`);
   }
   // AI-derived disclosures need their own approval, separate from the link or file review.
   const approved = (field: string) => packet.review.disclosureChoices.some(choice =>
@@ -171,7 +173,9 @@ export function adaptReviewedPrototype(packet: ReviewedLocalPrototypePacket): Ca
     assets: Object.freeze((packet.assets ?? []).map(asset => Object.freeze({
       outputPath: asset.outputPath,
       kind: asset.outputPath.endsWith(".pdf") ? "resume-pdf" as const
-        : isAudio(asset.outputPath) ? "audio-overview" as const : "other" as const,
+        : isAudio(asset.outputPath) ? "audio-overview" as const
+        : asset.targetRecordId !== undefined ? "logo" as const : "other" as const,
+      ...(asset.targetRecordId !== undefined ? { targetRecordId: asset.targetRecordId } : {}),
     }))),
     limitations: Object.freeze([...packet.limitations]),
     provenance: Object.freeze({ mode: "local-prototype", packetId: packet.packetId,

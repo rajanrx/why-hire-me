@@ -10,6 +10,9 @@ export interface ProfileRole {
   readonly id: string;
   readonly title: string;
   readonly organisation: string;
+  readonly organisationSummary: string | null;
+  /** Approved logo for the organisation (or the engagement itself); initials are the fallback. */
+  readonly logo: string | null;
   readonly period: string | null;
   readonly summary: string | null;
   readonly outcomes: readonly ProfileRef[];
@@ -18,10 +21,14 @@ export interface ProfileRole {
   readonly technologies: readonly ProfileRef[];
 }
 
+/** Where a technology was used: enough to label it and to explain the company on hover. */
+export interface ProfilePlace { readonly organisation: string; readonly title: string; readonly period: string | null;
+  readonly summary: string | null; readonly logo: string | null }
+
 export interface ProfileCategory {
   readonly id: string | null;
   readonly name: string;
-  readonly technologies: readonly (ProfileRef & { readonly usedAt: readonly string[] })[];
+  readonly technologies: readonly (ProfileRef & { readonly usedAt: readonly ProfilePlace[] })[];
 }
 
 export interface CareerProfileView {
@@ -73,6 +80,8 @@ export function careerProfileView(display: CareerPortfolioDisplayModel): CareerP
   const byPriority = (a: Item, b: Item) =>
     Number(!isFeatured(a)) - Number(!isFeatured(b)) || order.get(a.id)! - order.get(b.id)!;
 
+  const logos = new Map(display.assets.flatMap(asset =>
+    asset.kind === "logo" && asset.targetRecordId ? [[asset.targetRecordId, asset.outputPath] as const] : []));
   const roles = display.items.filter(item => kind(item) === "engagement").map((engagement): ProfileRole => {
     const direct = near(engagement.id);
     const work = direct.filter(item => WORK_TYPES.has(kind(item)) && item.inclusion !== null);
@@ -81,10 +90,13 @@ export function careerProfileView(display: CareerPortfolioDisplayModel): CareerP
     const featured = ordered.filter(isFeatured).slice(0, MAX_FEATURED_WORK);
     const shownWork = featured.length ? featured : ordered.slice(0, MAX_FEATURED_WORK);
     const period = engagement.details.find(detail => /date|period|tenure|timeline/i.test(detail.label));
+    const organisation = direct.find(item => kind(item) === "organisation");
     return {
       id: engagement.id,
       title: direct.find(item => kind(item) === "role")?.name ?? engagement.name,
-      organisation: direct.find(item => kind(item) === "organisation")?.name ?? "",
+      organisation: organisation?.name ?? "",
+      organisationSummary: organisation?.summary ?? null,
+      logo: (organisation && logos.get(organisation.id)) ?? logos.get(engagement.id) ?? null,
       period: period?.value ?? null,
       summary: engagement.summary,
       outcomes: records.filter(item => kind(item) === OUTCOME && item.inclusion !== null).sort(byPriority).map(ref),
@@ -107,10 +119,10 @@ export function careerProfileView(display: CareerPortfolioDisplayModel): CareerP
     }),
   ].slice(0, MAX_IMPACT).map(ref);
 
-  const roleLabel = new Map(roles.map(role => [role.id, role.organisation || role.title]));
-  const usedAt = (technology: Item) => [...new Set(roles
+  const usedAt = (technology: Item): ProfilePlace[] => roles
     .filter(role => role.technologies.some(item => item.id === technology.id))
-    .map(role => roleLabel.get(role.id)!))];
+    .map(role => ({ organisation: role.organisation || role.title, title: role.title, period: role.period,
+      summary: role.summary ?? role.organisationSummary, logo: role.logo }));
   const technologies = display.items.filter(item => kind(item) === "technology");
   const categorised = new Set<string>();
   const categories: ProfileCategory[] = display.items.filter(item => kind(item) === "technologycategory")

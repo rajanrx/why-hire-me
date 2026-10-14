@@ -38,7 +38,9 @@ export interface CareerPortfolioDisplayModel {
   readonly items: readonly CareerPortfolioDisplayItem[];
   readonly relations: readonly CareerPortfolioDisplayRelation[];
   readonly links: readonly CareerPortfolioDisplayLink[];
-  readonly assets: readonly { readonly outputPath: string; readonly kind: "resume-pdf" | "audio-overview" | "other" }[];
+  /** `logo` assets name the record (usually an Organisation) they identify. */
+  readonly assets: readonly { readonly outputPath: string; readonly kind: "resume-pdf" | "audio-overview" | "logo" | "other";
+    readonly targetRecordId?: string }[];
   readonly limitations: readonly string[];
   readonly provenance:
     | { readonly mode: "governed-render"; readonly releaseId: string; readonly releaseDigest: string;
@@ -81,5 +83,5 @@ export interface ReviewedLocalPrototypePacket {
     readonly newLocator: string | null; readonly personApproved: boolean }[];
   readonly limitations: readonly string[];
   readonly assets?: readonly { readonly sourcePath: string; readonly outputPath: string;
-    readonly reviewed: true; readonly reviewReference: string }[];
+    readonly reviewed: true; readonly reviewReference: string; readonly targetRecordId?: string }[];
 }
