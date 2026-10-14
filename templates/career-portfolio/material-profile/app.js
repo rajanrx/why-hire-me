@@ -183,6 +183,7 @@
     if (!suggestions.childElementCount) renderSuggestions(search?.value || "");
     for (const chip of $$(".chip", suggestions)) chip.setAttribute("aria-current", String(chip.getAttribute("href") === hrefFor("explore", focus || "")));
     if (!focus) {
+      result.hidden = false;
       $("#focused-graph").hidden = true;
       return;
     }
@@ -193,6 +194,8 @@
       (total ? `<div class="groups">${Object.entries(groups).filter(([, list]) => list.length).map(([kind, list]) =>
         `<section class="group card ${kind}"><h3 class="title-small">${GROUP_TITLES[kind]}</h3><ul>${list.slice(0, 12).map(id =>
           `<li><a class="record-link" href="${hrefFor("entity", id)}">${esc(items.get(id).name)}</a></li>`).join("")}</ul>${list.length > 12 ? `<p class="muted label-small">and ${list.length - 12} more in All records</p>` : ""}</section>`).join("")}</div>` : "");
+    // The focused graph replaces the grouped lists; its panel carries the same connections as text.
+    result.hidden = Boolean(showGraph);
     $("#focused-graph").hidden = !showGraph;
     if (showGraph) {
       graph.focus(focus);
@@ -238,7 +241,7 @@
         .concat(edges);
       if (typeof cytoscape !== "function") return this.panel(id, near);
       if (!this.instance) {
-        this.instance = cytoscape({ container: $("#graph-canvas"), elements: [], style: this.style(), minZoom: 0.3, maxZoom: 2.5 });
+        this.instance = cytoscape({ container: $("#graph-canvas"), elements: [], style: this.style(), minZoom: 0.3, maxZoom: 1.4 });
         this.instance.on("tap", "node", event => {
           const target = event.target.id();
           location.hash = target === this.trail.at(-1) ? hrefFor("entity", target) : hrefFor("explore/graph", target);
