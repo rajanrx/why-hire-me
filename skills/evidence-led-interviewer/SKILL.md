@@ -57,7 +57,8 @@ Read [`references/question-method.md`](references/question-method.md), then:
 
 1. Map each question to one purpose: verify, clarify, deepen, test application, resolve conflict,
    or fill a criterion gap.
-2. Prefer a small number of high-information questions over broad autobiography.
+2. Size the question set to the chosen depth (see below); within it, prefer high-information
+   questions over broad autobiography.
 3. Ask for a concrete situation, the person's own responsibility, actions and reasoning,
    constraints/trade-offs, outcome, evidence, and reflection when relevant.
 4. Use the permitted probe families. Do not lead the person toward a preferred answer.
@@ -68,6 +69,67 @@ Read [`references/question-method.md`](references/question-method.md), then:
 Ask one primary question at a time in an interactive interview. For an async question set, keep the
 set small, state the criterion and expected effort, and allow equivalent written, audio, video, or
 artefact-based responses where feasible.
+
+### Discovery depth
+
+In knowledge discovery, after showing the evidence map and before the first gap question, ask the
+person which depth they want, and let them change it at any time:
+
+- **Deep dive** — work through every material gap, role by role and episode by episode. Ask
+  many questions: for each episode cover situation, ownership, actions, alternatives considered,
+  collaborators, constraints, outcome and how it was observed, evidence, and reflection; follow up
+  on every vague, missing, or contradictory answer before moving on. Keep going until each episode
+  has a disposition or the person stops.
+- **General** — a few high-value questions per role, aimed at the largest gaps in recent and
+  recruiter-relevant work; skip episode-level probing and older or low-relevance roles unless the
+  person asks.
+
+State the expected effort of each option (rough number of questions or minutes). Record the
+choice in the exploration session.
+
+### Answer format: options with free text
+
+In knowledge discovery, offer each question as a short set of answer options plus a free-text
+answer, so the person can pick quickly or write their own:
+
+- Use the host's structured question tool when one exists (for example, a multiple-choice prompt
+  that always allows an "Other" text answer); otherwise list lettered options and say the person
+  can answer in their own words.
+- Options describe answer shapes, ranges, or roles (for example "designed the approach", "built
+  it", "led the squad that built it", "approximate figure", "no measurement exists"), never a
+  preferred or flattering answer. Always include a neutral exit such as "not sure", "can't share",
+  or "skip".
+- Use multi-select when answers are not mutually exclusive, such as several responsibilities.
+- In a deep dive, related questions about the same episode may be grouped (up to about four at
+  once) when the host tool supports it; otherwise keep one question at a time.
+- Treat a picked option as the person's answer at that level of detail only; probe with free text
+  when the option is not specific enough to support a candidate record. Record the person's
+  free-text words faithfully, not the option label, when both are given.
+
+### Reconcile each answer with existing evidence
+
+In knowledge discovery, after each answer and before the next question, compare it with the
+evidence map and tell the person briefly what you found:
+
+- **aligned** — the answer matches existing records; cite them and note any detail it adds;
+- **new** — the answer adds information no record covers; propose it as a candidate;
+- **conflict** — the answer differs from an existing record (dates outside a role's period, a
+  different title, organisation, figure, scope, ownership, or a technology recorded for another
+  role or period). Show both versions neutrally with their sources and ask which holds, with
+  options such as "the existing record is right", "my new answer is right", "both are true in
+  different contexts", and "not sure". Never silently overwrite either side; record the person's
+  resolution, or `unresolved` if they are unsure.
+
+Help the person answer accurately. People misremember dates, figures, and who did what, so offer
+recall aids drawn only from their own authorised evidence (the role period, related records,
+artefacts, earlier answers) and point out a likely slip, such as a date that falls outside the
+role or a figure that differs from the résumé, as a question rather than a correction. Do not
+supply an answer they have not given, nudge figures upwards, or treat a mistake as a sign of
+dishonesty; the person decides what is correct. Carry unresolved conflicts into the candidate
+records' uncertainty.
+
+Formal evaluation keeps open, identical core questions; do not convert core evaluation questions
+into multiple choice, because the options would change the construct and could cue the answer.
 
 ## Formal-evaluation rules
 
