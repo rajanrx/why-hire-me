@@ -166,7 +166,8 @@ When storing results, read [`references/record-contract.md`](references/record-c
 - Every AI action records the model/provider identity available to the adapter, skill version,
   inputs, output, time, and limitations without storing secrets.
 - When the person approves discovery answers for an existing reviewed portfolio packet, write them as
-  a `why-hire-me.packet-amendments/v1` file (updates, linked additions, limitations; see the
+  a `why-hire-me.packet-amendments/v1` file (updates, linked additions, technologies with their category and the records that used them,
+  contextual technology uses, limitations; see the
   portfolio skill's `references/reviewed-packet-workflow.md`) beside a readable session record of
   questions, answers, reconciliations, and dispositions. Hand both to `output-career-portfolio`;
   never edit the packet or portfolio from the interview.

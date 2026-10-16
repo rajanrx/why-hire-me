@@ -80,6 +80,10 @@ file. Each field states the desired end value, so applying it twice changes noth
   "additions": [{ "item": { "id": "<new id>", "type": "Reported outcome", "name": "<name>", "summary": "<text>" },
     "engagementId": "<engagement id>", "parentId": "<work id>",
     "inclusion": { "status": "summarised", "rationale": "<why>", "summarisedUnderRecordId": "<work id>" } }],
+  "categories": [{ "name": "Observability" }],
+  "technologies": [{ "name": "Grafana", "category": "Observability", "usedIn": ["<work id>", "<engagement id>"] }],
+  "technologyUses": [{ "id": "<new id>", "summary": "<approved wording>", "workContextId": "<engagement id>",
+    "workContext": "<context name>" }],
   "assets": [{ "sourcePath": "resume.pdf", "outputPath": "resume.pdf", "reviewed": true, "reviewReference": "<review>" }],
   "limitations": ["Interview figures are person-stated and approximate."]
 }
@@ -95,6 +99,18 @@ node scripts/portfolio/preview-reviewed-prototype.mjs --packet career/reviewed-p
 A renamed record's old name is replaced in every other record's text, so organisation and
 technology readouts never keep stale names. Updated records gain the evidence label once, and their
 carry-forward entry becomes `reworded`. Unknown record IDs are refused rather than guessed.
+
+Technologies reach the Expertise lens through `categories`, `technologies` and `technologyUses`:
+
+- A technology names its one category by ID or exact name, and moving it to another category
+  removes the old link. Its ID is `TECH-` plus the first 12 hex characters of the SHA-256 of its
+  name unless given; categories use `CAT-` the same way.
+- `usedIn` links the technology to each record that used it. Links are additive: the record's
+  contextual technologies and the technology's linked work gain the new names. Removal is a reviewed
+  exclusion, not an amendment.
+- A technology use is shown in its work context, for example a role-wide use on its engagement.
+- A technology whose name differs from an existing one only by case (Postgres and postgres) is
+  refused, as are unknown categories, records and work contexts. Rename the existing one instead.
 
 ## 3. Print the résumé
 
