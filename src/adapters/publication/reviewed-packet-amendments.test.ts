@@ -48,3 +48,50 @@ test("amendments apply idempotently, add linked outcomes, and carry renames into
 test("amendments refuse unknown records instead of guessing", () => {
   assert.throws(() => applyPacketAmendments(packet, { ...amendments, updates: [{ id: "missing", summary: "x" }] }), /unknown record missing/);
 });
+
+const withTechnology: ReviewedLocalPrototypePacket = {
+  ...packet,
+  items: [...packet.items, item("cat-lang", "TechnologyCategory", "Languages", "Grouping.", [{ label: "Technologies", value: "Kotlin" }]),
+    item("tech-kotlin", "Technology", "Kotlin", null, [{ label: "Linked work", value: "Old payments project" }])],
+  relations: [...packet.relations,
+    { id: "rel-cat", subject: "tech-kotlin", object: "cat-lang", predicate: "technology.belongs_to_category", reviewed: true, reviewReference: "review-1" },
+    { id: "rel-use", subject: "work-1", object: "tech-kotlin", predicate: "record.has_contextual_technology", reviewed: true, reviewReference: "review-1" }],
+};
+const technologyAmendments: PacketAmendments = {
+  ...amendments, updates: [], additions: [], limitations: [],
+  categories: [{ name: "Observability" }],
+  technologies: [{ name: "Grafana", category: "Observability", usedIn: ["work-1", "eng-1"] },
+    { name: "Rust", category: "cat-lang", usedIn: ["work-1"] }],
+  technologyUses: [{ id: "tu-eng-1", summary: "Rust and Grafana across Example Co.", workContextId: "eng-1", workContext: "Example Co platform" }],
+};
+
+test("technology amendments add categorised technologies and uses idempotently", () => {
+  const once = applyPacketAmendments(withTechnology, technologyAmendments);
+  assert.deepEqual(applyPacketAmendments(once, technologyAmendments), once);
+  const byName = new Map(once.items.map(record => [record.name, record]));
+  const grafana = byName.get("Grafana")!;
+  assert.match(grafana.id, /^TECH-[0-9a-f]{12}$/);
+  assert.equal(grafana.details.find(detail => detail.label === "Linked work")!.value, "Old payments project; Example Co · Lead");
+  assert.equal(byName.get("Languages")!.details.find(detail => detail.label === "Technologies")!.value, "Kotlin · Rust");
+  assert.equal(byName.get("Old payments project")!.details.find(detail => detail.label === "Contextual technologies")!.value, "Kotlin · Grafana · Rust");
+  assert.ok(once.relations.some(r => r.subject === "tu-eng-1" && r.object === "eng-1" && r.predicate === "technology_use.in_context"));
+  assert.deepEqual(once.technologyUseMap, [{ technologyUseId: "tu-eng-1", workContextId: "eng-1", status: "visible-in-context", targetRecordId: "eng-1" }]);
+  adaptReviewedPrototype(once);
+});
+
+test("a technology moved to another category belongs only to the new one", () => {
+  const moved = applyPacketAmendments(withTechnology, { ...technologyAmendments, technologyUses: [],
+    technologies: [{ name: "Kotlin", category: "Observability" }] });
+  assert.deepEqual(moved.relations.filter(r => r.subject === "tech-kotlin" && r.predicate === "technology.belongs_to_category").map(r => r.object),
+    [moved.items.find(record => record.name === "Observability")!.id]);
+  assert.equal(moved.items.find(record => record.id === "cat-lang")!.details.find(detail => detail.label === "Technologies")!.value, "Kotlin",
+    "an emptied category keeps its last readout rather than inventing one");
+});
+
+test("technology amendments refuse near-duplicates and unknown references", () => {
+  const only = (change: Partial<PacketAmendments>) => () => applyPacketAmendments(withTechnology, { ...technologyAmendments, technologyUses: [], ...change });
+  assert.throws(only({ technologies: [{ name: "kotlin", category: "cat-lang" }] }), /tech-kotlin is already "Kotlin"/);
+  assert.throws(only({ technologies: [{ name: "Rust", category: "Missing" }] }), /unknown category Missing/);
+  assert.throws(only({ technologies: [{ name: "Rust", category: "cat-lang", usedIn: ["missing"] }] }), /unknown record missing/);
+  assert.throws(only({ technologyUses: [{ id: "tu-x", summary: "x", workContextId: "missing", workContext: "x" }] }), /unknown work context missing/);
+});
