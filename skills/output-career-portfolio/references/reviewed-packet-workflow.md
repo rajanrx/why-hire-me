@@ -9,9 +9,12 @@ A complete fictional example lives in [`../assets/sample-packet/`](../assets/sam
 
 ## 0. Get the commands
 
-Skill installers copy only the skills. The commands below need the package: clone
-`https://github.com/rajanrx/why-hire-me` or unpack a release bundle, then run
-`pnpm install && pnpm run build` once.
+Skill installers copy only the skills. The commands below need the package. Install it as a
+dependency of the person's own private career repository from a release tarball
+(`https://github.com/rajanrx/why-hire-me/releases/download/v<version>/why-hire-me-v<version>.tar.gz`),
+then run them as `node node_modules/why-hire-me/scripts/portfolio/<command>.mjs` or as package
+scripts; the project README shows a complete `package.json`. Paths below are relative to the
+package root. To work on Why Hire Me itself, clone it and run `pnpm install && pnpm run build` instead.
 
 ## Write the first packet
 
