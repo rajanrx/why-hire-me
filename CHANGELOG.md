@@ -1,5 +1,15 @@
 # why-hire-me
 
+## 0.13.0
+
+### Minor Changes
+
+- 0f16163: Packet amendments can add technology categories, categorised technologies linked to the records that used them, and contextual technology uses, so confirmed tools reach the Expertise lens without hand-editing a packet.
+
+### Patch Changes
+
+- 28de1b4: Document installing Why Hire Me as a dependency of a private career repository from a release tarball, with a complete package.json, a working layout, and the hash check for upgrades.
+
 ## 0.12.1
 
 ### Patch Changes
