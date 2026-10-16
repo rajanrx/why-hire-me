@@ -20,8 +20,8 @@ restart it. Then run three skills in order. Each one builds on the knowledge the
 
 Then `why-hire-me:output-career-portfolio` turns what you approved into an offline portfolio and
 printable résumé, and the publisher skills share it only where you choose. The portfolio commands need the
-package itself: `git clone https://github.com/rajanrx/why-hire-me && cd why-hire-me && pnpm install && pnpm run build`
-(or unpack the release bundle and run the same two pnpm commands).
+package itself: install it as a dependency of your own private career repository (see
+[Keep your career in its own repository](#keep-your-career-in-its-own-repository)).
 
 **Copy these prompts into your AI app:**
 
@@ -48,6 +48,53 @@ You stay in control throughout. AI may explore and propose; you decide what beco
 knowledge and what can leave your computer. Every build step is a command over files you reviewed,
 so the same inputs give the same portfolio on any machine (see the
 [reviewed-packet workflow](skills/output-career-portfolio/references/reviewed-packet-workflow.md)).
+
+### Keep your career in its own repository
+
+Keep your reviewed packets, amendments, interview notes and approved portfolio in a **private**
+repository of your own, and install Why Hire Me into it from a release. Your data never lives in
+this repository, and upgrading is a one-line change.
+
+```json
+{
+  "name": "my-career",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "amend": "node node_modules/why-hire-me/scripts/portfolio/amend-reviewed-packet.mjs",
+    "preview": "node node_modules/why-hire-me/scripts/portfolio/preview-reviewed-prototype.mjs",
+    "print-resume": "node node_modules/why-hire-me/scripts/portfolio/print-resume.mjs",
+    "approve": "node node_modules/why-hire-me/scripts/portfolio/approve-candidate.mjs",
+    "verify-hosted": "node node_modules/why-hire-me/scripts/portfolio/verify-hosted.mjs",
+    "notebooklm-handoff": "node node_modules/why-hire-me/skills/output-notebooklm-sync/scripts/prepare-handoff.mjs"
+  },
+  "dependencies": {
+    "why-hire-me": "https://github.com/rajanrx/why-hire-me/releases/download/v0.12.1/why-hire-me-v0.12.1.tar.gz"
+  },
+  "pnpm": { "ignoredBuiltDependencies": ["better-sqlite3"] }
+}
+```
+
+Run `pnpm install`, then the steps in the
+[reviewed-packet workflow](skills/output-career-portfolio/references/reviewed-packet-workflow.md)
+as `pnpm amend …`, `pnpm preview …` and so on, from your repository root. A layout that works:
+
+```text
+career/
+  reviewed-packet-v3.json   current packet; asset paths are relative to this folder
+  brand-assets/  resume/    files the packet refers to
+  public/                   the approved portfolio you deploy
+  generation-record.json    how public/ was built and who approved it
+  amendments/  interviews/  sources/  records/  history/
+```
+
+- The portfolio commands don't use `better-sqlite3`, so its native build can stay ignored.
+- The lockfile records the release URL, not a content hash. When you upgrade, check the tarball
+  against the release's `.sha256` asset:
+  `curl -sL <tarball-url> | shasum -a 256`.
+- Avoid `deploy` and `publish` as script names: pnpm runs its own built-in commands instead.
+- Skill installs and this dependency are separate. Run `why-hire-me-update` for the skills, and
+  bump the URL for the commands, so both stay on the same release.
 
 ## ✨ AI skills
 
